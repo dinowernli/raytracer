@@ -34,9 +34,7 @@ else:
 # Build binaries.
 p = environment.Program(
   'Raytracer', 
-  ['proto/RaytracerConfig.pb.cc',
-   Glob('*.cc'),
-  ]
+   Glob('*.cc') + [st[2] for st in source_target],
 )
 
 # This is how to force dependencies.

@@ -1,7 +1,7 @@
-#include "proto/RaytracerConfig.pb.h"
+#include "proto/Configuration.pb.h"
 
 int main(int argc, char **argv) {
-  raytracer::RaytracerConfiguration c;
+  raytracer::Configuration c;
 
   return 0;
 }
