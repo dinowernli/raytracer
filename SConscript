@@ -1,9 +1,22 @@
 import os
 
+build_dir = 'build'
+proto_dir = 'proto'
+
 environment = Environment(
   CCFLAGS = ['-Wall', '-pipe', '-std=c++0x'], 
   ENV = os.environ,
-  CPPPATH = ['.']
+  CPPPATH = ['.'],
+  tools = ['default', 'protoc'],
+  toolpath = ['.']
+)
+
+proto_files = environment.Protoc(
+    [],
+    Glob(os.path.join(proto_dir, '*.proto')),
+    PROTOCPROTOPATH=['.'],
+    PROTOCPYTHONOUTDIR=None,
+    PROTOCOUTDIR = build_dir,
 )
 
 # Build modes

@@ -1,0 +1,5 @@
+package raytracer;
+
+message RaytracerConfiguration {
+  optional uint32 threads = 1;
+}
