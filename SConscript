@@ -12,11 +12,11 @@ environment = Environment(
 )
 
 proto_files = environment.Protoc(
-    [],
-    Glob(os.path.join(proto_dir, '*.proto')),
-    PROTOCPROTOPATH=['.'],
-    PROTOCPYTHONOUTDIR=None,
-    PROTOCOUTDIR = build_dir,
+  [],
+  Glob(os.path.join(proto_dir, '*.proto')),
+  PROTOCPROTOPATH=['.'],
+  PROTOCPYTHONOUTDIR=None,
+  PROTOCOUTDIR = build_dir,
 )
 
 # Build modes
