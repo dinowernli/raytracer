@@ -1,5 +1,5 @@
 /*
- * Author: duh
+ * Author: Dino Wernli
  */
 
 #include "Element.h"
