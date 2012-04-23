@@ -1,6 +1,6 @@
 /*
- *	Contains elements, lights etc. and can be rendered.
- *	Author: Dino Wernli
+ * Contains elements, lights etc. and can be rendered.
+ * Author: Dino Wernli
  */
 
 #ifndef SCENE_H_

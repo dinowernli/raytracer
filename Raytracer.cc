@@ -1,3 +1,7 @@
+/*
+ * Autor: Dino Wernli
+ */
+
 #include <memory>
 
 #include "proto/Configuration.pb.h"

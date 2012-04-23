@@ -1,6 +1,6 @@
 /*
- *  Is in charge of rendering a scene. Runs the rendering loop and emits events.
- *	Author: Dino Wernli
+ * Is in charge of rendering a scene. Runs the rendering loop and emits events.
+ * Author: Dino Wernli
  */
 
 #ifndef RENDERER_H_

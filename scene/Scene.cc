@@ -1,5 +1,5 @@
 /*
- *	Author: Dino Wernli
+ * Author: Dino Wernli
  */
 
 #include "Scene.h"

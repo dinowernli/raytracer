@@ -1,6 +1,6 @@
 /*
- *  Represents an element which can be rendered as part of a scene.
- *	Author: Dino Wernli
+ * Represents an element which can be rendered as part of a scene.
+ * Author: Dino Wernli
  */
 
 #ifndef ELEMENT_H_
