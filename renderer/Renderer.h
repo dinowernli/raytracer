@@ -7,8 +7,10 @@
 #define RENDERER_H_
 
 #include<memory>
+#include<vector>
 
 class Scene;
+class Updatable;
 
 namespace raytracer {
 class Configuration;
@@ -19,12 +21,17 @@ class Renderer {
   Renderer();
   virtual ~Renderer();
 
+  // Takes ownership of the passed listener. Does nothing is the listener has
+  // already been added.
+  void AddListener(Updatable* listener);
+
   // Builds a new Renderer from configuration. The caller takes ownership of
   // the returned object.
   static Renderer* FromConfig(const raytracer::Configuration& config);
 
  private:
   std::unique_ptr<Scene> scene_;
+  std::vector<std::unique_ptr<Updatable> > listeners_;
 };
 
 #endif  /* RENDERER_H_ */

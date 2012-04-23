@@ -5,6 +5,7 @@
 
 #include <memory>
 
+#include "exporter/BmpExporter.h"
 #include "proto/Configuration.pb.h"
 #include "renderer/Image.h"
 #include "renderer/Renderer.h"
@@ -17,5 +18,9 @@ int main(int argc, char **argv) {
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(config));
   Vector3 vec(1, 2, 4);
   Image image(300, 400);
+
+  BmpExporter* exporter = new BmpExporter();
+  renderer->AddListener(exporter);
+
   return 0;
 }

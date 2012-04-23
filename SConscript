@@ -35,8 +35,9 @@ else:
 p = environment.Program(
   'Raytracer', 
    Glob('*.cc') 
-    + Glob('scene/*.cc') 
+    + Glob('exporter/*.cc')
     + Glob('renderer/*.cc')
+    + Glob('scene/*.cc') 
     + Glob('util/*.cc')
     + [st[2] for st in source_target],
 )
