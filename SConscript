@@ -34,7 +34,11 @@ else:
 # Build binaries.
 p = environment.Program(
   'Raytracer', 
-   Glob('*.cc') + Glob('scene/*.cc') + Glob('renderer/*.cc') + [st[2] for st in source_target],
+   Glob('*.cc') 
+    + Glob('scene/*.cc') 
+    + Glob('renderer/*.cc')
+    + Glob('util/*.cc')
+    + [st[2] for st in source_target],
 )
 
 # This is how to force dependencies.
