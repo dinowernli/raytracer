@@ -12,3 +12,7 @@ Image::Image(size_t width, size_t height)
 
 Image::~Image() {
 }
+
+void Image::PutPixel(const Color3& color, size_t x, size_t y) {
+  pixels_[x][y] = color;
+}
