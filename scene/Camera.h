@@ -22,13 +22,13 @@ class Camera {
   size_t resolution_y() const { return resolution_y_; }
 
  private:
-  size_t resolution_x_;
-  size_t resolution_y_;
-
   Point3 position_;
   Vector3 view_;
   Vector3 up_;
   Scalar opening_angle_;
+
+  size_t resolution_x_;
+  size_t resolution_y_;
 };
 
 #endif  /* CAMERA_H_ */
