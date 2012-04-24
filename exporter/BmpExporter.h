@@ -11,7 +11,7 @@
 class Image;
 
 class BmpExporter : public Updatable {
-public:
+ public:
   BmpExporter();
   virtual ~BmpExporter();
 

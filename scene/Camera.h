@@ -6,7 +6,7 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
-#include <cstring>
+#include <cstddef>
 
 #include "util/Numeric.h"
 #include "util/Point3.h"
@@ -14,10 +14,8 @@
 
 class Camera {
  public:
-  Camera(const Point3& position, 
-		 const Vector3& view, 
-		 const Vector3& up, 
-		 Scalar opening_angle);
+  Camera(const Point3& position, const Vector3& view, const Vector3& up,
+         Scalar opening_angle);
   virtual ~Camera();
 
   size_t resolution_x() const;
