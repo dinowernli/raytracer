@@ -9,6 +9,7 @@
 #include "proto/Configuration.pb.h"
 #include "renderer/Image.h"
 #include "renderer/Renderer.h"
+#include "scene/Camera.h"
 #include "scene/Scene.h"
 #include "util/Point3.h"
 #include "util/Ray.h"
@@ -21,6 +22,9 @@ int main(int argc, char **argv) {
   Vector3 vec(1, 2, 4);
   Ray ray(Point3(0, 0, 0), vec);
   Image image(300, 400);
+
+  Point3 p(0, 0, 0);
+  Camera cam(p, vec, vec, 0);
 
   BmpExporter* exporter = new BmpExporter();
   renderer->AddListener(exporter);
