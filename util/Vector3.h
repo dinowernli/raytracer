@@ -10,18 +10,15 @@
 #include <cmath>
 
 #include "util/Numeric.h"
-#include "util/Point3.h"
+
+class Point3;
 
 class Vector3 {
  public:
   Vector3() : x_(0), y_(0), z_(0) {}
   Vector3(const Scalar& x, const Scalar& y, const Scalar& z)
       : x_(x), y_(y), z_(z) {}
-  Vector3(const Vector3& other) : x_(other.x_), y_(other.y_), z_(other.z_) {}
 
-  const Scalar& x() { return x_; }
-  const Scalar& y() { return y_; }
-  const Scalar& z() { return z_; }
   const Scalar& x() const { return x_; }
   const Scalar& y() const { return y_; }
   const Scalar& z() const { return z_; }
@@ -56,18 +53,7 @@ inline Vector3 operator+(const Vector3& lhs, const Vector3& rhs)
   return Vector3(lhs.x() + rhs.x(), lhs.y() + rhs.y(), lhs.z() + rhs.z());
 }
 
-inline Point3 operator+(const Point3& lhs, const Vector3& rhs)
-{
-  return Point3(lhs.x() + rhs.x(), lhs.y() + rhs.y(), lhs.z() + rhs.z());
-}
-
-// Subtraction operators.
-inline Vector3 operator-(const Point3& lhs, const Vector3& rhs) throw()
-{
-  return Vector3(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
-}
-
-inline Vector3 operator-(const Vector3& lhs, const Vector3& rhs) throw()
+inline Vector3 operator-(const Vector3& lhs, const Vector3& rhs)
 {
   return Vector3(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
 }
@@ -78,7 +64,7 @@ inline Vector3 operator*(const Scalar& lhs, const Vector3& rhs)
   return Vector3(lhs * rhs.x(), lhs * rhs.y(), lhs * rhs.z());
 }
 
-inline Vector3 operator*(const Vector3& lhs, const Scalar& rhs) throw()
+inline Vector3 operator*(const Vector3& lhs, const Scalar& rhs)
 {
   return Vector3(rhs * lhs.x(), rhs * lhs.y(), rhs * lhs.z());
 }

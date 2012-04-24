@@ -13,7 +13,7 @@ class Ray;
 
 class Element {
  public:
-  virtual ~Element();
+  virtual ~Element() {}
   virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL) = 0;
 };
 

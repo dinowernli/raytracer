@@ -11,13 +11,9 @@
 class Color3 {
  public:
   Color3() : r_(0), g_(0), b_(0) {}
-
   Color3(const Intensity& r, const Intensity& g, const Intensity& b)
       : r_(r), g_(g), b_(b) {}
 
-  const Intensity& r() { return r_; }
-  const Intensity& g() { return g_; }
-  const Intensity& b() { return b_; }
   const Intensity& r() const { return r_; }
   const Intensity& g() const { return g_; }
   const Intensity& b() const { return b_; }

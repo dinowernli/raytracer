@@ -15,11 +15,11 @@
 class Camera {
  public:
   Camera(const Point3& position, const Vector3& view, const Vector3& up,
-         Scalar opening_angle);
+         Scalar opening_angle, size_t resolution_x, size_t resolution_y);
   virtual ~Camera();
 
-  size_t resolution_x() const;
-  size_t resolution_y() const;
+  size_t resolution_x() const { return resolution_x_; }
+  size_t resolution_y() const { return resolution_y_; }
 
  private:
   size_t resolution_x_;

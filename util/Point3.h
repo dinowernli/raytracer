@@ -8,6 +8,7 @@
 #define POINT3_H_
 
 #include "util/Numeric.h"
+#include "util/Vector3.h"
 
 class Point3 {
  public:
@@ -15,6 +16,11 @@ class Point3 {
 
   Point3(const Scalar& x, const Scalar& y, const Scalar& z)
       : x_(x), y_(y), z_(z) {}
+
+  // Returns a vector from *this to target.
+  Vector3 VectorTo(const Point3& target) {
+    return Vector3(target.x_ - x_, target.y_ - y_, target.z_ - z_);
+  }
 
   const Scalar& x() { return x_; }
   const Scalar& y() { return y_; }
@@ -26,5 +32,15 @@ class Point3 {
  private:
   Scalar x_, y_, z_;
 };
+
+inline Point3 operator+(const Point3& lhs, const Vector3& rhs)
+{
+  return Point3(lhs.x() + rhs.x(), lhs.y() + rhs.y(), lhs.z() + rhs.z());
+}
+
+inline Vector3 operator-(const Point3& lhs, const Vector3& rhs)
+{
+  return Vector3(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
+}
 
 #endif  /* POINT3_H_ */
