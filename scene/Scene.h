@@ -10,6 +10,7 @@
 #include<vector>
 
 #include "scene/Camera.h"
+#include "util/NoCopyAssign.h"
 
 class Element;
 class Image;
@@ -19,6 +20,8 @@ class Scene {
  public:
   Scene();
   virtual ~Scene();
+
+  NO_COPY_ASSIGN(Scene);
 
   // Takes ownership of the passed element.
   void AddElement(Element* element);
