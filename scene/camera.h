@@ -8,9 +8,9 @@
 
 #include <cstddef>
 
-#include "util/Numeric.h"
-#include "util/Point3.h"
-#include "util/Vector3.h"
+#include "util/numeric.h"
+#include "util/point3.h"
+#include "util/vector3.h"
 
 class Camera {
  public:

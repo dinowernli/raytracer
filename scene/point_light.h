@@ -6,9 +6,9 @@
 #ifndef POINTLIGHT_H_
 #define POINTLIGHT_H_
 
-#include "scene/Light.h"
-#include "util/Point3.h"
-#include "util/Ray.h"
+#include "scene/light.h"
+#include "util/point3.h"
+#include "util/ray.h"
 
 class PointLight : public Light {
  public:

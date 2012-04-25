@@ -6,7 +6,7 @@
 #ifndef COLOR3_H_
 #define COLOR3_H_
 
-#include "util/Numeric.h"
+#include "util/numeric.h"
 
 class Color3 {
  public:

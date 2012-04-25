@@ -5,16 +5,16 @@
 
 #include <memory>
 
-#include "exporter/BmpExporter.h"
-#include "proto/Configuration.pb.h"
-#include "renderer/Image.h"
-#include "renderer/Renderer.h"
-#include "scene/Camera.h"
-#include "scene/PointLight.h"
-#include "scene/Scene.h"
-#include "util/Point3.h"
-#include "util/Ray.h"
-#include "util/Vector3.h"
+#include "exporter/bmp_exporter.h"
+#include "proto/configuration.pb.h"
+#include "renderer/image.h"
+#include "renderer/renderer.h"
+#include "scene/camera.h"
+#include "scene/point_light.h"
+#include "scene/scene.h"
+#include "util/point3.h"
+#include "util/ray.h"
+#include "util/vector3.h"
 
 int main(int argc, char **argv) {
   raytracer::Configuration config;

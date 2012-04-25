@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-#include "util/Numeric.h"
+#include "util/numeric.h"
 
 class Point3;
 

@@ -7,7 +7,7 @@
 #ifndef LIGHT_H_
 #define LIGHT_H_
 
-#include "util/Color3.h"
+#include "util/color3.h"
 
 class Point3;
 class Ray;

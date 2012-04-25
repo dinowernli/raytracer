@@ -2,11 +2,11 @@
  * Author: Dino Wernli
  */
 
-#include "Scene.h"
+#include "scene.h"
 
-#include "renderer/Image.h"
-#include "scene/Element.h"
-#include "scene/Light.h"
+#include "renderer/image.h"
+#include "scene/element.h"
+#include "scene/light.h"
 
 Scene::Scene() {
 }

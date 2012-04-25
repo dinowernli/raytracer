@@ -7,8 +7,8 @@
 #ifndef POINT3_H_
 #define POINT3_H_
 
-#include "util/Numeric.h"
-#include "util/Vector3.h"
+#include "util/numeric.h"
+#include "util/vector3.h"
 
 class Point3 {
  public:

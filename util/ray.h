@@ -6,8 +6,8 @@
 #ifndef RAY3_H_
 #define RAY3_H_
 
-#include "util/Point3.h"
-#include "util/Vector3.h"
+#include "util/point3.h"
+#include "util/vector3.h"
 
 class Ray {
  public:

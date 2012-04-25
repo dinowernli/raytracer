@@ -2,9 +2,9 @@
  * Author: Dino Wernli
  */
 
-#include "Image.h"
+#include "image.h"
 
-#include "util/Color3.h"
+#include "util/color3.h"
 
 Image::Image(size_t width, size_t height)
     : pixels_(width, std::vector<Color3>(height)) {

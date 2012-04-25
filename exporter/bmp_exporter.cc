@@ -4,9 +4,9 @@
 
 #include <iostream>
 
-#include "BmpExporter.h"
+#include "bmp_exporter.h"
 
-#include "renderer/Image.h"
+#include "renderer/image.h"
 
 BmpExporter::BmpExporter() {
 }

@@ -2,7 +2,7 @@
  * Author: Dino Wernli
  */
 
-#include "Camera.h"
+#include "camera.h"
 
 Camera::Camera(const Point3& position, const Vector3& view, const Vector3& up,
                Scalar opening_angle, size_t resolution_x, size_t resolution_y)

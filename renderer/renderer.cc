@@ -2,11 +2,11 @@
  * Author: Dino Wernli
  */
 
-#include "Renderer.h"
+#include "renderer.h"
 
-#include "proto/Configuration.pb.h"
-#include "renderer/Updatable.h"
-#include "scene/Scene.h"
+#include "proto/configuration.pb.h"
+#include "renderer/updatable.h"
+#include "scene/scene.h"
 
 Renderer::Renderer() {
 }

@@ -9,8 +9,8 @@
 #include<memory>
 #include<vector>
 
-#include "scene/Camera.h"
-#include "util/NoCopyAssign.h"
+#include "scene/camera.h"
+#include "util/no_copy_assign.h"
 
 class Element;
 class Image;

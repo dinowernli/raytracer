@@ -6,7 +6,7 @@
 #ifndef BMPEXPORTER_H_
 #define BMPEXPORTER_H_
 
-#include "renderer/Updatable.h"
+#include "renderer/updatable.h"
 
 class Image;
 
