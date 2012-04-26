@@ -8,6 +8,7 @@
 
 #include <cstddef>
 
+#include "util/no_copy_assign.h"
 #include "util/numeric.h"
 #include "util/point3.h"
 #include "util/ray.h"
@@ -21,6 +22,7 @@ class Camera {
   Camera(const Point3& position, const Vector3& view, const Vector3& up,
          Scalar opening_angle, size_t resolution_x, size_t resolution_y);
   virtual ~Camera();
+  NO_COPY_ASSIGN(Camera);
 
   // Returns a ray from the camera origin through sample position.
   Ray GenerateRay(const Sample& sample) const;
