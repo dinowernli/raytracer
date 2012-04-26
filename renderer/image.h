@@ -10,19 +10,36 @@
 #include <memory>
 #include <vector>
 
-class Color3;
+#include "util/color3.h"
 
 class Image {
  public:
   // Initially, the image is completely black.
-  Image(size_t width, size_t height);
-  virtual ~Image();
+  Image(size_t width, size_t height) : pixels_(width,
+                                               std::vector<Color3>(height)) {
+  }
+  ~Image() { };
 
   // Sets the color at the specified position in the pixel buffer.
-  void PutPixel(const Color3& color, size_t x, size_t y);
+  void PutPixel(const Color3& color, size_t x, size_t y) {
+    pixels_[x][y] = color;
+  }
+
+  // Returns the color at position (x, y) of the image.
+  const Color3& PixelAt(size_t x, size_t y) const {
+    return pixels_[x][y];
+  }
+
+  const size_t SizeX() const { return pixels_.size(); }
+  const size_t SizeY() const {
+    if (SizeX() == 0) {
+      return 0;
+    }
+    return pixels_[0].size();
+  }
 
  private:
-  // Stores the raw colors of the image.
+  // Stores the raw colors of the image. The entry (0, 0) is the top left pixel.
   std::vector<std::vector<Color3> > pixels_;
 };
 
