@@ -11,6 +11,7 @@
 
 #include "util/no_copy_assign.h"
 
+class Sampler;
 class Scene;
 class Updatable;
 
@@ -20,6 +21,8 @@ class Configuration;
 
 class Renderer {
  public:
+  // Takes ownership of all passed pointers.
+  Renderer(Scene* scene, Sampler* sampler);
   Renderer();
   virtual ~Renderer();
   NO_COPY_ASSIGN(Renderer);
@@ -34,6 +37,7 @@ class Renderer {
 
  private:
   std::unique_ptr<Scene> scene_;
+  std::unique_ptr<Sampler> sampler_;
   std::vector<std::unique_ptr<Updatable> > listeners_;
 };
 

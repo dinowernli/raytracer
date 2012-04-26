@@ -13,7 +13,6 @@
 #include "util/no_copy_assign.h"
 
 class Element;
-class Image;
 class Light;
 
 class Scene {
@@ -30,15 +29,17 @@ class Scene {
 
   // Takes ownership of the passed camera.
   void set_camera(Camera* camera) { camera_.reset(camera); }
+  const Camera& camera() const { return *camera_; }
 
-  // Constructs the image, builds data structures etc.
+  // Constructs the image, builds data structures etc. Must be called before
+  // before querying for intersections. If anything is added to the scene after
+  // a call to Init(), it might be ignored until the next Init() call.
   void Init();
 
  private:
   std::vector<std::unique_ptr<Element> > elements_;
   std::vector<std::unique_ptr<Light> > lights_;
   std::unique_ptr<Camera> camera_;
-  std::unique_ptr<Image> image_;
 };
 
 #endif  /* SCENE_H_ */

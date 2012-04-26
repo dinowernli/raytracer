@@ -5,10 +5,18 @@
 #include "renderer.h"
 
 #include "proto/configuration.pb.h"
+#include "renderer/sampler/sampler.h"
 #include "renderer/updatable.h"
 #include "scene/scene.h"
 
 Renderer::Renderer() {
+  // TODO(dinow): Remove this constructor, only needed for static method stub.
+}
+
+Renderer::Renderer(Scene* scene, Sampler* sampler)
+    : scene_(scene), sampler_(sampler) {
+  // TODO(dinow): Move this call to the start of the rendering process.
+  sampler_->Init(scene_->camera());
 }
 
 Renderer::~Renderer() {

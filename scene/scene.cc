@@ -4,7 +4,6 @@
 
 #include "scene.h"
 
-#include "renderer/image.h"
 #include "scene/element.h"
 #include "scene/light.h"
 
@@ -23,6 +22,5 @@ void Scene::AddLight(Light* light) {
 }
 
 void Scene::Init() {
-  // TODO(dinow): Handle missing camera.
-  image_.reset(new Image(camera_->resolution_x(), camera_->resolution_y()));
+  // TODO(dinow): Build KD-tree.
 }
