@@ -11,8 +11,12 @@
 #include "renderer/sampler/sampler.h"
 #include "renderer/sampler/scanline_sampler.h"
 #include "renderer/updatable.h"
+#include "scene/camera.h"
+#include "scene/point_light.h"
 #include "scene/scene.h"
 #include "util/ray.h"
+
+class Light;
 
 Renderer::Renderer(Scene* scene, Sampler* sampler)
     : scene_(scene), sampler_(sampler) {
@@ -58,6 +62,12 @@ Color3 Renderer::TraceColor(const Ray& ray) {
 // static
 Renderer* Renderer::FromConfig(const raytracer::Configuration& config) {
   // TODO(dinow): Parse config and pass corresponding objects to new renderer.
-  Renderer* result = new Renderer(new Scene(), new ScanlineSampler());
+  Scene* scene = new Scene();
+  scene->set_camera(new Camera(Point3(0, 0, 0), Vector3(0, 0, 1),
+                               Vector3(0, 1, 0), PI / 6.0, 300, 500));
+  Light* light = new PointLight(Point3(0, 0, 0), Color3(0, 0, 0));
+  scene->AddLight(light);
+
+  Renderer* result = new Renderer(scene, new ScanlineSampler());
   return result;
 }
