@@ -17,7 +17,7 @@
 void TestStuff() {
   raytracer::Configuration config;
 
-  std::unique_ptr<Renderer> renderer(Renderer::FromConfig(config));
+  std::auto_ptr<Renderer> renderer(Renderer::FromConfig(config));
   renderer->AddListener(new BmpExporter());
   renderer->AddListener(new BmpExporter());
   renderer->AddListener(new BmpExporter());

@@ -17,11 +17,11 @@ class PpmExporter : public Updatable{
   virtual ~PpmExporter();
   virtual void Update(const Image& image);
 
-  static size_t kMaxPixelValue;
-  static std::string kMagicNumber;
+  const static size_t kMaxPixelValue;
+  const static std::string kMagicNumber;
 
  private:
-  std::string file_name_;
+  const std::string file_name_;
 };
 
 #endif  /* PPM_EXPORTER_H_ */

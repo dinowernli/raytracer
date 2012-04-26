@@ -25,8 +25,8 @@ void PpmExporter::Update(const Image& image) {
   std::ofstream file_stream(file_name_);
 
   file_stream << kMagicNumber << std::endl;
-  file_stream << kMaxPixelValue << std::endl;
   file_stream << image.SizeX() << " " << image.SizeY() << std::endl;
+  file_stream << kMaxPixelValue << std::endl;
 
   for (size_t y = 0; y < image.SizeY(); ++y) {
     for (size_t x = 0; x < image.SizeX(); ++x) {
@@ -41,6 +41,6 @@ void PpmExporter::Update(const Image& image) {
   file_stream.close();
 }
 
-size_t PpmExporter::kMaxPixelValue = 255;
+const size_t PpmExporter::kMaxPixelValue = 255;
 
-std::string PpmExporter::kMagicNumber = "P3";
+const std::string PpmExporter::kMagicNumber = "P3";
