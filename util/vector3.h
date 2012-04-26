@@ -23,17 +23,31 @@ class Vector3 {
   const Scalar& y() const { return y_; }
   const Scalar& z() const { return z_; }
 
-  Scalar SquaredLength() {
+  Scalar SquaredLength() const {
     return x_ * x_ + y_ * y_ + z_ * z_;
   }
 
-  Scalar Length() {
+  Scalar Length() const {
     return sqrt(SquaredLength());
   }
 
   // Returns a new vector representing the normalized version of *this.
-  Vector3 Normalized() {
+  Vector3 Normalized() const {
     return Vector3(*this) /= Length();
+  }
+
+  // Normalize the vector in place.
+  void Normalize() {
+    (*this) /= Length();
+  }
+
+  // Returns the cross product of *this times other.
+  Vector3 Cross(const Vector3& other) const {
+    return Vector3(
+      y_ * other.z_ - z_ * other.y_,
+      z_ * other.x_ - x_ * other.y_,
+      x_ * other.y_ - y_ * other.x_
+    );
   }
 
   Vector3& operator/=(const Scalar& rhs) {

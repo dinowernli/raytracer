@@ -7,6 +7,9 @@
 #ifndef NUMERIC_H_
 #define NUMERIC_H_
 
+#define EPSILON 0.0000001
+#define PI 3.1415926535897932384626433
+
 // Represents the type of a scalar value such as a coefficient of a vector.
 typedef double Scalar;
 
