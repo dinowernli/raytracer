@@ -24,7 +24,7 @@ void TestStuff() {
   renderer->AddListener(new BmpExporter());
   renderer->Start();
 
-  PpmExporter ppm_exporter("~/playground/test.ppm");
+  PpmExporter ppm_exporter("/home/duh/playground/test.ppm");
   Image i(100, 200);
   i.PutPixel(Color3(1, 1, 1), 10, 10);
   ppm_exporter.Update(i);
