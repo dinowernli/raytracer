@@ -1,0 +1,46 @@
+/*
+ * Author: Dino Wernli
+ */
+
+#include "ppm_exporter.h"
+
+#include <fstream>
+
+#include "renderer/image.h"
+#include "util/color3.h"
+
+// Transforms an intensity in range [0, 1] to an integer in
+// {0, ..., kMaxPixelValue}.
+unsigned int ScaleIntensity(Intensity intensity) {
+  return intensity * PpmExporter::kMaxPixelValue;
+}
+
+PpmExporter::PpmExporter(std::string file_name) : file_name_(file_name) {
+}
+
+PpmExporter::~PpmExporter() {
+}
+
+void PpmExporter::Update(const Image& image) {
+  std::ofstream file_stream(file_name_);
+
+  file_stream << kMagicNumber << std::endl;
+  file_stream << kMaxPixelValue << std::endl;
+  file_stream << image.SizeX() << " " << image.SizeY() << std::endl;
+
+  for (size_t y = 0; y < image.SizeY(); ++y) {
+    for (size_t x = 0; x < image.SizeX(); ++x) {
+      const Color3& color = image.PixelAt(x, y);
+      file_stream << ScaleIntensity(color.r()) << " "
+                  << ScaleIntensity(color.g()) << " "
+                  << ScaleIntensity(color.g()) << " ";
+    }
+    file_stream << std::endl;
+  }
+  file_stream << std::endl;
+  file_stream.close();
+}
+
+size_t PpmExporter::kMaxPixelValue = 255;
+
+std::string PpmExporter::kMagicNumber = "P3";
