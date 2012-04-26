@@ -21,12 +21,19 @@ class Sampler {
   virtual ~Sampler() { };
 
   // Prepares for generating samples for the given camera. Must be called
-  // before starting to fetch samples.
-  virtual void Init(const Camera& camera) {
-    image_.reset(new Image(camera.resolution_x(), camera.resolution_y()));
+  // before starting to fetch samples. If the passed camera is null, the sampler
+  // will not generate any samples.
+  virtual void Init(const Camera* camera) {
+    if (camera != NULL) {
+      image_.reset(new Image(camera->resolution_x(), camera->resolution_y()));
+    }
   }
 
+  // Returns the next sample to be traced or NULL if there are none left. The
+  // caller takes ownership of the returned sample.
   virtual Sample* NextSample() = 0;
+
+  const Image& image() const { return *image_; }
 
  private:
   std::unique_ptr<Image> image_;

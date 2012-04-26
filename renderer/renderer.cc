@@ -6,17 +6,15 @@
 
 #include "proto/configuration.pb.h"
 #include "renderer/sampler/sampler.h"
+#include "renderer/sampler/scanline_sampler.h"
 #include "renderer/updatable.h"
 #include "scene/scene.h"
-
-Renderer::Renderer() {
-  // TODO(dinow): Remove this constructor, only needed for static method stub.
-}
 
 Renderer::Renderer(Scene* scene, Sampler* sampler)
     : scene_(scene), sampler_(sampler) {
   // TODO(dinow): Move this call to the start of the rendering process.
-  sampler_->Init(scene_->camera());
+  const Camera* camera = &scene_->camera();
+  sampler_->Init(camera);
 }
 
 Renderer::~Renderer() {
@@ -34,5 +32,6 @@ void Renderer::AddListener(Updatable* listener) {
 // static
 Renderer* Renderer::FromConfig(const raytracer::Configuration& config) {
   // TODO(dinow): Parse config and pass corresponding objects to new renderer.
-  return new Renderer();
+  Renderer* result = new Renderer(new Scene(), new ScanlineSampler());
+  return result;
 }

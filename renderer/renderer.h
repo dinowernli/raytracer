@@ -23,7 +23,6 @@ class Renderer {
  public:
   // Takes ownership of all passed pointers.
   Renderer(Scene* scene, Sampler* sampler);
-  Renderer();
   virtual ~Renderer();
   NO_COPY_ASSIGN(Renderer);
 
