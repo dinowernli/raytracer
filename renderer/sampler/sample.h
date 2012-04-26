@@ -18,7 +18,13 @@ class Sample {
   ~Sample() { }
   NO_COPY_ASSIGN(Sample);
 
-private:
+  const Color3& color() const { return color_; }
+  const size_t& x() const { return x_; }
+  const size_t& y() const { return y_; }
+
+  void set_color(const Color3& color) { color_ = color; }
+
+ private:
   size_t x_;
   size_t y_;
 
