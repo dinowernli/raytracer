@@ -33,9 +33,13 @@ class Sampler {
   // caller takes ownership of the returned sample.
   virtual Sample* NextSample() = 0;
 
+  // Stores the color of the sample in the image.
+  virtual void AcceptSample(const Sample& sample) = 0;
+
   const Image& image() const { return *image_; }
 
- private:
+ protected:
+  // TODO(dinow): Possibly make this a private attribute of each sampler.
   std::unique_ptr<Image> image_;
 };
 

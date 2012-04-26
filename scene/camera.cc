@@ -24,7 +24,7 @@ void Camera::ComputeOrientation(const Vector3& view, const Vector3& up) {
   up_ = (right_.Cross(view_)).Normalized();
 }
 
-Vector3 Camera::ToWorld(const Vector3& vector) {
+Vector3 Camera::ToWorld(const Vector3& vector) const {
   // Execute the matrix multiplication M* [vector; 1] where M =
   // [  right.x,  right.y,  right.z,  0
   //    up.x,     up.y,     up.z,     0
@@ -42,7 +42,7 @@ Vector3 Camera::ToWorld(const Vector3& vector) {
   return result.Normalized();
 }
 
-Ray Camera::GenerateRay(const Sample& sample) {
+Ray Camera::GenerateRay(const Sample& sample) const {
   // Add 0.5 to send ray through the pixel center.
   Scalar image_x = sample.x() + 0.5;
   Scalar image_y = sample.y() + 0.5;

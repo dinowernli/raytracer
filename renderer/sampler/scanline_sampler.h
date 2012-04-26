@@ -21,6 +21,7 @@ class ScanlineSampler : public Sampler {
 
   virtual void Init(const Camera* camera);
   virtual Sample* NextSample();
+  virtual void AcceptSample(const Sample& sample);
 
  private:
   // Iteration variables for the scan line.

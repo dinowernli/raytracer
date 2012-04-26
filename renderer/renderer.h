@@ -9,8 +9,10 @@
 #include<memory>
 #include<vector>
 
+#include "util/color3.h"
 #include "util/no_copy_assign.h"
 
+class Ray;
 class Sampler;
 class Scene;
 class Updatable;
@@ -30,11 +32,17 @@ class Renderer {
   // already been added.
   void AddListener(Updatable* listener);
 
+  // Starts the rendering process.
+  void Start();
+
   // Builds a new Renderer from configuration. The caller takes ownership of
   // the returned object.
   static Renderer* FromConfig(const raytracer::Configuration& config);
 
  private:
+  // Traces the color of the provided ray in the scene.
+  Color3 TraceColor(const Ray& ray);
+
   std::unique_ptr<Scene> scene_;
   std::unique_ptr<Sampler> sampler_;
   std::vector<std::unique_ptr<Updatable> > listeners_;

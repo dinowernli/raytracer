@@ -37,5 +37,10 @@ Sample* ScanlineSampler::NextSample() {
     return NULL;
   }
 
+  // TODO(dinow): Reuse allocated sample instead of creating new ones.
   return new Sample(current_x_++, current_y_);
+}
+
+void ScanlineSampler::AcceptSample(const Sample& sample) {
+  image_->PutPixel(sample.color(), sample.x(), sample.y());
 }

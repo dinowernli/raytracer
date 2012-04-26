@@ -23,7 +23,7 @@ class Camera {
   virtual ~Camera();
 
   // Returns a ray from the camera origin through sample position.
-  Ray GenerateRay(const Sample& sample);
+  Ray GenerateRay(const Sample& sample) const;
 
   size_t resolution_x() const { return resolution_x_; }
   size_t resolution_y() const { return resolution_y_; }
@@ -35,7 +35,7 @@ class Camera {
 
   // Takes a vector in camera coordinates and transforms it into world
   // coordinates.
-  Vector3 ToWorld(const Vector3& vector);
+  Vector3 ToWorld(const Vector3& vector) const;
 
   Point3 position_;
   Vector3 view_;  // Ensured to always be of length 1.
