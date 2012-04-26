@@ -9,6 +9,8 @@
 #include<memory>
 #include<vector>
 
+#include "util/no_copy_assign.h"
+
 class Scene;
 class Updatable;
 
@@ -20,6 +22,7 @@ class Renderer {
  public:
   Renderer();
   virtual ~Renderer();
+  NO_COPY_ASSIGN(Renderer);
 
   // Takes ownership of the passed listener. Does nothing is the listener has
   // already been added.
