@@ -23,6 +23,4 @@ class Plane : public Element {
   Vector3 normal_;
 };
 
-
-
 #endif  /* PLANE_H_ */

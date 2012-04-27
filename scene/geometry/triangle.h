@@ -1,4 +1,5 @@
 /*
+ * A triangle element which can be added to a scene.
  * Author: Dino Wernli
  */
 
@@ -10,10 +11,8 @@
 
 class Triangle : public Element {
  public:
-  Triangle(const Point3& c1, const Point3& c2, const Point3& c3)
-      : corners_({c1, c2, c3}) {
-  }
-  virtual ~Triangle() { }
+  Triangle(const Point3& c1, const Point3& c2, const Point3& c3);
+  virtual ~Triangle();
 
   virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL);
 

@@ -15,8 +15,8 @@ Plane::~Plane() {
 }
 
 bool Plane::Intersect(const Ray& ray, IntersectionData* data) {
-  Scalar t = - normal_.Dot(point_.VectorTo(ray.origin())) /
-      ray.direction().Dot(normal_);
+  Scalar denominator = ray.direction().Dot(normal_);
+  Scalar t = - normal_.Dot(point_.VectorTo(ray.origin())) / denominator;
   if (t < data->t && t >= ray.min_t() && t <= ray.max_t()) {
     data->element = this;
     data->position = ray.PointAt(t);

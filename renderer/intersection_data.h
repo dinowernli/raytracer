@@ -10,6 +10,8 @@
 #include "util/point3.h"
 
 struct IntersectionData {
+  IntersectionData() : t(0), element(NULL) {}
+
   Scalar t;
   Point3 position;
   const Element* element;
