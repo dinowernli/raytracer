@@ -9,6 +9,7 @@
 #include "scene/element.h"
 #include "scene/light.h"
 #include "scene/point_light.h"
+#include "scene/geometry/plane.h"
 #include "scene/geometry/sphere.h"
 #include "util/ray.h"
 
@@ -51,6 +52,7 @@ Scene* Scene::BuildStandardScene() {
   scene->AddLight(new PointLight(Point3(0, 4, -3), Color3(1, 1, 1)));
   scene->AddLight(new PointLight(Point3(3, 2, 1), Color3(1, 1, 1)));
   scene->AddElement(new Sphere(Point3(0.2, 1.3, 4), 1.1));
+  scene->AddElement(new Plane(Point3(3, 0, 0), Vector3(-1.2, 0.2, 0)));
 
   return scene;
 }
