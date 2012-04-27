@@ -45,7 +45,7 @@ class Vector3 {
   Vector3 Cross(const Vector3& other) const {
     return Vector3(
       y_ * other.z_ - z_ * other.y_,
-      z_ * other.x_ - x_ * other.y_,
+      z_ * other.x_ - x_ * other.z_,
       x_ * other.y_ - y_ * other.x_
     );
   }
