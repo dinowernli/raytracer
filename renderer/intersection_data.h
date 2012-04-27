@@ -6,10 +6,13 @@
 #ifndef INTERSECTIONDATA_H_
 #define INTERSECTIONDATA_H_
 
+#include "scene/element.h"
 #include "util/point3.h"
 
 struct IntersectionData {
+  Scalar t;
   Point3 position;
+  const Element* element;
 };
 
 #endif /* INTERSECTIONDATA_H_ */

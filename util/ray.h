@@ -6,22 +6,37 @@
 #ifndef RAY3_H_
 #define RAY3_H_
 
+#include <limits>
+
 #include "util/point3.h"
 #include "util/vector3.h"
 
 class Ray {
  public:
-  Ray(const Point3& origin, const Vector3& direction)
-      : origin_(origin), direction_(direction) {}
+  Ray(const Point3& origin, const Vector3& direction, Scalar min_t = 0,
+      Scalar max_t = std::numeric_limits<Scalar>::max())
+          : origin_(origin), direction_(direction), min_t_(min_t),
+            max_t_(max_t) {
+  }
+
+  Point3 PointAt(Scalar t) const {
+    return origin_ + t * direction_;
+  }
 
   const Vector3& direction() const { return direction_; }
   const Point3& origin() const { return origin_; }
+  Scalar min_t() const { return min_t_; }
+  Scalar max_t() const { return max_t_; }
 
  private:
   Point3 origin_;
 
   // The direction must always be a vector of length 1.
   Vector3 direction_;
+
+  // These values describe the range of the ray.
+  Scalar min_t_;
+  Scalar max_t_;
 };
 
 #endif  /* RAY3_H_ */

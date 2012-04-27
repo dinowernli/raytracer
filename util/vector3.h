@@ -50,6 +50,10 @@ class Vector3 {
     );
   }
 
+  Scalar Dot(const Vector3& other) const {
+    return x_ * other.x_ + y_ * other.y_ + z_ * other.z_;
+  }
+
   Vector3& operator/=(const Scalar& rhs) {
     x_ /= rhs;
     y_ /= rhs;

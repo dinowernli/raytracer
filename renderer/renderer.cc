@@ -15,6 +15,7 @@
 #include "renderer/shader/shader.h"
 #include "renderer/updatable.h"
 #include "scene/camera.h"
+#include "scene/geometry/sphere.h"
 #include "scene/point_light.h"
 #include "scene/scene.h"
 #include "util/ray.h"
@@ -75,6 +76,9 @@ Renderer* Renderer::FromConfig(const raytracer::Configuration& config) {
                                Vector3(0, 1, 0), PI / 6.0, 300, 500));
   Light* light = new PointLight(Point3(0, 0, 0), Color3(0, 0, 0));
   scene->AddLight(light);
+
+  Element* sphere = new Sphere(Point3(0, 0, 0), 10);
+  scene->AddElement(sphere);
 
   Sampler* sampler = new ScanlineSampler();
   Shader* shader = new PhongShader();

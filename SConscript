@@ -37,9 +37,10 @@ p = environment.Program(
    Glob('*.cc') 
     + Glob('exporter/*.cc')
     + Glob('renderer/*.cc')
-	+ Glob('renderer/sampler/*.cc')
-	+ Glob('renderer/shader/*.cc')
+    + Glob('renderer/sampler/*.cc')
+    + Glob('renderer/shader/*.cc')
     + Glob('scene/*.cc') 
+    + Glob('scene/geometry/*.cc')
     + Glob('util/*.cc')
     + [st[2] for st in source_target],
 )
