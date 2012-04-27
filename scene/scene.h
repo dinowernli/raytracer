@@ -13,7 +13,9 @@
 #include "util/no_copy_assign.h"
 
 class Element;
+class IntersectionData;
 class Light;
+class Ray;
 
 class Scene {
  public:
@@ -35,6 +37,8 @@ class Scene {
   // before querying for intersections. If anything is added to the scene after
   // a call to Init(), it might be ignored until the next Init() call.
   void Init();
+
+  bool Intersect(const Ray& ray, IntersectionData* data);
 
  private:
   std::vector<std::unique_ptr<Element> > elements_;

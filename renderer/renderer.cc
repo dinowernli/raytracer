@@ -7,9 +7,12 @@
 #include <memory>
 
 #include "proto/configuration.pb.h"
+#include "renderer/intersection_data.h"
 #include "renderer/sampler/sample.h"
 #include "renderer/sampler/sampler.h"
 #include "renderer/sampler/scanline_sampler.h"
+#include "renderer/shader/phong_shader.h"
+#include "renderer/shader/shader.h"
 #include "renderer/updatable.h"
 #include "scene/camera.h"
 #include "scene/point_light.h"
@@ -18,8 +21,8 @@
 
 class Light;
 
-Renderer::Renderer(Scene* scene, Sampler* sampler)
-    : scene_(scene), sampler_(sampler) {
+Renderer::Renderer(Scene* scene, Sampler* sampler, Shader* shader)
+    : scene_(scene), sampler_(sampler), shader_(shader) {
 }
 
 Renderer::~Renderer() {
@@ -54,8 +57,14 @@ void Renderer::Start() {
 }
 
 Color3 Renderer::TraceColor(const Ray& ray) {
-  // TODO(dinow): Implement this. Return gray for now.
-  return Color3(0.5, 0.5, 0.5);
+  IntersectionData data;
+  bool intersects = scene_->Intersect(ray, &data);
+  if (intersects) {
+    return shader_->Shade(data);
+  } else {
+    // TODO(dinow): Return background color of scene.
+    return Color3(0.5, 0.5, 0.5);
+  }
 }
 
 // static
@@ -67,6 +76,9 @@ Renderer* Renderer::FromConfig(const raytracer::Configuration& config) {
   Light* light = new PointLight(Point3(0, 0, 0), Color3(0, 0, 0));
   scene->AddLight(light);
 
-  Renderer* result = new Renderer(scene, new ScanlineSampler());
+  Sampler* sampler = new ScanlineSampler();
+  Shader* shader = new PhongShader();
+
+  Renderer* result = new Renderer(scene, sampler, shader);
   return result;
 }

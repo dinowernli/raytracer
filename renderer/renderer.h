@@ -15,6 +15,7 @@
 class Ray;
 class Sampler;
 class Scene;
+class Shader;
 class Updatable;
 
 namespace raytracer {
@@ -24,7 +25,7 @@ class Configuration;
 class Renderer {
  public:
   // Takes ownership of all passed pointers.
-  Renderer(Scene* scene, Sampler* sampler);
+  Renderer(Scene* scene, Sampler* sampler, Shader* shader);
   virtual ~Renderer();
   NO_COPY_ASSIGN(Renderer);
 
@@ -45,6 +46,7 @@ class Renderer {
 
   std::unique_ptr<Scene> scene_;
   std::unique_ptr<Sampler> sampler_;
+  std::unique_ptr<Shader> shader_;
   std::vector<std::unique_ptr<Updatable> > listeners_;
 };
 
