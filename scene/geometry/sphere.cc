@@ -2,8 +2,9 @@
  * Author: Dino Wernli
  */
 
-#include "renderer/intersection_data.h"
 #include "scene/geometry/sphere.h"
+
+#include "renderer/intersection_data.h"
 #include "util/ray.h"
 
 Sphere::Sphere(const Point3& center, Scalar radius)
