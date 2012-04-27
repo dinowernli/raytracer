@@ -43,4 +43,10 @@ inline Vector3 operator-(const Point3& lhs, const Vector3& rhs)
   return Vector3(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
 }
 
+template<class OStream>
+OStream& operator<<(OStream& os, const Point3& p)
+{
+  return os << "(p: " << p.x() << ", " << p.y() << ", " << p.z() << ")";
+}
+
 #endif  /* POINT3_H_ */

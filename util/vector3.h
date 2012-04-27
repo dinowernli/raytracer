@@ -92,4 +92,10 @@ inline Vector3 operator*(const Vector3& lhs, const Vector3& rhs)
   return Vector3(lhs.x() * rhs.x(), lhs.y() * rhs.y(), lhs.z() * rhs.z());
 }
 
+template<class OStream>
+OStream& operator<<(OStream& os, const Vector3& v)
+{
+  return os << "(v: " << v.x() << ", " << v.y() << ", " << v.z() << ")";
+}
+
 #endif  /* VECTOR3_H_ */

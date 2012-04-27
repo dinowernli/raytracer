@@ -39,4 +39,11 @@ class Ray {
   Scalar max_t_;
 };
 
+template<class OStream>
+OStream& operator<<(OStream& os, const Ray& r)
+{
+  return os << "(ray: " << r.origin() << ", " << r.direction() << ")";
+}
+
+
 #endif  /* RAY3_H_ */
