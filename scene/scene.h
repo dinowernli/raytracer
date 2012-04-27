@@ -40,6 +40,9 @@ class Scene {
 
   bool Intersect(const Ray& ray, IntersectionData* data);
 
+  // Builds a standard test scene. The caller takes ownership of the pointer.
+  static Scene* BuildStandardScene();
+
  private:
   std::vector<std::unique_ptr<Element> > elements_;
   std::vector<std::unique_ptr<Light> > lights_;

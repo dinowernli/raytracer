@@ -14,13 +14,8 @@
 #include "renderer/shader/phong_shader.h"
 #include "renderer/shader/shader.h"
 #include "renderer/updatable.h"
-#include "scene/camera.h"
-#include "scene/geometry/sphere.h"
-#include "scene/point_light.h"
 #include "scene/scene.h"
 #include "util/ray.h"
-
-class Light;
 
 Renderer::Renderer(Scene* scene, Sampler* sampler, Shader* shader)
     : scene_(scene), sampler_(sampler), shader_(shader) {
@@ -64,25 +59,16 @@ Color3 Renderer::TraceColor(const Ray& ray) {
     return shader_->Shade(data);
   } else {
     // TODO(dinow): Return background color of scene.
-    return Color3(0.5, 0.5, 0.5);
+    return Color3(0, 0, 0);
   }
 }
 
 // static
 Renderer* Renderer::FromConfig(const raytracer::Configuration& config) {
   // TODO(dinow): Parse config and pass corresponding objects to new renderer.
-  Scene* scene = new Scene();
-  scene->set_camera(new Camera(Point3(0, 0, 0), Vector3(0, 0, 1),
-                               Vector3(0, 1, 0), PI / 6.0, 300, 500));
-  Light* light = new PointLight(Point3(0, 0, 0), Color3(0, 0, 0));
-  scene->AddLight(light);
-
-  Element* sphere = new Sphere(Point3(0, 0, 0), 10);
-  scene->AddElement(sphere);
-
+  Scene* scene = Scene::BuildStandardScene();
   Sampler* sampler = new ScanlineSampler();
   Shader* shader = new PhongShader();
 
-  Renderer* result = new Renderer(scene, sampler, shader);
-  return result;
+  return new Renderer(scene, sampler, shader);
 }
