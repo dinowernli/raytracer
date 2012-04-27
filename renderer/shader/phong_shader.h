@@ -7,11 +7,14 @@
 #define PHONG_SHADER_H_
 
 #include "renderer/shader/shader.h"
+#include "util/no_copy_assign.h"
 
 class PhongShader : public Shader {
  public:
   PhongShader();
   virtual ~PhongShader();
+  NO_COPY_ASSIGN(PhongShader);
+
   virtual Color3 Shade(const IntersectionData& data);
 };
 
