@@ -20,7 +20,7 @@ class ScanlineSampler : public Sampler {
   NO_COPY_ASSIGN(ScanlineSampler);
 
   virtual void Init(const Camera* camera);
-  virtual Sample* NextSample();
+  virtual bool NextSample(Sample* sample);
   virtual void AcceptSample(const Sample& sample);
 
  private:

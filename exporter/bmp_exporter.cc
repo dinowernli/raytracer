@@ -16,5 +16,5 @@ BmpExporter::~BmpExporter() {
 
 void BmpExporter::Update(const Image& image) {
   // TODO(dinow): Actually export the image.
-  std::cout << "Updated." << std::endl;
+  std::cout << "BmpExporter: updated" << std::endl;
 }

@@ -27,18 +27,20 @@ void ScanlineSampler::Init(const Camera* camera) {
   }
 }
 
-Sample* ScanlineSampler::NextSample() {
+bool ScanlineSampler::NextSample(Sample* sample) {
   if (current_x_ >= width_) {
     current_x_ = 0;
     ++current_y_;
   }
 
   if (current_y_ >= height_) {
-    return NULL;
+    return false;
   }
 
-  // TODO(dinow): Reuse allocated sample instead of creating new ones.
-  return new Sample(current_x_++, current_y_);
+  sample->set_color(Color3(0, 0, 0));
+  sample->set_x(current_x_++);
+  sample->set_y(current_y_);
+  return true;
 }
 
 void ScanlineSampler::AcceptSample(const Sample& sample) {

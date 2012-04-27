@@ -41,12 +41,11 @@ void Renderer::Start() {
   const Camera* camera = &scene_->camera();
   sampler_->Init(camera);
 
-  for(std::unique_ptr<Sample> sample(sampler_->NextSample());
-      sample.get() != NULL;
-      sample.reset(sampler_->NextSample())) {
-    Ray ray = camera->GenerateRay(*sample);
-    sample->set_color(TraceColor(ray));
-    sampler_->AcceptSample(*sample);
+  Sample sample;
+  while(sampler_->NextSample(&sample)) {
+    Ray ray = camera->GenerateRay(sample);
+    sample.set_color(TraceColor(ray));
+    sampler_->AcceptSample(sample);
   }
 
   for(auto it = listeners_.begin(); it != listeners_.end(); ++it) {

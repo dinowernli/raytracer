@@ -29,9 +29,10 @@ class Sampler {
     }
   }
 
-  // Returns the next sample to be traced or NULL if there are none left. The
-  // caller takes ownership of the returned sample.
-  virtual Sample* NextSample() = 0;
+  // Returns whether there is a next sample to be traced. If it returns true,
+  // then the next sample is stored in 'sample', the color of the sample is set
+  // to black.
+  virtual bool NextSample(Sample* sample) = 0;
 
   // Stores the color of the sample in the image.
   virtual void AcceptSample(const Sample& sample) = 0;

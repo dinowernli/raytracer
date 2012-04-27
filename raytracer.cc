@@ -9,7 +9,6 @@
 #include "exporter/bmp_exporter.h"
 #include "exporter/ppm_exporter.h"
 #include "proto/configuration.pb.h"
-#include "renderer/image.h"
 #include "renderer/renderer.h"
 
 // This is just to test some objects.
@@ -18,16 +17,9 @@ void TestStuff() {
   raytracer::Configuration config;
 
   std::auto_ptr<Renderer> renderer(Renderer::FromConfig(config));
-  renderer->AddListener(new BmpExporter());
-  renderer->AddListener(new BmpExporter());
-  renderer->AddListener(new BmpExporter());
+  renderer->AddListener(new PpmExporter("output/test.ppm"));
   renderer->AddListener(new BmpExporter());
   renderer->Start();
-
-  PpmExporter ppm_exporter("/home/duh/playground/test.ppm");
-  Image i(100, 200);
-  i.PutPixel(Color3(1, 1, 1), 10, 10);
-  ppm_exporter.Update(i);
 }
 
 int main(int argc, char **argv) {
