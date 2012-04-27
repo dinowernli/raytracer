@@ -46,13 +46,11 @@ bool Scene::Intersect(const Ray& ray, IntersectionData* data) {
 // static
 Scene* Scene::BuildStandardScene() {
   Scene* scene = new Scene();
-  scene->set_camera(new Camera(Point3(0, 0, 0), Vector3(0, 0, 1),
-                               Vector3(0, 1, 0), PI / 6.0, 300, 500));
-  Light* light = new PointLight(Point3(0, 0, 0), Color3(0, 0, 0));
-  scene->AddLight(light);
-
-  Element* sphere = new Sphere(Point3(0, 0, 0), 10);
-  scene->AddElement(sphere);
+  scene->set_camera(new Camera(Point3(1, 1, -3), Vector3(0, 0, 1),
+                               Vector3(0, 1, 0), 20, 100, 100));
+  scene->AddLight(new PointLight(Point3(0, 4, -3), Color3(1, 1, 1)));
+  scene->AddLight(new PointLight(Point3(3, 2, 1), Color3(1, 1, 1)));
+  scene->AddElement(new Sphere(Point3(0.2, 1.3, 4), 1.1));
 
   return scene;
 }
