@@ -19,8 +19,14 @@ class Ray {
             max_t_(max_t) {
   }
 
+  // Returns the unique point on the ray at distance t from the origin.
   Point3 PointAt(Scalar t) const {
     return origin_ + t * direction_;
+  }
+
+  // Returns whether or not t is within the range of this ray.
+  bool InRange(Scalar t) const {
+    return t >= min_t_ && t <= max_t_;
   }
 
   const Vector3& direction() const { return direction_; }

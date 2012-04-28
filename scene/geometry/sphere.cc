@@ -33,16 +33,17 @@ bool Sphere::Intersect(const Ray& ray, IntersectionData* data) {
   bool found = false;
   Scalar t;
 
-  // test if t meets requirements
-  if (t1 >= ray.min_t() && t1 <= ray.max_t() && t1 < data->t) {
+  // Find out which t is closer.
+  if (ray.InRange(t1) && (data == NULL || t1 < data->t)) {
     t = t1;
     found = true;
-  } else if (t2 >= ray.min_t() && t2 <= ray.max_t() && t2 < data->t) {
+  }
+  if (ray.InRange(t2) && (data == NULL || t2 < data->t)) {
     t = t2;
     found = true;
   }
 
-  if (found) {
+  if (data != NULL && found) {
     data->t = t;
     data->position = ray.PointAt(t);
     data->element = this;

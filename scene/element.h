@@ -16,7 +16,7 @@ class Element {
   virtual ~Element() {}
 
   // Returns whether the ray intersects this element. If this returns true and
-  // data != NULL, information about the intersection is stored in data.
+  // data != NULL, information about the first intersection is stored in data.
   virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL) = 0;
 };
 
