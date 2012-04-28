@@ -33,7 +33,7 @@ else:
 
 # Build binaries.
 p = environment.Program(
-  'Raytracer', 
+  'raytracer',
    Glob('*.cc') 
     + Glob('exporter/*.cc')
     + Glob('renderer/*.cc')

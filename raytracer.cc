@@ -13,7 +13,7 @@
 
 int main(int argc, char **argv) {
   raytracer::Configuration config;
-  std::auto_ptr<Renderer> renderer(Renderer::FromConfig(config));
+  std::unique_ptr<Renderer> renderer(Renderer::FromConfig(config));
   renderer->AddListener(new PpmExporter("output/test.ppm"));
   renderer->AddListener(new BmpExporter());
   renderer->Start();

@@ -44,5 +44,9 @@ bool ScanlineSampler::NextSample(Sample* sample) {
 }
 
 void ScanlineSampler::AcceptSample(const Sample& sample) {
-  image_->PutPixel(sample.color(), sample.x(), sample.y());
+  // The point (0, 0) in sample space is at the bottom left corner. However, in
+  // image space, (0, 0) represents the top left corner. Therefore, we must flip
+  // the y-coordinate when writing the color.
+  const size_t image_y = image_->SizeY() - sample.y() - 1;
+  image_->PutPixel(sample.color(), sample.x(), image_y);
 }

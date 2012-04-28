@@ -18,7 +18,7 @@ Sphere::~Sphere() {
 bool Sphere::Intersect(const Ray& ray, IntersectionData* data) {
   Vector3 center_to_origin = center_.VectorTo(ray.origin());
 
-  Scalar aa = 2.0 * ray.direction().SquaredLength();
+  Scalar aa = 2 * ray.direction().SquaredLength();
   Scalar b = 2 * (ray.direction().Dot(center_to_origin));
   Scalar c = center_to_origin.SquaredLength() - radius_ * radius_;
 
