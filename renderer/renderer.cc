@@ -53,7 +53,7 @@ void Renderer::Start() {
 }
 
 Color3 Renderer::TraceColor(const Ray& ray) {
-  IntersectionData data;
+  IntersectionData data(ray);
   bool intersects = scene_->Intersect(ray, &data);
   if (intersects) {
     return shader_->Shade(data);

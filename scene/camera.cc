@@ -51,8 +51,8 @@ Ray Camera::GenerateRay(const Sample& sample) const {
   Scalar tangent = 2 * tan(opening_angle_ * PI / 180.0);
   Scalar factor = tangent / resolution_y_;
 
-  Scalar dx = (image_x - resolution_x_) * factor;
-  Scalar dy = (image_y - resolution_y_) * factor;
+  Scalar dx = (image_x - resolution_x_ / 2.0) * factor;
+  Scalar dy = (image_y - resolution_y_ / 2.0) * factor;
 
   // Convert image coordinates to world coordinates.
   Vector3 camera_coords(dx, dy, 1);
