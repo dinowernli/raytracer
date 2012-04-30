@@ -14,6 +14,9 @@
 #include "renderer/renderer.h"
 
 int main(int argc, char **argv) {
+  // The severities are INFO, WARNING, ERROR, FATAL. The compiler is configured
+  // to compile out all log statements which which are below WARNING if compiled
+  // in release mode, i.e. all INFO log statements are removed.
   google::InitGoogleLogging(argv[0]);
 
   raytracer::Configuration config;

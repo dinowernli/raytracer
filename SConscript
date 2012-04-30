@@ -28,6 +28,7 @@ for st in source_target:
 # Configure different build modes.
 if ARGUMENTS.get('debug') == '0' or ARGUMENTS.get('release') == '1':
 	environment.Append(CCFLAGS = ['-O2'])
+	environment.Append(CCFLAGS = ['-DGOOGLE_STRIP_LOG=1'])  # All "INFO" logs are compiled out.
 else:
 	environment.Append(CCFLAGS = ['-g'])
 	if ARGUMENTS.get('profile') == '1':
