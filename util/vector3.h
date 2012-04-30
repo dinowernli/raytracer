@@ -12,6 +12,10 @@
 #include "util/numeric.h"
 
 class Point3;
+class Vector3;
+
+Vector3 operator*(const Scalar& lhs, const Vector3& rhs);
+Vector3 operator-(const Vector3& lhs, const Vector3& rhs);
 
 class Vector3 {
  public:
@@ -54,6 +58,11 @@ class Vector3 {
     return x_ * other.x_ + y_ * other.y_ + z_ * other.z_;
   }
 
+  // Returns this vector reflected on the plane given by "normal".
+  Vector3 ReflectedOnPlane(const Vector3& normal) const {
+    return ((*this) - 2 * normal.Dot(*this) * normal).Normalized();
+  }
+
   Vector3& operator/=(const Scalar& rhs) {
     x_ /= rhs;
     y_ /= rhs;
@@ -64,6 +73,11 @@ class Vector3 {
  private:
   Scalar x_, y_, z_;
 };
+
+// Unary operators.
+inline Vector3 operator-(const Vector3& other) {
+  return Vector3(-other.x(), -other.y(), -other.z());
+}
 
 // Addition operators.
 inline Vector3 operator+(const Vector3& lhs, const Vector3& rhs)

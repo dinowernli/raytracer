@@ -18,7 +18,7 @@ class Point3 {
       : x_(x), y_(y), z_(z) {}
 
   // Returns a vector from *this to target.
-  Vector3 VectorTo(const Point3& target) {
+  Vector3 VectorTo(const Point3& target) const {
     return Vector3(target.x_ - x_, target.y_ - y_, target.z_ - z_);
   }
 

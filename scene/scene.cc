@@ -36,7 +36,7 @@ void Scene::Init() {
   // TODO(dinow): Build KD-tree.
 }
 
-bool Scene::Intersect(const Ray& ray, IntersectionData* data) {
+bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
   bool result = false;
   for (auto it = elements_.begin(); it != elements_.end(); ++it) {
     result = result | it->get()->Intersect(ray, data);
@@ -47,6 +47,16 @@ bool Scene::Intersect(const Ray& ray, IntersectionData* data) {
     }
   }
   return result;
+}
+
+void Scene::GetNonOccludedLights(const Point3& position,
+                                 std::vector<const Light*>* lights) const {
+  for(auto it = lights_.begin(); it != lights_.end(); ++it) {
+    Ray ray = it->get()->GenerateRay(position);
+    if (!Intersect(ray)) {
+      lights->push_back(it->get());
+    }
+  }
 }
 
 // static

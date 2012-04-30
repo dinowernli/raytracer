@@ -17,8 +17,11 @@ class PointLight : public Light {
   }
   virtual ~PointLight() {};
 
-  Ray GenerateRay(const Point3& target) {
-    return Ray(position_, position_.VectorTo(target));
+  const Point3& position() const { return position_; }
+
+  virtual Ray GenerateRay(const Point3& target) const {
+    Vector3 direction = position_.VectorTo(target);
+    return Ray(position_, direction, 0, direction.Length());
   }
 
  private:

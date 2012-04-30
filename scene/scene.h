@@ -45,7 +45,11 @@ class Scene {
   // a call to Init(), it might be ignored until the next Init() call.
   void Init();
 
-  bool Intersect(const Ray& ray, IntersectionData* data);
+  bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
+
+  // Add all the lights to "lights" provided they are visible from "position".
+  void GetNonOccludedLights(const Point3& position,
+                            std::vector<const Light*>* lights) const;
 
   // Builds a standard test scene. The caller takes ownership of the pointer.
   static Scene* BuildStandardScene();

@@ -22,18 +22,25 @@ class Color3 {
     return Color3(r_ / rhs, g_ / rhs, b_ / rhs);
   }
 
-  // Clamps all channels of this to the range [0, 1] in place.
-  Color3& Clamp() {
-    r_ = r_ < 0 ? 0 : r_;
-    r_ = r_ > 1 ? 1 : r_;
-
-    g_ = g_ < 0 ? 0 : g_;
-    g_ = g_ > 1 ? 1 : g_;
-
-    b_ = b_ < 0 ? 0 : b_;
-    b_ = b_ > 1 ? 1 : b_;
-
+  Color3& operator+=(const Color3& rhs) {
+    r_ += rhs.r_;
+    g_ += rhs.g_;
+    b_ += rhs.b_;
     return *this;
+  }
+
+  // Returns a new color which contains the values of this clamped to [0, 1].
+  Color3 Clamped() const {
+    Scalar r = r_ < 0 ? 0 : r_;
+    r = r > 1 ? 1 : r;
+
+    Scalar g = g_ < 0 ? 0 : g_;
+    g = g > 1 ? 1 : g;
+
+    Scalar b = b_ < 0 ? 0 : b_;
+    b = b > 1 ? 1 : b;
+
+    return Color3(r, g, b);
   }
 
   const Intensity& r() const { return r_; }
@@ -43,5 +50,15 @@ class Color3 {
  private:
   Intensity r_, g_, b_;
 };
+
+inline Color3 operator+(const Color3& lhs, const Color3& rhs)
+{
+  return Color3(lhs.r() + rhs.r(), lhs.g() + rhs.g(), lhs.b() + rhs.b());
+}
+
+inline Color3 operator*(const Color3& lhs, const Color3& rhs)
+{
+  return Color3(lhs.r() * rhs.r(), lhs.g() * rhs.g(), lhs.b() * rhs.b());
+}
 
 #endif  /* COLOR3_H_ */

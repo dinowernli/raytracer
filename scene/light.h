@@ -18,10 +18,10 @@ class Light {
   virtual ~Light() {}
 
   // Generates a ray of light from the source.
-  virtual Ray GenerateRay(const Point3& target) = 0;
+  virtual Ray GenerateRay(const Point3& target) const = 0;
 
   // Returns the color of light coming from this source.
-  Color3& color() { return color_; }
+  const Color3& color() const { return color_; }
 
  private:
   Color3 color_;

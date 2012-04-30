@@ -30,6 +30,8 @@ class Camera {
   size_t resolution_x() const { return resolution_x_; }
   size_t resolution_y() const { return resolution_y_; }
 
+  const Point3& position() const { return position_; }
+
  private:
   // Computes a new "up" and a "right" vector such that "view", "up" and "right"
   // are orthogonal. This guarantees that the direction of "view" is maintained.

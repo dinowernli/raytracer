@@ -18,13 +18,14 @@ Plane::~Plane() {
 bool Plane::Intersect(const Ray& ray, IntersectionData* data) {
   Scalar denominator = ray.direction().Dot(normal_);
   Scalar t = - normal_.Dot(point_.VectorTo(ray.origin())) / denominator;
-  if (ray.InRange(t) && (data == NULL || t < data->t)) {
+
+  bool found = ray.InRange(t) && (data == NULL || t < data->t);
+  if (found && data != NULL) {
     data->element = this;
     data->position = ray.PointAt(t);
     data->normal = normal_;
     data->material = material_;
     data->t = t;
-    return true;
   }
-  return false;
+  return found;
 }
