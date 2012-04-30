@@ -3,6 +3,7 @@
  * Autor: Dino Wernli
  */
 
+#include <glog/logging.h>
 #include <google/protobuf/stubs/common.h>
 #include <memory>
 
@@ -13,6 +14,8 @@
 #include "renderer/renderer.h"
 
 int main(int argc, char **argv) {
+  google::InitGoogleLogging(argv[0]);
+
   raytracer::Configuration config;
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(config));
   renderer->AddListener(new PpmExporter("output/test.ppm"));

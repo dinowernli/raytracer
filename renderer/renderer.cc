@@ -4,6 +4,7 @@
 
 #include "renderer.h"
 
+#include <glog/logging.h>
 #include <memory>
 
 #include "proto/configuration.pb.h"
@@ -34,6 +35,8 @@ void Renderer::AddListener(Updatable* listener) {
 }
 
 void Renderer::Start() {
+  LOG(INFO) << "Starting rendering process.";
+
   // We can skip the NULL-check for camera because we may assume that the
   // sampler can handle this. If camera is NULL, the loop below will terminate
   // instantly.
@@ -55,6 +58,8 @@ void Renderer::Start() {
   for(auto it = listeners_.begin(); it != listeners_.end(); ++it) {
     it->get()->Update(*sampler_);
   }
+
+  LOG(INFO) << "Ending rendering process.";
 }
 
 Color3 Renderer::TraceColor(const Ray& ray) {

@@ -4,7 +4,7 @@
 
 #include "progress_listener.h"
 
-#include <iostream>
+#include <glog/logging.h>
 
 #include "renderer/sampler/sampler.h"
 
@@ -17,7 +17,7 @@ ProgressListener::~ProgressListener() {
 void ProgressListener::Update(const Sampler& sampler) {
   int digit = 10 * sampler.Progress();
   if (digit > last_dumped_progess_) {
-    std::cout << "Progress: " << 10 * digit << "%" << std::endl;
+    LOG(INFO) << "Progress: " << 10 * digit << "%";
     last_dumped_progess_ = digit;
   }
 }
