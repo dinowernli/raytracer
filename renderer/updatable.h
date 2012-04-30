@@ -6,12 +6,12 @@
 #ifndef UPDATABLE_H_
 #define UPDATABLE_H_
 
-class Image;
+class Sampler;
 
 class Updatable {
  public:
   virtual ~Updatable() { };
-  virtual void Update(const Image& image) = 0;
+  virtual void Update(const Sampler& sampler) = 0;
 };
 
 #endif  /* UPDATABLE_H_ */

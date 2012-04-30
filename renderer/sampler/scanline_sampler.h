@@ -22,6 +22,7 @@ class ScanlineSampler : public Sampler {
   virtual void Init(const Camera* camera);
   virtual bool NextSample(Sample* sample);
   virtual void AcceptSample(const Sample& sample);
+  virtual double Progress() const;
 
  private:
   // Iteration variables for the scan line.
@@ -31,6 +32,8 @@ class ScanlineSampler : public Sampler {
   // Size of the image.
   size_t width_;
   size_t height_;
+
+  size_t accepted_;
 };
 
 #endif  /* SCANLINE_SAMPLER_H_ */

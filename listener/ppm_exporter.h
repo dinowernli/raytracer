@@ -9,13 +9,13 @@
 
 #include <string>
 
-class Image;
+class Sampler;
 
 class PpmExporter : public Updatable{
  public:
   PpmExporter(std::string file_name);
   virtual ~PpmExporter();
-  virtual void Update(const Image& image);
+  virtual void Update(const Sampler& sampler);
 
   const static size_t kMaxPixelValue;
   const static std::string kMagicNumber;

@@ -6,8 +6,9 @@
 #include <google/protobuf/stubs/common.h>
 #include <memory>
 
-#include "exporter/bmp_exporter.h"
-#include "exporter/ppm_exporter.h"
+#include "listener/bmp_exporter.h"
+#include "listener/ppm_exporter.h"
+#include "listener/progress_listener.h"
 #include "proto/configuration.pb.h"
 #include "renderer/renderer.h"
 
@@ -16,6 +17,7 @@ int main(int argc, char **argv) {
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(config));
   renderer->AddListener(new PpmExporter("output/test.ppm"));
   renderer->AddListener(new BmpExporter());
+  renderer->AddListener(new ProgressListener());
   renderer->Start();
 
   // Free all memory in the protocol buffer library.

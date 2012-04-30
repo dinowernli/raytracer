@@ -2,11 +2,11 @@
  * Author: Dino Wernli
  */
 
-#include "ppm_exporter.h"
+#include "listener/ppm_exporter.h"
 
 #include <fstream>
 
-#include "renderer/image.h"
+#include "renderer/sampler/sampler.h"
 #include "util/color3.h"
 
 // Transforms an intensity in range [0, 1] to an integer in
@@ -21,7 +21,13 @@ PpmExporter::PpmExporter(std::string file_name) : file_name_(file_name) {
 PpmExporter::~PpmExporter() {
 }
 
-void PpmExporter::Update(const Image& image) {
+void PpmExporter::Update(const Sampler& sampler) {
+  // Only export if the image is done.
+  if (!sampler.IsDone()) {
+    return;
+  }
+
+  const Image& image = sampler.image();
   std::ofstream file_stream(file_name_);
 
   file_stream << kMagicNumber << std::endl;

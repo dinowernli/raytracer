@@ -8,14 +8,14 @@
 
 #include "renderer/updatable.h"
 
-class Image;
+class Sampler;
 
 class BmpExporter : public Updatable {
  public:
   BmpExporter();
   virtual ~BmpExporter();
 
-  virtual void Update(const Image& image);
+  virtual void Update(const Sampler& sampler);
 };
 
 #endif  /* BMPEXPORTER_H_ */

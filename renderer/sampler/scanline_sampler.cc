@@ -17,6 +17,7 @@ void ScanlineSampler::Init(const Camera* camera) {
   Sampler::Init(camera);
   current_x_ = 0;
   current_y_ = 0;
+  accepted_ = 0;
 
   if (camera != NULL) {
     width_ = camera->resolution_x();
@@ -49,4 +50,9 @@ void ScanlineSampler::AcceptSample(const Sample& sample) {
   // the y-coordinate when writing the color.
   const size_t image_y = image_->SizeY() - sample.y() - 1;
   image_->PutPixel(sample.color(), sample.x(), image_y);
+  ++accepted_;
+}
+
+double ScanlineSampler::Progress() const {
+  return double(accepted_) / (image_->SizeX() * image_->SizeY());
 }

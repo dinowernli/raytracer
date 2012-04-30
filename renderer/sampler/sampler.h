@@ -39,6 +39,12 @@ class Sampler {
 
   const Image& image() const { return *image_; }
 
+  // Returns the progress of the rendering as value in [0, 1].
+  virtual double Progress() const = 0;
+
+  // Returns true iff all pixels have been written to the image.
+  bool IsDone() const { return Progress() == 1.0; }
+
  protected:
   // TODO(dinow): Possibly make this a private attribute of each sampler.
   std::unique_ptr<Image> image_;

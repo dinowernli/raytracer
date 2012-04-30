@@ -41,6 +41,10 @@ void Renderer::Start() {
   scene_->Init();
   sampler_->Init(camera);
 
+  for(auto it = listeners_.begin(); it != listeners_.end(); ++it) {
+      it->get()->Update(*sampler_);
+  }
+
   Sample sample;
   while(sampler_->NextSample(&sample)) {
     Ray ray = camera->GenerateRay(sample);
@@ -49,7 +53,7 @@ void Renderer::Start() {
   }
 
   for(auto it = listeners_.begin(); it != listeners_.end(); ++it) {
-    it->get()->Update(sampler_->image());
+    it->get()->Update(*sampler_);
   }
 }
 
