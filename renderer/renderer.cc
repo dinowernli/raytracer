@@ -38,6 +38,7 @@ void Renderer::Start() {
   // sampler can handle this. If camera is NULL, the loop below will terminate
   // instantly.
   const Camera* camera = &scene_->camera();
+  scene_->Init();
   sampler_->Init(camera);
 
   Sample sample;

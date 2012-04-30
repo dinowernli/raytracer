@@ -40,7 +40,7 @@ class Scene {
   void set_background(const Material* background) { background_ = background; }
   const Material* background() const { return background_; }
 
-  // Constructs the image, builds data structures etc. Must be called before
+  // Prepares the scene, builds data structures etc. Must be called before
   // before querying for intersections. If anything is added to the scene after
   // a call to Init(), it might be ignored until the next Init() call.
   void Init();
