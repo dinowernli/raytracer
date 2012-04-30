@@ -58,8 +58,7 @@ Color3 Renderer::TraceColor(const Ray& ray) {
   if (intersects) {
     return shader_->Shade(data);
   } else {
-    // TODO(dinow): Return background color of scene.
-    return Color3(0, 0, 0);
+    return scene_->background();
   }
 }
 

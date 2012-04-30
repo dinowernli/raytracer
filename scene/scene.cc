@@ -68,6 +68,8 @@ Scene* Scene::BuildStandardScene() {
 
 
   Scene* scene = new Scene();
+  scene->set_background(Color3(1, 0.9, 0.9));
+
   scene->AddMaterial(red);
   scene->AddMaterial(green);
   scene->AddMaterial(blue);
@@ -79,6 +81,7 @@ Scene* Scene::BuildStandardScene() {
   scene->AddLight(new PointLight(Point3(0, 4, -3), Color3(1, 1, 1)));
   scene->AddLight(new PointLight(Point3(3, 2, 1), Color3(1, 1, 1)));
   scene->AddElement(new Sphere(Point3(0.2, 1.3, 4), 1.1, green));
+  scene->AddElement(new Sphere(Point3(1.8, 1.8, 1.8), 0.5, green));
   scene->AddElement(new Plane(Point3(3, 0, 0), Vector3(-1.2, 0.2, 0), red));
 
   // TODO(dinow): Replace this with a CirclePlane once implemented.
