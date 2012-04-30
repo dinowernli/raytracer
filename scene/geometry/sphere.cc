@@ -7,8 +7,8 @@
 #include "renderer/intersection_data.h"
 #include "util/ray.h"
 
-Sphere::Sphere(const Point3& center, Scalar radius)
-    : center_(center), radius_(radius) {
+Sphere::Sphere(const Point3& center, Scalar radius, const Material* material)
+    : center_(center), radius_(radius), material_(material) {
 }
 
 Sphere::~Sphere() {
@@ -47,6 +47,7 @@ bool Sphere::Intersect(const Ray& ray, IntersectionData* data) {
     data->t = t;
     data->position = ray.PointAt(t);
     data->element = this;
+    data->material = material_;
   }
   return found;
 }

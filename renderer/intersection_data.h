@@ -7,6 +7,7 @@
 #define INTERSECTIONDATA_H_
 
 #include "scene/element.h"
+#include "scene/material.h"
 #include "util/point3.h"
 #include "util/ray.h"
 
@@ -18,6 +19,7 @@ struct IntersectionData {
   Scalar t;
   Point3 position;
   const Element* element;
+  const Material* material;
 };
 
 #endif /* INTERSECTIONDATA_H_ */
