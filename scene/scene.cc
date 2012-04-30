@@ -90,7 +90,7 @@ Scene* Scene::BuildStandardScene() {
   scene->set_background(bg);
 
   scene->set_camera(new Camera(Point3(1, 1, -3), Vector3(0, 0, 1),
-                               Vector3(0, 1, 0), 20, 100, 100));
+                               Vector3(0, 1, 0), 20, 500, 500));
   scene->AddLight(new PointLight(Point3(0, 4, -3), Color3(1, 1, 1)));
   scene->AddLight(new PointLight(Point3(3, 2, 1), Color3(1, 1, 1)));
   scene->AddElement(new Sphere(Point3(0.2, 1.3, 4), 1.1, green));

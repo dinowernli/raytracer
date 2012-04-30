@@ -31,14 +31,14 @@ bool Sphere::Intersect(const Ray& ray, IntersectionData* data) {
   Scalar t2 = (-b + sqrt(under_root)) / aa;
 
   bool found = false;
-  Scalar t;
+  Scalar t = 0;
 
   // Find out which t is closer.
-  if (ray.InRange(t1) && (data == NULL || t1 < data->t)) {
+  if (ray.InRange(t1) && (!found || t1 < t)) {
     t = t1;
     found = true;
   }
-  if (ray.InRange(t2) && (data == NULL || t2 < data->t)) {
+  if (ray.InRange(t2) && (!found || t2 < t)) {
     t = t2;
     found = true;
   }

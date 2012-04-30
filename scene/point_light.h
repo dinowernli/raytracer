@@ -21,7 +21,9 @@ class PointLight : public Light {
 
   virtual Ray GenerateRay(const Point3& target) const {
     Vector3 direction = position_.VectorTo(target);
-    return Ray(position_, direction, 0, direction.Length());
+
+    // Subtract epsilon to prevent the ray from intersecting with at "position".
+    return Ray(position_, direction, 0, direction.Length() - EPSILON);
   }
 
  private:
