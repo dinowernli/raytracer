@@ -14,9 +14,11 @@
 #include "renderer/renderer.h"
 
 int main(int argc, char **argv) {
-  // The severities are INFO, WARNING, ERROR, FATAL. The compiler is configured
-  // to compile out all log statements which which are below WARNING if compiled
-  // in release mode, i.e. all INFO log statements are removed.
+  // LOG(INFO): Always logged.
+  // DVLOG(i): Only compiled in if DEBUG flag set, logged if log level is >= i.
+  //
+  // Always run "GLOG_logtostderr=1 ./build/raytracer" (assumed below).
+  // Run "GLOG_v=i ./build/raytracer" for verbose loggin up to level i.
   google::InitGoogleLogging(argv[0]);
 
   raytracer::Configuration config;

@@ -11,6 +11,16 @@ environment = Environment(
   tools = ['default'],
 )
 
+# Configure different build modes.
+if ARGUMENTS.get('debug') == '0' or ARGUMENTS.get('release') == '1':
+	environment.Append(CCFLAGS = ['-O2'])
+	environment.Append(CCFLAGS = ['-DNDEBUG'])
+else:
+	environment.Append(CCFLAGS = ['-g'])
+	if ARGUMENTS.get('profile') == '1':
+		environment.Append(CCFLAGS = ['-pg'])
+		environment.Append(LINKFLAGS = ['-pg'])
+
 # Add support for glog.
 environment.ParseConfig('pkg-config --cflags --libs libglog')
 
@@ -24,16 +34,6 @@ for st in source_target:
     st[0],
     'protoc --cpp_out=' + build_dir + ' ' + st[0]
   )
-
-# Configure different build modes.
-if ARGUMENTS.get('debug') == '0' or ARGUMENTS.get('release') == '1':
-	environment.Append(CCFLAGS = ['-O2'])
-	environment.Append(CCFLAGS = ['-DGOOGLE_STRIP_LOG=1'])  # All "INFO" logs are compiled out.
-else:
-	environment.Append(CCFLAGS = ['-g'])
-	if ARGUMENTS.get('profile') == '1':
-		environment.Append(CCFLAGS = ['-pg'])
-		environment.Append(LINKFLAGS = ['-pg'])
 
 # Build binaries.
 p = environment.Program(

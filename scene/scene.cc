@@ -4,6 +4,8 @@
 
 #include "scene.h"
 
+#include <glog/logging.h>
+
 #include "renderer/intersection_data.h"
 #include "scene/camera.h"
 #include "scene/element.h"
@@ -34,6 +36,7 @@ void Scene::AddMaterial(Material* material) {
 
 void Scene::Init() {
   // TODO(dinow): Build KD-tree.
+  DVLOG(1) << "Scene initialized.";
 }
 
 bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
