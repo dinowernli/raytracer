@@ -14,10 +14,12 @@
 struct IntersectionData {
   // Builds a new struct for this specific ray. The ray is necessary in order to
   // initialize "t" to the maximum "t" allowed by the ray.
-  IntersectionData(const Ray& ray) : t(ray.max_t()), element(NULL) {}
+  IntersectionData(const Ray& ray)
+      : t(ray.max_t()), element(NULL), material(NULL) {}
 
   Scalar t;
   Point3 position;
+  Vector3 normal;
   const Element* element;
   const Material* material;
 };

@@ -37,8 +37,8 @@ class Scene {
   // Takes ownership of the passed camera.
   void set_camera(Camera* camera) { camera_.reset(camera); }
   const Camera& camera() const { return *camera_; }
-  void set_background(const Color3& background) { background_ = background; }
-  const Color3& background() const { return background_; }
+  void set_background(const Material* background) { background_ = background; }
+  const Material* background() const { return background_; }
 
   // Constructs the image, builds data structures etc. Must be called before
   // before querying for intersections. If anything is added to the scene after
@@ -55,7 +55,9 @@ class Scene {
   std::vector<std::unique_ptr<Light> > lights_;
   std::unique_ptr<Camera> camera_;
   std::vector<std::unique_ptr<Material> > materials_;
-  Color3 background_;
+
+  // No ownership of this pointer, it is a pointer to one of the "materials".
+  const Material* background_;
 };
 
 #endif  /* SCENE_H_ */

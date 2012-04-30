@@ -9,11 +9,12 @@
 #include "util/color3.h"
 
 class IntersectionData;
+class Scene;
 
 class Shader {
  public:
   virtual ~Shader() { }
-  virtual Color3 Shade(const IntersectionData& data) = 0;
+  virtual Color3 Shade(const IntersectionData& data, const Scene& scene) = 0;
 };
 
 

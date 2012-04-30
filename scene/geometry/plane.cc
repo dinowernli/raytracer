@@ -21,6 +21,7 @@ bool Plane::Intersect(const Ray& ray, IntersectionData* data) {
   if (ray.InRange(t) && (data == NULL || t < data->t)) {
     data->element = this;
     data->position = ray.PointAt(t);
+    data->normal = normal_;
     data->material = material_;
     data->t = t;
     return true;

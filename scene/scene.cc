@@ -55,8 +55,6 @@ Scene* Scene::BuildStandardScene() {
   Color3 w(1, 1, 1);
   Color3 b(0, 0, 1);
   Color3 y(1, 1, 0);
-
-
   Material* red = new Material(black, Color3(0.06, 0, 0),
                                Color3(0.6, 0, 0), Color3(1, 0.7, 0.7), 10);
   Material* green = new Material(Color3(0, 0, 0), Color3(0.04, 0.08, 0.1),
@@ -65,16 +63,21 @@ Scene* Scene::BuildStandardScene() {
   Material* blue = new Material(black, b/10, b, b, 7);
   Material* yellow = new Material(black, y/10, y, y, 5);
   Material* white = new Material(black, w/10, w, w, 3);
+  Color3 s(1, 0.9, 0.9);
+  Material* bg = new Material(black, s/10, s, s, 0);
 
 
   Scene* scene = new Scene();
-  scene->set_background(Color3(1, 0.9, 0.9));
-
   scene->AddMaterial(red);
   scene->AddMaterial(green);
   scene->AddMaterial(blue);
   scene->AddMaterial(yellow);
   scene->AddMaterial(white);
+  scene->AddMaterial(bg);
+
+  // TODO(dinow): Currently, diffuse (the middle param) is the one used for the
+  // background color of the scene. Consider adding a dedicated constructor.
+  scene->set_background(bg);
 
   scene->set_camera(new Camera(Point3(1, 1, -3), Vector3(0, 0, 1),
                                Vector3(0, 1, 0), 20, 100, 100));

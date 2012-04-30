@@ -14,6 +14,10 @@ class Color3 {
   Color3(const Intensity& r, const Intensity& g, const Intensity& b)
       : r_(r), g_(g), b_(b) {}
 
+  Color3 operator*(const Scalar& rhs) const {
+    return Color3(r_ * rhs, g_ * rhs, b_ * rhs);
+  }
+
   Color3 operator/(const Scalar& rhs) const {
     return Color3(r_ / rhs, g_ / rhs, b_ / rhs);
   }

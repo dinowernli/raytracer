@@ -48,6 +48,7 @@ bool Sphere::Intersect(const Ray& ray, IntersectionData* data) {
     data->position = ray.PointAt(t);
     data->element = this;
     data->material = material_;
+    data->normal = center_.VectorTo(data->position).Normalized();
   }
   return found;
 }

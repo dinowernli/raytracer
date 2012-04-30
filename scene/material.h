@@ -20,10 +20,10 @@ class Material {
   }
   NO_COPY_ASSIGN(Material);
 
+  const Color3& emission() const { return emission_; }
   const Color3& ambient() const { return ambient_; }
   const Color3& diffuse() const { return diffuse_; }
   const Color3& specular() const { return specular_; }
-  const Color3& emission() const { return emission_; }
   const Scalar shininess() const { return shininess_; }
 
  private:
