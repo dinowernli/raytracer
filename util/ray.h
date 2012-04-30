@@ -15,7 +15,7 @@ class Ray {
  public:
   Ray(const Point3& origin, const Vector3& direction, Scalar min_t = 0,
       Scalar max_t = std::numeric_limits<Scalar>::max())
-          : origin_(origin), direction_(direction), min_t_(min_t),
+          : origin_(origin), direction_(direction.Normalized()), min_t_(min_t),
             max_t_(max_t) {
   }
 
