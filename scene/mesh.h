@@ -13,15 +13,25 @@
 #include "scene/geometry/vertex.h"
 
 class Element;
+class Point3;
+class Vector3;
 
 class Mesh {
  public:
   Mesh();
   virtual ~Mesh();
 
+  // Adds a new vertex to the mesh and returns the index of the vertex. The
+  // mesh guarantees that the first added vertex will have index 0 and that
+  // every subsequent add will increase the vertex index by 1.
+  size_t AddVertex(const Point3& point, const Vector3& normal);
+
+  // Declares a triangle using the three passed vertex indices.
+  void AddTriangle(size_t v1, size_t v2, size_t v3);
+
   // Adds light-weight triangles to target. The caller takes ownership of the
   // produced triangles.
-  void CreateElements(std::vector<Element*>* target);
+  void CreateElements(std::vector<Element*>* target) const;
 
  private:
   struct TriangleDescriptor {
