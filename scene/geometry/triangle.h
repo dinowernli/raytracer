@@ -25,6 +25,12 @@ class Triangle : public Element {
 
   virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL);
 
+ protected:
+  // This constructor is only available to subclasses for initialization. Its
+  // purpose is to allow MeshTriangle to use the same code as Triangle.
+  Triangle(const Vertex* v1, const Vertex* v2, const Vertex* v3,
+           const Material* material = NULL);
+
  private:
   const Material* material_;
   const Vertex* vertex1_;

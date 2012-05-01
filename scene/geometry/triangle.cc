@@ -16,9 +16,12 @@ Triangle::Triangle(const Point3& c1, const Point3& c2, const Point3& c3,
   vertex3_ = new Vertex(c3, n3 == NULL ? inferred_normal : n3->Normalized());
 }
 
+Triangle::Triangle(const Vertex* v1, const Vertex* v2, const Vertex* v3,
+                   const Material* material)
+    :  material_(material), vertex1_(v1), vertex2_(v2), vertex3_(v3) {
+}
+
 Triangle::~Triangle() {
-  // TODO(dinow): As soon as meshes are implemented, add a test here to see if
-  // the vertices really have to be deleted.
   delete vertex1_;
   delete vertex2_;
   delete vertex3_;
