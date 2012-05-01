@@ -34,7 +34,7 @@ class Renderer {
   void AddListener(Updatable* listener);
 
   // Starts the rendering process.
-  void Start();
+  void Render();
 
   // Builds a new Renderer from configuration. The caller takes ownership of
   // the returned object.

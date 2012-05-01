@@ -34,7 +34,7 @@ void Renderer::AddListener(Updatable* listener) {
   listeners_.push_back(std::unique_ptr<Updatable>(listener));
 }
 
-void Renderer::Start() {
+void Renderer::Render() {
   LOG(INFO) << "Starting rendering process.";
 
   // We can skip the NULL-check for camera because we may assume that the
@@ -71,7 +71,7 @@ Color3 Renderer::TraceColor(const Ray& ray) {
 // static
 Renderer* Renderer::FromConfig(const raytracer::Configuration& config) {
   // TODO(dinow): Parse config and pass corresponding objects to new renderer.
-  Scene* scene = Scene::BuildStandardScene();
+  Scene* scene = Scene::QuadricsScene();
   Sampler* sampler = new ScanlineSampler();
   Shader* shader = new PhongShader();
 

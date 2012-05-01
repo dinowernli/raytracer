@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   renderer->AddListener(new PpmExporter("output/test.ppm"));
   renderer->AddListener(new BmpExporter());
   renderer->AddListener(new ProgressListener());
-  renderer->Start();
+  renderer->Render();
 
   // Free all memory in the protocol buffer library.
   google::protobuf::ShutdownProtobufLibrary();

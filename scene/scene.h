@@ -60,8 +60,11 @@ class Scene {
   void GetNonOccludedLights(const Point3& position,
                             std::vector<const Light*>* lights) const;
 
-  // Builds a standard test scene. The caller takes ownership of the pointer.
-  static Scene* BuildStandardScene();
+  // Builds the Quadrics scene. The caller takes ownership of the pointer.
+  static Scene* QuadricsScene();
+
+  // Builds the Horse scene. The caller takes ownership of the pointer.
+  static Scene* HorseScene();
 
  private:
   std::vector<std::unique_ptr<Element>> elements_;

@@ -71,7 +71,7 @@ void Scene::GetNonOccludedLights(const Point3& position,
 }
 
 // static
-Scene* Scene::BuildStandardScene() {
+Scene* Scene::QuadricsScene() {
   Color3 black(0, 0, 0);
   Color3 w(1, 1, 1);
   Color3 b(0, 0, 1);
@@ -118,4 +118,9 @@ Scene* Scene::BuildStandardScene() {
                                  blue, &normal, &normal, &normal));
 
   return scene;
+}
+
+// static
+Scene* Scene::HorseScene() {
+  return new Scene();
 }
