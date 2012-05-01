@@ -4,6 +4,8 @@
 
 #include "scanline_sampler.h"
 
+#include <glog/logging.h>
+
 #include "renderer/sampler/sample.h"
 #include "scene/camera.h"
 
@@ -51,6 +53,8 @@ void ScanlineSampler::AcceptSample(const Sample& sample) {
   const size_t image_y = image_->SizeY() - sample.y() - 1;
   image_->PutPixel(sample.color(), sample.x(), image_y);
   ++accepted_;
+
+  DVLOG(2) << "Putting color: " << sample.color();
 }
 
 double ScanlineSampler::Progress() const {

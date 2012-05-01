@@ -39,7 +39,7 @@ void PpmExporter::Update(const Sampler& sampler) {
       const Color3& color = image.PixelAt(x, y);
       file_stream << ScaleIntensity(color.r()) << " "
                   << ScaleIntensity(color.g()) << " "
-                  << ScaleIntensity(color.g()) << " ";
+                  << ScaleIntensity(color.b()) << " ";
     }
     file_stream << std::endl;
   }

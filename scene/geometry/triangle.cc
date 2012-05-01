@@ -11,9 +11,9 @@ Triangle::Triangle(const Point3& c1, const Point3& c2, const Point3& c3,
                    const Material* material, const Vector3* n1,
                    const Vector3* n2, const Vector3* n3) : material_(material) {
   Vector3 inferred_normal = c1.VectorTo(c2).Cross(c1.VectorTo(c3)).Normalized();
-  vertex1_ = new Vertex(c1, n1 == NULL ? inferred_normal : *n1);
-  vertex2_ = new Vertex(c2, n2 == NULL ? inferred_normal : *n2);
-  vertex3_ = new Vertex(c3, n3 == NULL ? inferred_normal : *n3);
+  vertex1_ = new Vertex(c1, n1 == NULL ? inferred_normal : n1->Normalized());
+  vertex2_ = new Vertex(c2, n2 == NULL ? inferred_normal : n2->Normalized());
+  vertex3_ = new Vertex(c3, n3 == NULL ? inferred_normal : n3->Normalized());
 }
 
 Triangle::~Triangle() {

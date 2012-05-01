@@ -61,4 +61,10 @@ inline Color3 operator*(const Color3& lhs, const Color3& rhs)
   return Color3(lhs.r() * rhs.r(), lhs.g() * rhs.g(), lhs.b() * rhs.b());
 }
 
+template<class OStream>
+OStream& operator<<(OStream& os, const Color3& c)
+{
+  return os << "(c: " << c.r() << ", " << c.g() << ", " << c.b() << ")";
+}
+
 #endif  /* COLOR3_H_ */
