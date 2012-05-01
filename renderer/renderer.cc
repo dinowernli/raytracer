@@ -18,8 +18,8 @@
 #include "scene/scene.h"
 #include "util/ray.h"
 
-Renderer::Renderer(Scene* scene, Sampler* sampler, Shader* shader)
-    : scene_(scene), sampler_(sampler), shader_(shader) {
+Renderer::Renderer(Sampler* sampler, Shader* shader) :
+    sampler_(sampler), shader_(shader) {
 }
 
 Renderer::~Renderer() {
@@ -34,8 +34,9 @@ void Renderer::AddListener(Updatable* listener) {
   listeners_.push_back(std::unique_ptr<Updatable>(listener));
 }
 
-void Renderer::Render() {
+void Renderer::Render(Scene* scene) {
   LOG(INFO) << "Starting rendering process.";
+  scene_ = scene;
 
   // We can skip the NULL-check for camera because we may assume that the
   // sampler can handle this. If camera is NULL, the loop below will terminate
@@ -59,6 +60,7 @@ void Renderer::Render() {
     it->get()->Update(*sampler_);
   }
 
+  scene_ = NULL;
   LOG(INFO) << "Ending rendering process.";
 }
 
@@ -71,9 +73,8 @@ Color3 Renderer::TraceColor(const Ray& ray) {
 // static
 Renderer* Renderer::FromConfig(const raytracer::Configuration& config) {
   // TODO(dinow): Parse config and pass corresponding objects to new renderer.
-  Scene* scene = Scene::QuadricsScene();
   Sampler* sampler = new ScanlineSampler();
   Shader* shader = new PhongShader();
 
-  return new Renderer(scene, sampler, shader);
+  return new Renderer(sampler, shader);
 }

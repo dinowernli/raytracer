@@ -12,6 +12,7 @@
 #include "listener/progress_listener.h"
 #include "proto/configuration.pb.h"
 #include "renderer/renderer.h"
+#include "scene/scene.h"
 
 int main(int argc, char **argv) {
   // LOG(INFO): Always logged.
@@ -21,12 +22,14 @@ int main(int argc, char **argv) {
   // Run "GLOG_v=i ./build/raytracer" for verbose loggin up to level i.
   google::InitGoogleLogging(argv[0]);
 
+  std::unique_ptr<Scene> scene(Scene::QuadricsScene());
+
   raytracer::Configuration config;
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(config));
   renderer->AddListener(new PpmExporter("output/test.ppm"));
   renderer->AddListener(new BmpExporter());
   renderer->AddListener(new ProgressListener());
-  renderer->Render();
+  renderer->Render(scene.get());
 
   // Free all memory in the protocol buffer library.
   google::protobuf::ShutdownProtobufLibrary();
