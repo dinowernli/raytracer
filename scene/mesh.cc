@@ -24,11 +24,11 @@ void Mesh::AddTriangle(size_t v1, size_t v2, size_t v3) {
   descriptors_.push_back(TriangleDescriptor(v1, v2, v3));
 }
 
-void Mesh::CreateElements(std::vector<Element*>* target) const {
+void Mesh::CreateElements(std::vector<std::unique_ptr<Element>>* target) const {
   for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it) {
     const Vertex* v1 = vertices_[it->v1_].get();
     const Vertex* v2 = vertices_[it->v2_].get();
     const Vertex* v3 = vertices_[it->v3_].get();
-    target->push_back(new MeshTriangle(v1, v2, v3));
+    target->push_back(std::unique_ptr<Element>(new MeshTriangle(v1, v2, v3)));
   }
 }

@@ -15,6 +15,7 @@
 #include "scene/geometry/plane.h"
 #include "scene/geometry/sphere.h"
 #include "scene/geometry/triangle.h"
+#include "scene/mesh.h"
 #include "util/ray.h"
 
 Scene::Scene() : background_(Color3(1, 1, 1)), ambient_(Color3(0, 0, 0)),
@@ -34,6 +35,11 @@ void Scene::AddLight(Light* light) {
 
 void Scene::AddMaterial(Material* material) {
   materials_.push_back(std::unique_ptr<Material>(material));
+}
+
+void Scene::AddMesh(Mesh* mesh) {
+  meshes_.push_back(std::unique_ptr<Mesh>(mesh));
+  mesh->CreateElements(&elements_);
 }
 
 void Scene::Init() {

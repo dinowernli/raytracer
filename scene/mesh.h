@@ -31,7 +31,7 @@ class Mesh {
 
   // Adds light-weight triangles to target. The caller takes ownership of the
   // produced triangles.
-  void CreateElements(std::vector<Element*>* target) const;
+  void CreateElements(std::vector<std::unique_ptr<Element>>* target) const;
 
  private:
   struct TriangleDescriptor {

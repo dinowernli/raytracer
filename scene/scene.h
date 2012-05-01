@@ -17,6 +17,7 @@ class Element;
 class IntersectionData;
 class Light;
 class Material;
+class Mesh;
 class Ray;
 
 class Scene {
@@ -33,6 +34,10 @@ class Scene {
 
   // Takes ownership of the passed material.
   void AddMaterial(Material* material);
+
+  // Takes ownership of the passed mesh. Extracts all elements of the mesh and
+  // adds them to the list of elements.
+  void AddMesh(Mesh* mesh);
 
   // Takes ownership of the passed camera.
   void set_camera(Camera* camera) { camera_.reset(camera); }
@@ -59,10 +64,11 @@ class Scene {
   static Scene* BuildStandardScene();
 
  private:
-  std::vector<std::unique_ptr<Element> > elements_;
-  std::vector<std::unique_ptr<Light> > lights_;
+  std::vector<std::unique_ptr<Element>> elements_;
+  std::vector<std::unique_ptr<Light>> lights_;
   std::unique_ptr<Camera> camera_;
-  std::vector<std::unique_ptr<Material> > materials_;
+  std::vector<std::unique_ptr<Material>> materials_;
+  std::vector<std::unique_ptr<Mesh>> meshes_;
 
   Color3 background_;
   Color3 ambient_;
