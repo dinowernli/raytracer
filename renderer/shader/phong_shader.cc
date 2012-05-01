@@ -20,14 +20,14 @@ PhongShader::~PhongShader() {
 
 Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
   if (data.element == NULL) {
-    return scene.background()->diffuse();
+    return scene.background();
   }
 
   const Material& material = *data.material;
-  const Material& background = *scene.background();
+  const Color3& background = scene.background();
 
   Color3 emission(material.emission().Clamped());
-  Color3 ambient((material.ambient() * background.ambient()).Clamped());
+  Color3 ambient((material.ambient() * background).Clamped());
   Color3 diffuse(0, 0, 0);
   Color3 specular(0, 0, 0);
 

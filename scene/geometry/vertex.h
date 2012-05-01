@@ -20,7 +20,8 @@ class Vertex {
   Vertex(const Point3& point, const Vector3& normal)
       : point_(point), normal_(normal){
   }
-  ~Vertex() { }
+  ~Vertex() {
+  }
 
   const Point3& point() const { return point_; }
   const Vector3& normal() const { return normal_; }

@@ -14,9 +14,11 @@
 #include "scene/point_light.h"
 #include "scene/geometry/plane.h"
 #include "scene/geometry/sphere.h"
+#include "scene/geometry/triangle.h"
 #include "util/ray.h"
 
-Scene::Scene() {
+Scene::Scene() : background_(Color3(1, 1, 1)), ambient_(Color3(0, 0, 0)),
+                 refraction_index_(1) {
 }
 
 Scene::~Scene() {
@@ -70,15 +72,12 @@ Scene* Scene::BuildStandardScene() {
   Color3 y(1, 1, 0);
   Material* red = new Material(black, Color3(0.06, 0, 0),
                                Color3(0.6, 0, 0), Color3(1, 0.7, 0.7), 10);
-  Material* green = new Material(Color3(0, 0, 0), Color3(0.04, 0.08, 0.1),
+  Material* green = new Material(black, Color3(0.04, 0.08, 0.1),
                                  Color3(0.4, 0.8, 0.1), Color3(0.6, 1, 0.5),
                                  20);
   Material* blue = new Material(black, b/10, b, b, 7);
   Material* yellow = new Material(black, y/10, y, y, 5);
   Material* white = new Material(black, w/10, w, w, 3);
-  Color3 s(1, 0.9, 0.9);
-  Material* bg = new Material(black, s/10, s, s, 0);
-
 
   Scene* scene = new Scene();
   scene->AddMaterial(red);
@@ -86,12 +85,8 @@ Scene* Scene::BuildStandardScene() {
   scene->AddMaterial(blue);
   scene->AddMaterial(yellow);
   scene->AddMaterial(white);
-  scene->AddMaterial(bg);
 
-  // TODO(dinow): Currently, diffuse (the middle param) is the one used for the
-  // background color of the scene. Consider adding a dedicated constructor.
-  scene->set_background(bg);
-
+  scene->set_background(Color3(1, 0.9, 0.9));
   scene->set_camera(new Camera(Point3(1, 1, -3), Vector3(0, 0, 1),
                                Vector3(0, 1, 0), 20, 500, 500));
   scene->AddLight(new PointLight(Point3(0, 4, -3), Color3(1, 1, 1)));
@@ -102,6 +97,19 @@ Scene* Scene::BuildStandardScene() {
 
   // TODO(dinow): Replace this with a CirclePlane once implemented.
   scene->AddElement(new Plane(Point3(0, 0, 0), Vector3(0, 1, 0), red));
+
+  Point3 common(1.8, 1.3, 1.8);
+  Vector3 normal(1.69, 0.6, -1.82);
+  scene->AddElement(new Triangle(common, Point3(1.4, 0, 1), Point3(2.8, 0, 2.3),
+                                 blue, &normal, &normal, &normal));
+
+  normal = Vector3(0.91, 1.6, 2.34);
+  scene->AddElement(new Triangle(common, Point3(2.8, 0, 2.3), Point3(1, 0, 3),
+                                 blue, &normal, &normal, &normal));
+
+  normal = Vector3(-2.6, 1.12, -0.52);
+  scene->AddElement(new Triangle(common, Point3(1, 0, 3), Point3(1.4, 0, 1),
+                                 blue, &normal, &normal, &normal));
 
   return scene;
 }
