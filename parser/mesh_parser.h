@@ -24,6 +24,8 @@ class MeshParser {
   // ownership of the returned pointer.
   Mesh* LoadFile(const std::string& path);
 
+  // TODO(dinow): Change the triangles to have corners and normals. That way,
+  // the "obj" format can be parsed properly.
   std::vector<Point3> points_;
   std::vector<Vector3> normals_;
 

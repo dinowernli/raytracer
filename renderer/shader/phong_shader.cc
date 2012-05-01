@@ -4,8 +4,8 @@
 
 #include "phong_shader.h"
 
-#include <cassert>
 #include <cmath>
+#include <glog/logging.h>
 
 #include "renderer/intersection_data.h"
 #include "scene/material.h"
@@ -37,7 +37,7 @@ Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
   for (auto it = lights.begin(); it != lights.end(); ++it) {
     // TODO(dinow): Hack since we only have point lights anyway.
     const PointLight* light = dynamic_cast<const PointLight *>(*it);
-    assert(light);
+    CHECK(light) << "Got a Light which is not a PointLight.";
 
     Vector3 point_to_light =
         data.position.VectorTo(light->position()).Normalized();
