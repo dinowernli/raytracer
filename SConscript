@@ -40,6 +40,7 @@ p = environment.Program(
   'raytracer',
    Glob('*.cc') 
     + Glob('listener/*.cc')
+    + Glob('parser/*.cc')
     + Glob('renderer/*.cc')
     + Glob('renderer/sampler/*.cc')
     + Glob('renderer/shader/*.cc')
