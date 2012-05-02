@@ -62,8 +62,7 @@ inline Color3 operator*(const Color3& lhs, const Color3& rhs)
 }
 
 template<class OStream>
-OStream& operator<<(OStream& os, const Color3& c)
-{
+OStream& operator<<(OStream& os, const Color3& c) {
   return os << "(c: " << c.r() << ", " << c.g() << ", " << c.b() << ")";
 }
 

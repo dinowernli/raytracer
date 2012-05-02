@@ -46,8 +46,7 @@ class Ray {
 };
 
 template<class OStream>
-OStream& operator<<(OStream& os, const Ray& r)
-{
+OStream& operator<<(OStream& os, const Ray& r) {
   return os << "(ray: " << r.origin() << ", " << r.direction() << ")";
 }
 

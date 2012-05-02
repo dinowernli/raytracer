@@ -107,8 +107,7 @@ inline Vector3 operator*(const Vector3& lhs, const Vector3& rhs)
 }
 
 template<class OStream>
-OStream& operator<<(OStream& os, const Vector3& v)
-{
+OStream& operator<<(OStream& os, const Vector3& v) {
   return os << "(v: " << v.x() << ", " << v.y() << ", " << v.z() << ")";
 }
 
