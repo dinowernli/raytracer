@@ -23,7 +23,8 @@ int main(int argc, char **argv) {
   google::InitGoogleLogging(argv[0]);
 
   //std::unique_ptr<Scene> scene(Scene::QuadricsScene());
-  std::unique_ptr<Scene> scene(Scene::HorseScene());
+  //std::unique_ptr<Scene> scene(Scene::HorseScene());
+  std::unique_ptr<Scene> scene(Scene::TestScene());
 
   raytracer::Configuration config;
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(config));

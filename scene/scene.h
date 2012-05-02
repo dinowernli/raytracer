@@ -66,6 +66,9 @@ class Scene {
   // Builds the Horse scene. The caller takes ownership of the pointer.
   static Scene* HorseScene();
 
+  // Builds a test scene. The caller takes ownership of the pointer.
+  static Scene* TestScene();
+
  private:
   std::vector<std::unique_ptr<Element>> elements_;
   std::vector<std::unique_ptr<Light>> lights_;
