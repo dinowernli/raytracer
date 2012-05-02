@@ -68,4 +68,3 @@ bool Triangle::Intersect(const Ray& ray, IntersectionData* data) {
   }
   return found;
 }
-

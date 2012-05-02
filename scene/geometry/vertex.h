@@ -31,4 +31,11 @@ class Vertex {
   Vector3 normal_;
 };
 
+template<class OStream>
+OStream& operator<<(OStream& os, const Vertex& v)
+{
+  return os << "(vertex: " << v.point() << ", " << v.normal() << ")";
+}
+
+
 #endif  /* VERTEX_H_ */

@@ -30,6 +30,10 @@ class Triangle : public Element {
 
   virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL);
 
+  const Vertex& vertex1() const { return *vertex1_; }
+  const Vertex& vertex2() const { return *vertex2_; }
+  const Vertex& vertex3() const { return *vertex3_; }
+
  private:
   const Material* material_;
   const Vertex* vertex1_;
@@ -40,5 +44,12 @@ class Triangle : public Element {
   // to delete the vertices in the destructor.
   bool owns_vertices_;
 };
+
+template<class OStream>
+OStream& operator<<(OStream& os, const Triangle& t)
+{
+  return os << "(triangle: " << t.vertex1() << ", " << t.vertex2() << ", "
+            << t.vertex3() << ")";
+}
 
 #endif  /* TRIANGLE_H_ */

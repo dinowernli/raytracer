@@ -154,7 +154,8 @@ Scene* Scene::TestScene() {
   scene->AddLight(new PointLight(Point3(-5, 4, 7), Color3(1, 1, 1)));
 
   scene->set_background(Color3(0.8, 0.9, 1));
-  scene->set_camera(new Camera(Point3(0, 0, -6), Vector3(0, 0, 1),
+  scene->set_ambient(Color3(0.02, 0.02, 0.02));
+  scene->set_camera(new Camera(Point3(2, 0.4, 1), Vector3(-2.5, -0.3, -1),
                                Vector3(0, 1, 0), 20, 100, 100));
 
   Color3 b(0, 0, 0);
@@ -166,7 +167,6 @@ Scene* Scene::TestScene() {
   Mesh* horse = parser.LoadFile("data/mesh/horse.obj");
   horse->set_material(blue);
   scene->AddMesh(horse);
-  //scene->AddElement(new Sphere(Point3(0, 0, 0), 1.1, blue));
 
   return scene;
 }

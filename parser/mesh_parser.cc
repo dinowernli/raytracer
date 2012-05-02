@@ -54,11 +54,11 @@ Mesh* MeshParser::LoadFile(const std::string& path) {
       file_stream >> index1_str >> index2_str >> index3_str;
 
       ExtractIndex(index1_str, &v1, &n1);
-      ExtractIndex(index1_str, &v2, &n2);
-      ExtractIndex(index1_str, &v3, &n3);
+      ExtractIndex(index2_str, &v2, &n2);
+      ExtractIndex(index3_str, &v3, &n3);
 
       CHECK(v1 == n1 && v2 == n2 && v3 == n3)
-          << "Position and normal indices do not match.";
+          << "Position and normal index mismatch.";
       mesh->AddTriangle(v1 - 1, v2 - 1, v3 - 1);
     }
   }
