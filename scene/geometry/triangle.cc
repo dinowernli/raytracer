@@ -52,7 +52,7 @@ bool Triangle::Intersect(const Ray& ray, IntersectionData* data) {
   // Compute barycentric v.
   Vector3 plane_normal = vertex_to_origin.Cross(edge12);
   Scalar v = ray.direction().Dot(plane_normal) * invdet;
-  if (v < 0 || v > 1) {
+  if (v < 0 || v + u > 1) {
     return false;
   }
 
