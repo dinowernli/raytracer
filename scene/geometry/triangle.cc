@@ -37,7 +37,7 @@ bool Triangle::Intersect(const Ray& ray, IntersectionData* data) {
 
   Vector3 dir_cross_first(ray.direction().Cross(edge13));
   Scalar determinant = edge12.Dot(dir_cross_first);
-  if (determinant > EPSILON && determinant < EPSILON) {
+  if (determinant > -EPSILON && determinant < EPSILON) {
     return false;
   }
   Scalar invdet = 1 / determinant;
