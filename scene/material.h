@@ -12,7 +12,7 @@
 class Material {
  public:
   Material(const Color3& emission, const Color3& ambient, const Color3& diffuse,
-           const Color3& specular, Scalar shininess)
+           const Color3& specular, Scalar shininess = 10)
       : emission_(emission), ambient_(ambient), diffuse_(diffuse),
         specular_(specular), shininess_(shininess) {
   }

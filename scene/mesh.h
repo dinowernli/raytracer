@@ -13,11 +13,13 @@
 #include "scene/geometry/vertex.h"
 
 class Element;
+class Material;
 class Point3;
 class Vector3;
 
 class Mesh {
  public:
+  // Does not take ownership of the passed material.
   Mesh();
   virtual ~Mesh();
 
@@ -33,6 +35,9 @@ class Mesh {
   // produced triangles.
   void CreateElements(std::vector<std::unique_ptr<Element>>* target) const;
 
+  // Does not take ownership of the passed material.
+  void set_material(const Material* material) { material_ = material; }
+
  private:
   struct TriangleDescriptor {
     TriangleDescriptor(size_t v1, size_t v2, size_t v3) : v1_(v1), v2_(v2),
@@ -45,6 +50,7 @@ class Mesh {
 
   std::vector<std::unique_ptr<Vertex>> vertices_;
   std::vector<TriangleDescriptor> descriptors_;
+  const Material* material_;
 };
 
 #endif  /* MESH_H_ */

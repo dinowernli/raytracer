@@ -9,6 +9,7 @@
 #ifndef SAMPLER_H_
 #define SAMPLER_H_
 
+#include <glog/logging.h>
 #include <memory>
 
 #include "renderer/image.h"
@@ -26,6 +27,9 @@ class Sampler {
   virtual void Init(const Camera* camera) {
     if (camera != NULL) {
       image_.reset(new Image(camera->resolution_x(), camera->resolution_y()));
+    } else {
+      LOG(WARNING) << "Initializing sampler with NULL camera.";
+      image_.reset(new Image(0, 0));
     }
   }
 

@@ -19,13 +19,9 @@ void ScanlineSampler::Init(const Camera* camera) {
   current_y_ = 0;
   accepted_ = 0;
 
-  if (camera != NULL) {
-    width_ = camera->resolution_x();
-    height_ = camera->resolution_y();
-  } else {
-    width_ = 0;
-    height_ = 0;
-  }
+  // After the init call above, the image is initialized.
+  width_ = image().SizeX();
+  height_ = image().SizeY();
 }
 
 bool ScanlineSampler::NextSample(Sample* sample) {
@@ -54,5 +50,9 @@ void ScanlineSampler::AcceptSample(const Sample& sample) {
 }
 
 double ScanlineSampler::Progress() const {
+  size_t total_size = image_->SizeX() * image_->SizeY();
+  if (total_size == 0) {
+    return 1;
+  }
   return double(accepted_) / (image_->SizeX() * image_->SizeY());
 }

@@ -6,6 +6,7 @@
 
 #include <glog/logging.h>
 
+#include "parser/mesh_parser.h"
 #include "renderer/intersection_data.h"
 #include "scene/camera.h"
 #include "scene/element.h"
@@ -122,5 +123,24 @@ Scene* Scene::QuadricsScene() {
 
 // static
 Scene* Scene::HorseScene() {
-  return new Scene();
+  Scene* scene = new Scene();
+
+  scene->AddLight(new PointLight(Point3(10, 8, 1), Color3(1, 1, 1)));
+  scene->AddLight(new PointLight(Point3(-5, 4, 7), Color3(1, 1, 1)));
+
+  scene->set_background(Color3(0.8, 0.9, 1));
+  scene->set_ambient(Color3(0.02, 0.02, 0.02));
+  scene->set_camera(new Camera(Point3(6.5, 1, 3), Vector3(-2.5, -0.3, -1),
+                               Vector3(0, 1, 0), 20, 100, 100));
+
+  Color3 b(0, 0, 0);
+  Material* blue = new Material(b, Color3(0, 0, 1), Color3(0.2, 0.5, 1),
+                                Color3(0, 0, 0.3));
+  scene->AddMaterial(blue);
+
+  MeshParser parser;
+  Mesh* horse = parser.LoadFile("data/mesh/horse.obj");
+  horse->set_material(blue);
+
+  return scene;
 }

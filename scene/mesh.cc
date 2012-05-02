@@ -29,6 +29,7 @@ void Mesh::CreateElements(std::vector<std::unique_ptr<Element>>* target) const {
     const Vertex* v1 = vertices_[it->v1_].get();
     const Vertex* v2 = vertices_[it->v2_].get();
     const Vertex* v3 = vertices_[it->v3_].get();
-    target->push_back(std::unique_ptr<Element>(new MeshTriangle(v1, v2, v3)));
+    target->push_back(std::unique_ptr<Element>(
+        new MeshTriangle(v1, v2, v3, material_)));
   }
 }
