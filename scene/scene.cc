@@ -141,6 +141,7 @@ Scene* Scene::HorseScene() {
   MeshParser parser;
   Mesh* horse = parser.LoadFile("data/mesh/horse.obj");
   horse->set_material(blue);
+  scene->AddMesh(horse);
 
   return scene;
 }

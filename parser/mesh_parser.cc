@@ -63,6 +63,11 @@ Mesh* MeshParser::LoadFile(const std::string& path) {
     }
   }
 
+  size_t n_vertices = std::min(points_.size(), normals_.size());
+  for (size_t i = 0; i < n_vertices; ++i) {
+    mesh->AddVertex(points_[i], normals_[i]);
+  }
+
   return mesh;
 }
 

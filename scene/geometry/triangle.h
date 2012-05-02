@@ -20,22 +20,25 @@ class Triangle : public Element {
   Triangle(const Point3& c1, const Point3& c2, const Point3& c3,
            const Material* material = NULL, const Vector3* n1 = NULL,
            const Vector3* n2 = NULL, const Vector3* n3 = NULL);
+
+  // Takes no ownerhip of any passed pointers.
+  Triangle(const Vertex* v1, const Vertex* v2, const Vertex* v3,
+           const Material* material = NULL);
+
   virtual ~Triangle();
   NO_COPY_ASSIGN(Triangle);
 
   virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL);
-
- protected:
-  // This constructor is only available to subclasses for initialization. Its
-  // purpose is to allow MeshTriangle to use the same code as Triangle.
-  Triangle(const Vertex* v1, const Vertex* v2, const Vertex* v3,
-           const Material* material = NULL);
 
  private:
   const Material* material_;
   const Vertex* vertex1_;
   const Vertex* vertex2_;
   const Vertex* vertex3_;
+
+  // TODO(dinow): Figure out if there is another way to decide whether or not
+  // to delete the vertices in the destructor.
+  bool owns_vertices_;
 };
 
 #endif  /* TRIANGLE_H_ */
