@@ -24,8 +24,10 @@ class Configuration;
 
 class Renderer {
  public:
-  // Takes ownership of all passed pointers.
-  Renderer(Sampler* sampler, Shader* shader);
+  // Takes ownership of all passed pointers. The argument "num_threads"
+  // determines the number of worker threads in addition to the monitoring
+  // thread.
+  Renderer(Sampler* sampler, Shader* shader, size_t num_threads = 1);
   virtual ~Renderer();
   NO_COPY_ASSIGN(Renderer);
 
@@ -41,8 +43,14 @@ class Renderer {
   static Renderer* FromConfig(const raytracer::Configuration& config);
 
  private:
+  // Serves as the method passed to threads. It contains the rendering loop
+  // which consists of fetching samples, tracing them, and putting them back.
+  void WorkerMain();
+
   // Traces the color of the provided ray in the scene.
   Color3 TraceColor(const Ray& ray);
+
+  void UpdateListeners() const;
 
   // The renderer does not own the scene.
   Scene* scene_;
@@ -50,6 +58,13 @@ class Renderer {
   std::unique_ptr<Sampler> sampler_;
   std::unique_ptr<Shader> shader_;
   std::vector<std::unique_ptr<Updatable> > listeners_;
+
+  size_t num_threads_;
+
+  // The sleep time for the monitor thread.
+  static const size_t kSleepTimeMilli;
+
+  static const size_t kMicroToMilli;
 };
 
 #endif  /* RENDERER_H_ */

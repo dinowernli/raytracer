@@ -27,6 +27,8 @@ int main(int argc, char **argv) {
   std::unique_ptr<Scene> scene(Scene::TestScene());
 
   raytracer::Configuration config;
+  config.set_threads(4);
+
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(config));
   renderer->AddListener(new PpmExporter("output/test.ppm"));
   renderer->AddListener(new BmpExporter());

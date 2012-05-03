@@ -41,6 +41,10 @@ class Sampler {
   // Stores the color of the sample in the image.
   virtual void AcceptSample(const Sample& sample) = 0;
 
+  // Returns whether the sampler is prepared to handle multiple threads calling
+  // its methods concurrently.
+  virtual bool IsThreadSafe() const = 0;
+
   const Image& image() const { return *image_; }
 
   // Returns the progress of the rendering as value in [0, 1].

@@ -25,13 +25,10 @@ class ScanlineSampler : public Sampler {
 
   virtual bool NextSample(Sample* sample);
 
-  // Not made thread-safe because this sampler only returns samples of size 1,
-  // each of which points to a different pixel. Also, the image is not resized
-  // during the process.
   virtual void AcceptSample(const Sample& sample);
 
-  // Not made thread-safe because because a slightly inconsistent progress
-  // measure is not the end of the world.
+  virtual bool IsThreadSafe() const { return thread_safe_; }
+
   virtual double Progress() const;
 
  private:

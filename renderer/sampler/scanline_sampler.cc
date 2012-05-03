@@ -51,6 +51,12 @@ void ScanlineSampler::AcceptSample(const Sample& sample) {
   // the y-coordinate when writing the color.
   const size_t image_y = image_->SizeY() - sample.y() - 1;
   image_->PutPixel(sample.color(), sample.x(), image_y);
+
+  // Only lock here because the code above is thread-safe.
+  std::unique_lock<std::mutex> guard;
+  if (thread_safe_) {
+    guard = std::move(std::unique_lock<std::mutex>(lock_));
+  }
   ++accepted_;
 }
 
