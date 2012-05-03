@@ -25,8 +25,10 @@ void ScanlineSampler::Init(const Camera* camera) {
 }
 
 bool ScanlineSampler::NextSample(Sample* sample) {
-  // TODO(dinow): Find a way to use std::lock_guard here.
-  if (thread_safe_) lock_.lock();
+  std::unique_lock<std::mutex> guard;
+  if (thread_safe_) {
+    guard = std::move(std::unique_lock<std::mutex>(lock_));
+  }
 
   if (current_x_ >= width_) {
     current_x_ = 0;
@@ -34,15 +36,12 @@ bool ScanlineSampler::NextSample(Sample* sample) {
   }
 
   if (current_y_ >= height_) {
-    if (thread_safe_) lock_.unlock();
     return false;
   }
 
   sample->set_color(Color3(0, 0, 0));
   sample->set_x(current_x_++);
   sample->set_y(current_y_);
-
-  if (thread_safe_) lock_.unlock();
   return true;
 }
 
