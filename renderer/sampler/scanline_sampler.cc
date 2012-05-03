@@ -104,4 +104,4 @@ double ScanlineSampler::Progress() const {
 }
 
 // static
-const size_t ScanlineSampler::kJobSize = 1;
+const size_t ScanlineSampler::kJobSize = 256;
