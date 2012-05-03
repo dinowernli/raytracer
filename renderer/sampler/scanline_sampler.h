@@ -6,22 +6,32 @@
 #ifndef SCANLINE_SAMPLER_H_
 #define SCANLINE_SAMPLER_H_
 
-#include "util/no_copy_assign.h"
+#include <mutex>
 
 #include "renderer/sampler/sampler.h"
+#include "util/no_copy_assign.h"
 
 class Camera;
 class Sample;
 
 class ScanlineSampler : public Sampler {
  public:
-  ScanlineSampler();
+  ScanlineSampler(bool thread_safe = false);
   virtual ~ScanlineSampler();
   NO_COPY_ASSIGN(ScanlineSampler);
 
+  // Not made thread safe, expected to be called only once.
   virtual void Init(const Camera* camera);
+
   virtual bool NextSample(Sample* sample);
+
+  // Not made thread-safe because this sampler only returns samples of size 1,
+  // each of which points to a different pixel. Also, the image is not resized
+  // during the process.
   virtual void AcceptSample(const Sample& sample);
+
+  // Not made thread-safe because because a slightly inconsistent progress
+  // measure is not the end of the world.
   virtual double Progress() const;
 
  private:
@@ -33,7 +43,15 @@ class ScanlineSampler : public Sampler {
   size_t width_;
   size_t height_;
 
+  // The number of samples which have been returned with a color.
   size_t accepted_;
+
+  // Indicates whether or not to expect multiple threads to interact with this
+  // sampler.
+  bool thread_safe_;
+
+  // Lock used for synchronizing access to the critical methods.
+  std::mutex lock_;
 };
 
 #endif  /* SCANLINE_SAMPLER_H_ */
