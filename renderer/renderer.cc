@@ -87,11 +87,16 @@ void Renderer::Render(Scene* scene) {
 void Renderer::WorkerMain() {
   const Camera* camera = &scene_->camera();
 
-  Sample sample;
-  while(sampler_->NextSample(&sample)) {
-    Ray ray = camera->GenerateRay(sample);
-    sample.set_color(TraceColor(ray));
-    sampler_->AcceptSample(sample);
+  std::vector<Sample> samples(sampler_->MaxJobSize());
+
+  size_t n_samples = 0;
+  while((n_samples = sampler_->NextJob(&samples)) > 0) {
+    for (size_t i = 0; i < n_samples; ++i) {
+      Sample& sample = samples[i];
+      Ray ray = camera->GenerateRay(sample);
+      sample.set_color(TraceColor(ray));
+    }
+    sampler_->AcceptJob(samples, n_samples);
   }
 }
 

@@ -25,13 +25,25 @@ class ScanlineSampler : public Sampler {
 
   virtual bool NextSample(Sample* sample);
 
+  virtual size_t MaxJobSize() const { return kJobSize; }
+
+  virtual size_t NextJob(std::vector<Sample>* samples);
+
   virtual void AcceptSample(const Sample& sample);
+
+  virtual void AcceptJob(const std::vector<Sample>& samples, size_t n);
 
   virtual bool IsThreadSafe() const { return thread_safe_; }
 
   virtual double Progress() const;
 
  private:
+  // Non-thread-safe version of NextSample which is used to fetch entire jobs.
+  bool InternalNextSample(Sample* sample);
+
+  // Non-thread-safe version of AcceptSample.
+  void InternalAcceptSample(const Sample& sample);
+
   // Iteration variables for the scan line.
   size_t current_x_;
   size_t current_y_;
@@ -49,6 +61,8 @@ class ScanlineSampler : public Sampler {
 
   // Lock used for synchronizing access to the critical methods.
   std::mutex lock_;
+
+  static const size_t kJobSize;
 };
 
 #endif  /* SCANLINE_SAMPLER_H_ */
