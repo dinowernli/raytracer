@@ -51,7 +51,7 @@ bool BoundingBox::Intersect(const Ray& ray, Scalar* t_near,
 
   bool intersected = AxisIntersect(Axis::x(), ray, t_near, t_far)
         && AxisIntersect(Axis::y(), ray, t_near, t_far)
-        && AxisIntersect(Axis::z(), ray, t_near, t_far);
+        && AxisIntersect(Axis::z(), ray, t_near, t_far)
         && (!(*t_far < ray.min_t()))  && (!(*t_near > ray.max_t()));
 
   DVLOG(2) << "t_near: " << *t_near << ", t_far: " << *t_far
