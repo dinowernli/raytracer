@@ -45,7 +45,7 @@ class Renderer {
  private:
   // Serves as the method passed to threads. It contains the rendering loop
   // which consists of fetching samples, tracing them, and putting them back.
-  void WorkerMain();
+  void WorkerMain(size_t worker_id);
 
   // Traces the color of the provided ray in the scene.
   Color3 TraceColor(const Ray& ray);

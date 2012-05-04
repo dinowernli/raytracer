@@ -62,10 +62,10 @@ void Renderer::Render(Scene* scene) {
 
   std::vector<std::thread> workers;
   for (size_t i = 0; i < num_threads_; ++i) {
-    workers.push_back(std::thread(&Renderer::WorkerMain, this));
+    workers.push_back(std::thread(&Renderer::WorkerMain, this, i));
   }
 
-  LOG(INFO) << "Created " << workers.size() << " worker threads";
+  LOG(INFO) << "Creating " << num_threads_ << " workers";
 
   while (!sampler_->IsDone()) {
     UpdateListeners();
@@ -76,7 +76,7 @@ void Renderer::Render(Scene* scene) {
     it->join();
   }
 
-  LOG(INFO) << "All worker threads returned";
+  LOG(INFO) << "All workers terminated";
 
   UpdateListeners();
 
@@ -84,9 +84,11 @@ void Renderer::Render(Scene* scene) {
   LOG(INFO) << "Ending rendering process";
 }
 
-void Renderer::WorkerMain() {
-  const Camera* camera = &scene_->camera();
+void Renderer::WorkerMain(size_t worker_id) {
+  LOG(INFO) << "Worker " << worker_id << " allocating buffer of size "
+            << sampler_->MaxJobSize();
   std::vector<Sample> samples(sampler_->MaxJobSize());
+  const Camera* camera = &scene_->camera();
 
   size_t n_samples = 0;
   while((n_samples = sampler_->NextJob(&samples)) > 0) {
