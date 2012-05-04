@@ -29,7 +29,7 @@ class Scene {
  public:
   // If passed a KdTree, will use it to test intersection with all bounded
   // objects. Takes ownership of the passed KdTree.
-  Scene(KdTree* kd_tree = NULL);
+  explicit Scene(KdTree* kd_tree = NULL);
   virtual ~Scene();
   NO_COPY_ASSIGN(Scene);
 

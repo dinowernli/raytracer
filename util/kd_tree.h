@@ -13,6 +13,7 @@
 #include <memory>
 #include <vector>
 
+#include "util/axis.h"
 #include "util/bounding_box.h"
 
 class Element;
@@ -45,7 +46,7 @@ class KdTree {
   std::unique_ptr<BoundingBox> bounding_box_;
 
   // TODO(dinow): Create an enum for axis somewhere.
-  const static size_t kInitialSplitAxis;
+  const static Axis kInitialSplitAxis;
 
   // If the root is at depth 0, no leaf will be at depth greater than this.
   const static size_t kTreeDepth;

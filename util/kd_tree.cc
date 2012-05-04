@@ -16,7 +16,7 @@ struct KdTree::Node {
 
   // Only to be called on leaves. Expects depth to be the current depth of the
   // leaf before splitting.
-  void Split(size_t axis, size_t depth, const BoundingBox* box);
+  void Split(Axis axis, size_t depth, const BoundingBox* box);
 
   // It is theoretically possible for leaves to have empty element vectors.
   bool IsLeaf() const { return left.get() == NULL && right.get() == NULL; }
@@ -39,7 +39,7 @@ KdTree::Node::Node() {
   this->elements.reset(new std::vector<const Element*>());
 }
 
-void KdTree::Node::Split(size_t axis, size_t depth, const BoundingBox* box) {
+void KdTree::Node::Split(Axis axis, size_t depth, const BoundingBox* box) {
   CHECK(IsLeaf()) << "Split() can only be called on leaf nodes";
   if (box == NULL) {
     CHECK(elements->size() == 0) << "Invalid bounding box during split";
@@ -70,12 +70,12 @@ void KdTree::Node::Split(size_t axis, size_t depth, const BoundingBox* box) {
   Point3 left_max = box->max();
   left_max[axis] = split_pos;
   BoundingBox left_box(box->min(), left_max);
-  left->Split((axis + 1) % 3, depth + 1, &left_box);
+  left->Split(axis.Next(), depth + 1, &left_box);
 
   Point3 right_min = box->max();
   right_min[axis] = split_pos;
   BoundingBox right_box(right_min, box->max());
-  right->Split((axis + 1) % 3, depth + 1, &right_box);
+  right->Split(axis.Next(), depth + 1, &right_box);
 
   // Clean up elements.
   elements.reset();
@@ -149,7 +149,7 @@ bool KdTree::Intersect(const Ray& ray, IntersectionData* data) const {
 }
 
 // static
-const size_t KdTree::kInitialSplitAxis = 0;
+const Axis KdTree::kInitialSplitAxis = Axis::x();
 
 // static
 const size_t KdTree::kTreeDepth = 20;
