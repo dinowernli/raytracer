@@ -81,7 +81,7 @@ bool BoundingBox::AxisIntersect(Axis axis, const Ray& ray,
     if (t1 > *t_near) *t_near = t1;
     if (t2 < *t_far) *t_far = t2;
 
-    if (t_near > t_far) {
+    if (*t_near > *t_far) {
       DVLOG(2) << "Missed box entirely";
       return false;
     }
