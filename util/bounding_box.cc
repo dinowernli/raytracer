@@ -35,8 +35,12 @@ BoundingBox& BoundingBox::Include(const Point3& point) {
 }
 
 BoundingBox& BoundingBox::Include(const BoundingBox& other) {
-  Include(Point3(other.xmin_, other.ymin_, other.zmin_));
-  Include(Point3(other.xmax_, other.ymax_, other.zmax_));
+  DVLOG(2) << "Bounding box include: ";
+  DVLOG(2) << "\tThis: " << *this;
+  DVLOG(2) << "\tOther: " << other;
+  Include(other.min());
+  Include(other.max());
+  DVLOG(2) << "\tFinal: " << *this;
   return *this;
 }
 
@@ -47,7 +51,7 @@ bool BoundingBox::Intersect(const Ray& ray, Scalar* t_near,
 
   bool intersected = AxisIntersect(Axis::x(), ray, t_near, t_far)
         && AxisIntersect(Axis::y(), ray, t_near, t_far)
-        && AxisIntersect(Axis::z(), ray, t_near, t_far)
+        && AxisIntersect(Axis::z(), ray, t_near, t_far);
         && (!(*t_far < ray.min_t()))  && (!(*t_near > ray.max_t()));
 
   DVLOG(2) << "t_near: " << *t_near << ", t_far: " << *t_far
