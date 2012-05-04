@@ -35,12 +35,12 @@ BoundingBox& BoundingBox::Include(const Point3& point) {
 }
 
 BoundingBox& BoundingBox::Include(const BoundingBox& other) {
-  DVLOG(2) << "Bounding box include: ";
-  DVLOG(2) << "\tThis: " << *this;
-  DVLOG(2) << "\tOther: " << other;
+  DVLOG(4) << "Bounding box include: ";
+  DVLOG(4) << "\tThis: " << *this;
+  DVLOG(4) << "\tOther: " << other;
   Include(other.min());
   Include(other.max());
-  DVLOG(2) << "\tFinal: " << *this;
+  DVLOG(4) << "\tFinal: " << *this;
   return *this;
 }
 
@@ -82,7 +82,7 @@ bool BoundingBox::AxisIntersect(Axis axis, const Ray& ray,
     if (t2 < *t_far) *t_far = t2;
 
     if (*t_near > *t_far) {
-      DVLOG(2) << "Missed box entirely";
+      DVLOG(3) << "Missed box entirely";
       return false;
     }
   }

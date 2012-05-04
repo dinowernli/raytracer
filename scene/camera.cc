@@ -5,6 +5,7 @@
 #include "camera.h"
 
 #include <cmath>
+#include <glog/logging.h>
 
 #include "renderer/sampler/sample.h"
 
@@ -22,6 +23,11 @@ void Camera::ComputeOrientation(const Vector3& view, const Vector3& up) {
   view_ = view.Normalized();
   right_ = (view_.Cross(up)).Normalized();
   up_ = (right_.Cross(view_)).Normalized();
+
+  DVLOG(2) << "Camera:";
+  DVLOG(2) << "\tup: " << up_;
+  DVLOG(2) << "\tdir: " << view_;
+  DVLOG(2) << "\tright: " << right_;
 }
 
 Vector3 Camera::ToWorld(const Vector3& vector) const {
