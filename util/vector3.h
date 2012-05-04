@@ -10,6 +10,7 @@
 #include <cmath>
 #include <cstddef>
 
+#include "util/axis.h"
 #include "util/numeric.h"
 
 class Point3;
@@ -27,6 +28,26 @@ class Vector3 {
   const Scalar& x() const { return x_; }
   const Scalar& y() const { return y_; }
   const Scalar& z() const { return z_; }
+
+  const Scalar& operator[](Axis axis) const {
+    if (axis == Axis::x()) {
+      return x_;
+    } else if (axis == Axis::y()) {
+      return y_;
+    } else {
+      return z_;
+    }
+  }
+
+  Scalar& operator[](Axis axis) {
+    if (axis == Axis::x()) {
+      return x_;
+    } else if (axis == Axis::y()) {
+      return y_;
+    } else {
+      return z_;
+    }
+  }
 
   Scalar SquaredLength() const {
     return x_ * x_ + y_ * y_ + z_ * z_;

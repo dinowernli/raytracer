@@ -27,12 +27,12 @@ int main(int argc, char **argv) {
   SceneConfig s_config;
   s_config.mutable_kd_tree_config();  // Initialize empty config.
 
-  std::unique_ptr<Scene> scene(Scene::QuadricsScene(s_config));
+  //std::unique_ptr<Scene> scene(Scene::QuadricsScene(s_config));
   //std::unique_ptr<Scene> scene(Scene::HorseScene(s_config));
-  //std::unique_ptr<Scene> scene(Scene::TestScene(s_config));
+  std::unique_ptr<Scene> scene(Scene::TestScene(s_config));
 
   RendererConfig r_config;
-  r_config.set_threads(4);
+  r_config.set_threads(1);
   r_config.set_shadows(true);
 
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(r_config));

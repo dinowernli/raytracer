@@ -5,6 +5,9 @@
 #include "bounding_box.h"
 
 #include <algorithm>
+#include <glog/logging.h>
+
+#include "util/ray.h"
 
 BoundingBox::BoundingBox(const Point3& p) : xmin_(p.x()), xmax_(p.x()),
     ymin_(p.y()), ymax_(p.y()), zmin_(p.z()), zmax_(p.z()) {
@@ -35,4 +38,49 @@ BoundingBox& BoundingBox::Include(const BoundingBox& other) {
   Include(Point3(other.xmin_, other.ymin_, other.zmin_));
   Include(Point3(other.xmax_, other.ymax_, other.zmax_));
   return *this;
+}
+
+bool BoundingBox::Intersect(const Ray& ray, Scalar* t_near,
+                            Scalar* t_far) const {
+  *t_near = -std::numeric_limits<Scalar>::infinity();
+  *t_far = std::numeric_limits<Scalar>::infinity();
+
+  bool intersected = AxisIntersect(Axis::x(), ray, t_near, t_far)
+        && AxisIntersect(Axis::y(), ray, t_near, t_far)
+        && AxisIntersect(Axis::z(), ray, t_near, t_far)
+        && (!(*t_far < ray.min_t()))  && (!(*t_near > ray.max_t()));
+
+  DVLOG(2) << "t_near: " << *t_near << ", t_far: " << *t_far
+           << ", intersected: " << intersected;
+
+  return intersected;
+}
+
+bool BoundingBox::AxisIntersect(Axis axis, const Ray& ray,
+                                Scalar* t_near, Scalar* t_far) const {
+  Scalar box_min = min()[axis];
+  Scalar box_max = max()[axis];
+  Scalar origin = ray.origin() [axis];
+  Scalar direction = ray.direction() [axis];
+
+  if (direction == 0) {
+    if (origin < box_min || origin > box_max) {
+      return false;
+    }
+  } else {
+    Scalar t1 = (box_min - origin) / direction;
+    Scalar t2 = (box_max - origin) / direction;
+
+    using std::swap;
+    if (t1 > t2) swap(t1, t2);
+
+    if (t1 > *t_near) *t_near = t1;
+    if (t2 < *t_far) *t_far = t2;
+
+    if (t_near > t_far) {
+      DVLOG(2) << "Missed box entirely";
+      return false;
+    }
+  }
+  return true;
 }

@@ -11,7 +11,7 @@
 #include "util/ray.h"
 
 struct KdTree::Node {
-  // Creates an empty leaf.
+  // Creates an empty leaf. Sets axis to X.
   Node();
 
   // Only to be called on leaves. Expects depth to be the current depth of the
@@ -28,14 +28,17 @@ struct KdTree::Node {
 
   // Returns whether or not the ray intersects any of the elements. If data is
   // not NULL, data about the first intersection is stored.
-  bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
+  bool Intersect(const Ray& ray, Scalar t_near, Scalar t_far,
+                 IntersectionData* data = NULL) const;
 
   std::unique_ptr<std::vector<const Element*>> elements;
   std::unique_ptr<Node> left;
   std::unique_ptr<Node> right;
+  Scalar split_position;
+  Axis split_axis;
 };
 
-KdTree::Node::Node() {
+KdTree::Node::Node() : split_axis(Axis::x()) {
   this->elements.reset(new std::vector<const Element*>());
 }
 
@@ -49,31 +52,30 @@ void KdTree::Node::Split(Axis axis, size_t depth, const BoundingBox* box) {
     return;
   }
 
-  // Create children.
+  // TODO(dinow): Implement other strategies than MidPointSplit.
+  split_position = (box->min()[axis] + box->max()[axis]) / 2.0;
+  split_axis = axis;
   left.reset(new Node());
   right.reset(new Node());
 
-  // TODO(dinow): Implement other strategies than MidPointSplit.
-  Scalar split_pos = (box->min()[axis] + box->max()[axis]) / 2.0;
-
   // Move elements to either 1 or 2 relevant children.
   for (size_t i = 0; i < elements->size(); ++i) {
-    if (elements->at(i)->bounding_box()->min()[axis] <= split_pos) {
+    if (elements->at(i)->bounding_box()->min()[axis] <= split_position) {
       left->elements->push_back(elements->at(i));
     }
-    if (elements->at(i)->bounding_box()->max()[axis] >= split_pos) {
+    if (elements->at(i)->bounding_box()->max()[axis] >= split_position) {
       right->elements->push_back(elements->at(i));
     }
   }
 
   // Recursively split children.
   Point3 left_max = box->max();
-  left_max[axis] = split_pos;
+  left_max[axis] = split_position;
   BoundingBox left_box(box->min(), left_max);
   left->Split(axis.Next(), depth + 1, &left_box);
 
   Point3 right_min = box->max();
-  right_min[axis] = split_pos;
+  right_min[axis] = split_position;
   BoundingBox right_box(right_min, box->max());
   right->Split(axis.Next(), depth + 1, &right_box);
 
@@ -82,24 +84,56 @@ void KdTree::Node::Split(Axis axis, size_t depth, const BoundingBox* box) {
   CHECK(!IsLeaf()) << "KdTree node still leaf after split";
 }
 
-bool KdTree::Node::Intersect(const Ray& ray, IntersectionData* data) const {
-  bool result = false;
+bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near, Scalar t_far,
+                             IntersectionData* data) const {
+  bool intersected;
   if (IsLeaf()) {
+    intersected = false;
     for (size_t i = 0; i < elements->size(); ++i) {
-      result = result | elements->at(i)->Intersect(ray, data);
-      if (result && data == NULL) {
+      intersected = intersected | elements->at(i)->Intersect(ray, data);
+      if (intersected && data == NULL) {
         return true;
       }
     }
-  } else {
-    bool left_intersection = left->Intersect(ray, data);
-    if (left_intersection && data == NULL) {
+    return intersected;
+  }
+
+  Scalar ray_direction_axis = ray.direction()[split_axis];
+  Scalar ray_origin_axis = ray.origin()[split_axis];
+
+  // Ray not moving in direction of the split, so only intersections with one
+  // side are possible.
+  if (ray_direction_axis == 0) {
+    if (ray_origin_axis <= split_position) {
+      return left->Intersect(ray, t_near, t_far, data);
+    } else {
+      return right->Intersect(ray, t_near, t_far, data);
+    }
+  }
+
+  intersected = false;
+
+  // Determine where on the ray the split happens.
+  Scalar t_split = (split_position - ray_origin_axis) / ray_direction_axis;
+
+  // Determine which is the first child traversed by the ray.
+  const Node* first = left.get();
+  const Node* second = right.get();
+  if (ray_direction_axis < 0) std::swap(first, second);
+
+  // Call recursively.
+  if (t_split > t_far) {
+    return first->Intersect(ray, t_near, t_far, data);
+  } else if (t_split < t_near) {
+    return second->Intersect(ray, t_near, t_far, data);
+  } else if ((intersected |= first->Intersect(ray, t_near, t_split, data))) {
+    if (data == NULL || data->t < t_split) {
       return true;
     }
-    bool right_intersection = right->Intersect(ray, data);
-    result = left_intersection || right_intersection;
+  } else {
+    intersected = second->Intersect(ray, t_split, t_far, data) || intersected;
   }
-  return result;
+  return intersected;
 }
 
 KdTree::KdTree() {
@@ -139,13 +173,25 @@ void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {
   LOG(INFO) << "Building KdTree for " << root_->elements->size() << " elements";
 
   root_->Split(kInitialSplitAxis, 0, bounding_box_.get());
+
+  if (bounding_box_.get() != NULL) {
+    DVLOG(2) << "Built KdTree with bounding box " << *bounding_box_;
+  }
 }
 
 bool KdTree::Intersect(const Ray& ray, IntersectionData* data) const {
   if (root_.get() == NULL) {
     LOG(WARNING) << "Called intersect on uninitialized KdTree. Returning false";
   }
-  return root_->Intersect(ray, data);
+
+  DVLOG(2) << "Intersecting with ray " << ray;
+
+  Scalar t_near, t_far;
+  if (!bounding_box_->Intersect(ray, &t_near, &t_far)) {
+    DVLOG(2) << "Bounding box did not intersect";
+    return false;
+  }
+  return root_->Intersect(ray, t_near, t_far, data);
 }
 
 // static
