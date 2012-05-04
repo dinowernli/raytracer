@@ -7,6 +7,8 @@
 #ifndef POINT3_H_
 #define POINT3_H_
 
+#include <cstddef>
+
 #include "util/numeric.h"
 #include "util/vector3.h"
 

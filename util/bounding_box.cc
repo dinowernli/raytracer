@@ -6,10 +6,14 @@
 
 #include <algorithm>
 
-#include "util/point3.h"
-
 BoundingBox::BoundingBox(const Point3& p) : xmin_(p.x()), xmax_(p.x()),
     ymin_(p.y()), ymax_(p.y()), zmin_(p.z()), zmax_(p.z()) {
+}
+
+BoundingBox::BoundingBox(const Point3& p1, const Point3& p2)
+    : xmin_(std::min(p1.x(), p2.x())), xmax_(std::max(p1.x(), p2.x())),
+      ymin_(std::min(p1.y(), p2.y())), ymax_(std::max(p1.y(), p2.y())),
+      zmin_(std::min(p1.z(), p2.z())), zmax_(std::max(p1.z(), p2.z())) {
 }
 
 BoundingBox::~BoundingBox() {

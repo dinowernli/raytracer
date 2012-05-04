@@ -8,6 +8,7 @@
 #define VECTOR3_H_
 
 #include <cmath>
+#include <cstddef>
 
 #include "util/numeric.h"
 

@@ -40,7 +40,11 @@ void KdTree::Node::Split(size_t axis, size_t depth, const BoundingBox* box) {
     return;
   }
 
+
+
   // TODO(dinow): Distribute elements to children.
+
+  CHECK(!IsLeaf()) << "KdTree node still leaf after split";
 }
 
 KdTree::KdTree() {
@@ -73,6 +77,7 @@ void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {
 }
 
 bool KdTree::Intersect(const Ray& ray, IntersectionData* data) const {
+  // TODO(dinow): Implement.
   return false;
 }
 
