@@ -82,8 +82,6 @@ double ScanlineSampler::Progress() const {
   if (total_size == 0) {
     return 1;
   }
-
-  // TODO(dinow): Access to "accepted_" might have to be protected by a lock.
   return double(accepted_) / (image_->SizeX() * image_->SizeY());
 }
 
