@@ -22,9 +22,9 @@ int main(int argc, char **argv) {
   // Run "GLOG_v=i ./build/raytracer" for verbose logging up to level i.
   google::InitGoogleLogging(argv[0]);
 
-  std::unique_ptr<Scene> scene(Scene::QuadricsScene());
+  //std::unique_ptr<Scene> scene(Scene::QuadricsScene());
   //std::unique_ptr<Scene> scene(Scene::HorseScene());
-  //std::unique_ptr<Scene> scene(Scene::TestScene());
+  std::unique_ptr<Scene> scene(Scene::TestScene());
 
   raytracer::Configuration config;
   config.set_threads(4);

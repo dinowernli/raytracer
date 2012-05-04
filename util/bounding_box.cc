@@ -26,3 +26,9 @@ BoundingBox& BoundingBox::Include(const Point3& point) {
   zmax_ = max(zmax_, point.z());
   return *this;
 }
+
+BoundingBox& BoundingBox::Include(const BoundingBox& other) {
+  Include(Point3(other.xmin_, other.ymin_, other.zmin_));
+  Include(Point3(other.xmax_, other.ymax_, other.zmax_));
+  return *this;
+}

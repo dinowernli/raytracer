@@ -18,6 +18,9 @@ class BoundingBox {
   // Changes the bounding box to include point.
   BoundingBox& Include(const Point3& point);
 
+  // Changes the bounding box to include the other bounding box.
+  BoundingBox& Include(const BoundingBox& other);
+
  private:
   Scalar xmin_, xmax_, ymin_, ymax_, zmin_, zmax_;
 };
