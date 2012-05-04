@@ -20,6 +20,8 @@
 #include "scene/scene.h"
 #include "util/ray.h"
 
+using raytracer::RendererConfig;
+
 Renderer::Renderer(Sampler* sampler, Shader* shader, size_t num_threads)
     : sampler_(sampler), shader_(shader), num_threads_(num_threads) {
   if (num_threads == 0) {
@@ -85,8 +87,8 @@ void Renderer::Render(Scene* scene) {
 }
 
 void Renderer::WorkerMain(size_t worker_id) {
-  LOG(INFO) << "Worker " << worker_id << " allocating buffer of size "
-            << sampler_->MaxJobSize();
+  DVLOG(1) << "Worker " << worker_id << " allocating buffer of size "
+           << sampler_->MaxJobSize();
   std::vector<Sample> samples(sampler_->MaxJobSize());
   const Camera* camera = &scene_->camera();
 
@@ -120,7 +122,7 @@ const size_t Renderer::kSleepTimeMilli = 300;
 const size_t Renderer::kMicroToMilli = 1000;
 
 // static
-Renderer* Renderer::FromConfig(const raytracer::Configuration& config) {
+Renderer* Renderer::FromConfig(const RendererConfig& config) {
   Sampler* sampler = new ScanlineSampler(config.threads() > 0);
   Shader* shader = new PhongShader(config.shadows());
   return new Renderer(sampler, shader, config.threads());

@@ -11,6 +11,7 @@
 
 #include "scene/camera.h"
 #include "util/color3.h"
+#include "util/kd_tree.h"
 #include "util/no_copy_assign.h"
 
 class Element;
@@ -20,9 +21,15 @@ class Material;
 class Mesh;
 class Ray;
 
+namespace raytracer {
+class SceneConfig;
+}
+
 class Scene {
  public:
-  Scene();
+  // If passed a KdTree, will use it to test intersection with all bounded
+  // objects. Takes ownership of the passed KdTree.
+  Scene(KdTree* kd_tree = NULL);
   virtual ~Scene();
   NO_COPY_ASSIGN(Scene);
 
@@ -56,18 +63,22 @@ class Scene {
 
   bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
 
-  // Builds the Quadrics scene. The caller takes ownership of the pointer.
-  static Scene* QuadricsScene();
-
-  // Builds the Horse scene. The caller takes ownership of the pointer.
-  static Scene* HorseScene();
-
-  // Builds a test scene. The caller takes ownership of the pointer.
-  static Scene* TestScene();
-
   // TODO(dinow): Figure out how to return something which only allows iteration
   // over const Light& (without an extra memory allocation).
   const std::vector<std::unique_ptr<Light>>& lights() const { return lights_; }
+
+  // TODO(dinow): Eventually let the config specify which scene and remove the
+  // methods below.
+  static Scene* FromConfig(const raytracer::SceneConfig& config);
+
+  // Builds the Quadrics scene. The caller takes ownership of the pointer.
+  static Scene* QuadricsScene(const raytracer::SceneConfig& config);
+
+  // Builds the Horse scene. The caller takes ownership of the pointer.
+  static Scene* HorseScene(const raytracer::SceneConfig& config);
+
+  // Builds a test scene. The caller takes ownership of the pointer.
+  static Scene* TestScene(const raytracer::SceneConfig& config);
 
  private:
   std::vector<std::unique_ptr<Element>> elements_;
@@ -75,6 +86,7 @@ class Scene {
   std::unique_ptr<Camera> camera_;
   std::vector<std::unique_ptr<Material>> materials_;
   std::vector<std::unique_ptr<Mesh>> meshes_;
+  std::unique_ptr<KdTree> kd_tree_;
 
   Color3 background_;
   Color3 ambient_;

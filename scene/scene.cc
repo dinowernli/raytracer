@@ -7,6 +7,7 @@
 #include <glog/logging.h>
 
 #include "parser/mesh_parser.h"
+#include "proto/configuration.pb.h"
 #include "renderer/intersection_data.h"
 #include "scene/camera.h"
 #include "scene/element.h"
@@ -19,8 +20,9 @@
 #include "scene/mesh.h"
 #include "util/ray.h"
 
-Scene::Scene() : background_(Color3(1, 1, 1)), ambient_(Color3(0, 0, 0)),
-                 refraction_index_(1) {
+Scene::Scene(KdTree* kd_tree)
+    : kd_tree_(kd_tree), background_(Color3(1, 1, 1)),
+      ambient_(Color3(0, 0, 0)), refraction_index_(1) {
 }
 
 Scene::~Scene() {
@@ -44,25 +46,44 @@ void Scene::AddMesh(Mesh* mesh) {
 }
 
 void Scene::Init() {
-  // TODO(dinow): Build KD-tree.
+  DVLOG(1) << "Initializing scene with " << elements_.size() << " elements";
+  if(kd_tree_.get() != NULL) {
+    // TODO(dinow): Add the elements somewhere which are not part of the tree.
+    LOG(WARNING) << "Ignoring all elements not in KdTree";
+    kd_tree_->Init(elements_);
+  }
   DVLOG(1) << "Scene initialized.";
 }
 
 bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
-  bool result = false;
-  for (auto it = elements_.begin(); it != elements_.end(); ++it) {
-    result = result | it->get()->Intersect(ray, data);
+  if(kd_tree_.get() != NULL) {
+    return kd_tree_->Intersect(ray, data);
+  } else {
+    bool result = false;
+    for (auto it = elements_.begin(); it != elements_.end(); ++it) {
+      result = result | it->get()->Intersect(ray, data);
 
-    // Only return early if data is irrelevant.
-    if (result && data == NULL) {
-      return true;
+      // Only return early if data is irrelevant.
+      if (result && data == NULL) {
+        return true;
+      }
     }
+    return result;
   }
-  return result;
 }
 
 // static
-Scene* Scene::QuadricsScene() {
+Scene* Scene::FromConfig(const raytracer::SceneConfig& config) {
+  DVLOG(2) << "SceneConfig has KdTreeConfig: " << config.has_kd_tree_config();
+
+  KdTree* tree = config.has_kd_tree_config() ? new KdTree() : NULL;
+  return new Scene(tree);
+}
+
+// static
+Scene* Scene::QuadricsScene(const raytracer::SceneConfig& config) {
+  Scene* scene = FromConfig(config);
+
   Color3 black(0, 0, 0);
   Color3 w(1, 1, 1);
   Color3 b(0, 0, 1);
@@ -76,7 +97,6 @@ Scene* Scene::QuadricsScene() {
   Material* yellow = new Material(black, y/10, y, y, 5);
   Material* white = new Material(black, w/10, w, w, 3);
 
-  Scene* scene = new Scene();
   scene->AddMaterial(red);
   scene->AddMaterial(green);
   scene->AddMaterial(blue);
@@ -112,8 +132,8 @@ Scene* Scene::QuadricsScene() {
 }
 
 // static
-Scene* Scene::HorseScene() {
-  Scene* scene = new Scene();
+Scene* Scene::HorseScene(const raytracer::SceneConfig& config) {
+  Scene* scene = FromConfig(config);
 
   scene->AddLight(new PointLight(Point3(10, 8, 1), Color3(1, 1, 1)));
   scene->AddLight(new PointLight(Point3(-5, 4, 7), Color3(1, 1, 1)));
@@ -137,8 +157,8 @@ Scene* Scene::HorseScene() {
 }
 
 // static
-Scene* Scene::TestScene() {
-  Scene* scene = new Scene();
+Scene* Scene::TestScene(const raytracer::SceneConfig& config) {
+  Scene* scene = FromConfig(config);
 
   scene->AddLight(new PointLight(Point3(10, 8, 1), Color3(1, 1, 1)));
   scene->AddLight(new PointLight(Point3(-5, 4, 7), Color3(1, 1, 1)));

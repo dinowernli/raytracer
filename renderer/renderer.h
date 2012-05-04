@@ -19,7 +19,7 @@ class Shader;
 class Updatable;
 
 namespace raytracer {
-class Configuration;
+class RendererConfig;
 }
 
 class Renderer {
@@ -40,7 +40,7 @@ class Renderer {
 
   // Builds a new Renderer from configuration. The caller takes ownership of
   // the returned object.
-  static Renderer* FromConfig(const raytracer::Configuration& config);
+  static Renderer* FromConfig(const raytracer::RendererConfig& config);
 
  private:
   // Serves as the method passed to threads. It contains the rendering loop

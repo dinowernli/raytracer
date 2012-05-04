@@ -1,6 +1,17 @@
 package raytracer;
 
-message Configuration {
+message KdTreeConfig {
+}
+
+message SceneConfig {
+  // Absence of one of these means that no KdTree will be used.
+  optional KdTreeConfig kd_tree_config = 1;
+}
+
+message RendererConfig {
+  // The number of worker threads used in the renderer.
   optional uint32 threads = 1;
+
+  // Whether or not to ignore lights which are occluded.
   optional bool shadows = 2;
 }

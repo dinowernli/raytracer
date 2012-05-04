@@ -123,6 +123,8 @@ void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {
     }
   }
 
+  LOG(INFO) << "Building KdTree for " << root_->elements->size() << " elements";
+
   root_->Split(kInitialSplitAxis, 0, bounding_box_.get());
 }
 

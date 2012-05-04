@@ -35,7 +35,7 @@ void Mesh::CreateElements(std::vector<std::unique_ptr<Element>>* target) const {
     const Vertex* v3 = vertices_[it->v3_].get();
 
     Triangle* triangle = new Triangle(v1, v2, v3, material_);
-    DVLOG(2) << "Adding triangle " << *triangle;
+    DVLOG(3) << "Adding triangle " << *triangle;
     target->push_back(std::unique_ptr<Element>(triangle));
   }
 }
