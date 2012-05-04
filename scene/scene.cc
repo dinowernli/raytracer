@@ -61,16 +61,6 @@ bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
   return result;
 }
 
-void Scene::GetNonOccludedLights(const Point3& position,
-                                 std::vector<const Light*>* lights) const {
-  for(auto it = lights_.begin(); it != lights_.end(); ++it) {
-    Ray ray = it->get()->GenerateRay(position);
-    if (!Intersect(ray)) {
-      lights->push_back(it->get());
-    }
-  }
-}
-
 // static
 Scene* Scene::QuadricsScene() {
   Color3 black(0, 0, 0);

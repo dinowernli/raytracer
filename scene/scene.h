@@ -56,10 +56,6 @@ class Scene {
 
   bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
 
-  // Add all the lights to "lights" provided they are visible from "position".
-  void GetNonOccludedLights(const Point3& position,
-                            std::vector<const Light*>* lights) const;
-
   // Builds the Quadrics scene. The caller takes ownership of the pointer.
   static Scene* QuadricsScene();
 
@@ -68,6 +64,10 @@ class Scene {
 
   // Builds a test scene. The caller takes ownership of the pointer.
   static Scene* TestScene();
+
+  // TODO(dinow): Figure out how to return something which only allows iteration
+  // over const Light& (without an extra memory allocation).
+  const std::vector<std::unique_ptr<Light>>& lights() const { return lights_; }
 
  private:
   std::vector<std::unique_ptr<Element>> elements_;
