@@ -7,8 +7,15 @@
 #include "renderer/intersection_data.h"
 #include "util/ray.h"
 
+// Convenience method which creates a bounding box for a circle.
+static inline BoundingBox* MakeBoundingBox(const Point3& center, Scalar radius){
+  Vector3 offset(radius, radius, radius);
+  return &(new BoundingBox(center + offset))->Include(center - offset);
+}
+
 Sphere::Sphere(const Point3& center, Scalar radius, const Material* material)
-    : center_(center), radius_(radius), material_(material) {
+    : Element(MakeBoundingBox(center, radius)), center_(center),
+      radius_(radius), material_(material) {
 }
 
 Sphere::~Sphere() {
