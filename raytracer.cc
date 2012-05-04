@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
   // DVLOG(i): Only compiled in if DEBUG flag set, logged if log level is >= i.
   //
   // Always run "GLOG_logtostderr=1 ./build/raytracer" (assumed below).
-  // Run "GLOG_v=i ./build/raytracer" for verbose loggin up to level i.
+  // Run "GLOG_v=i ./build/raytracer" for verbose logging up to level i.
   google::InitGoogleLogging(argv[0]);
 
   std::unique_ptr<Scene> scene(Scene::QuadricsScene());
