@@ -144,7 +144,7 @@ Scene* Scene::HorseScene(const raytracer::SceneConfig& config) {
   scene->set_background(Color3(0.8, 0.9, 1));
   scene->set_ambient(Color3(0.02, 0.02, 0.02));
   scene->set_camera(new Camera(Point3(6.5, 1, 3), Vector3(-2.5, -0.3, -1),
-                               Vector3(0, 1, 0), 20, 100, 100));
+                               Vector3(0, 1, 0), 20, 500, 500));
 
   Color3 b(0, 0, 0);
   Material* blue = new Material(b, Color3(0, 0, 1), Color3(0.2, 0.5, 1),
