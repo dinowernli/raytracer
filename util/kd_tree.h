@@ -34,6 +34,11 @@ class KdTree {
   // been called, this returns false.
   bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
 
+  // Returns the total number of elements stored in all leaves of the tree.
+  // Note that this potentially elements multiple times if they were added to
+  // the left and to the right.
+  size_t NumElementsWithDuplicates() const;
+
  private:
   struct Node;
   std::unique_ptr<Node> root_;

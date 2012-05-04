@@ -21,6 +21,11 @@ struct KdTree::Node {
   // It is theoretically possible for leaves to have empty element vectors.
   bool IsLeaf() const { return left.get() == NULL && right.get() == NULL; }
 
+  size_t NumElements() const {
+    return IsLeaf() ? elements->size() :
+        left->NumElements() + right->NumElements();
+  }
+
   // Returns whether or not the ray intersects any of the elements. If data is
   // not NULL, data about the first intersection is stored.
   bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
@@ -101,6 +106,14 @@ KdTree::KdTree() {
 }
 
 KdTree::~KdTree() {
+}
+
+size_t KdTree::NumElementsWithDuplicates() const {
+  if (root_.get() == NULL) {
+    return 0;
+  } else {
+    return root_->NumElements();
+  }
 }
 
 void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {

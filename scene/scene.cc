@@ -51,6 +51,9 @@ void Scene::Init() {
     // TODO(dinow): Add the elements somewhere which are not part of the tree.
     LOG(WARNING) << "Ignoring all elements not in KdTree";
     kd_tree_->Init(elements_);
+
+    DVLOG(1) << "Built KdTree with " << kd_tree_->NumElementsWithDuplicates()
+             << " elements (with duplicates)";
   }
   DVLOG(1) << "Scene initialized.";
 }
