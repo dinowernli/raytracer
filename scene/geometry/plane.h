@@ -18,7 +18,7 @@ class Plane : public Element {
         const Material* material = NULL);
   virtual ~Plane();
 
-  virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL);
+  virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
 
   const Material* material() const;
 

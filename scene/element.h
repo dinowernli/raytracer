@@ -20,7 +20,8 @@ class Element {
 
   // Returns whether the ray intersects this element. If this returns true and
   // data != NULL, information about the first intersection is stored in data.
-  virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL) = 0;
+  virtual bool Intersect(const Ray& ray,
+                         IntersectionData* data = NULL) const = 0;
 
   // Returns NULL if the object has no bounding box.
   const BoundingBox* bounding_box() const { return bounding_box_.get(); }

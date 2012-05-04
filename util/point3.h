@@ -8,6 +8,7 @@
 #define POINT3_H_
 
 #include <cstddef>
+#include <stdexcept>
 
 #include "util/numeric.h"
 #include "util/vector3.h"
@@ -24,20 +25,27 @@ class Point3 {
     return Vector3(target.x_ - x_, target.y_ - y_, target.z_ - z_);
   }
 
-  const Scalar& x() { return x_; }
-  const Scalar& y() { return y_; }
-  const Scalar& z() { return z_; }
   const Scalar& x() const { return x_; }
   const Scalar& y() const { return y_; }
   const Scalar& z() const { return z_; }
 
   // TODO(dinow): Figure out how to enforce axis \in {0, 1, 2}.
-  Scalar operator[](size_t axis) const {
+  const Scalar& operator[](size_t axis) const {
     switch(axis) {
       case 0: return x_;
       case 1: return y_;
       case 2: return z_;
     }
+    throw std::invalid_argument("Accessing bad axis");
+  }
+
+  Scalar& operator[](size_t axis) {
+    switch(axis) {
+      case 0: return x_;
+      case 1: return y_;
+      case 2: return z_;
+    }
+    throw std::invalid_argument("Accessing bad axis");
   }
 
  private:

@@ -22,7 +22,7 @@ Sphere::~Sphere() {
 }
 
 // Solves the quadratic equation for ray-sphere intersection.
-bool Sphere::Intersect(const Ray& ray, IntersectionData* data) {
+bool Sphere::Intersect(const Ray& ray, IntersectionData* data) const {
   Vector3 center_to_origin = center_.VectorTo(ray.origin());
 
   Scalar aa = 2 * ray.direction().SquaredLength();

@@ -17,7 +17,7 @@ class Sphere : public Element {
   Sphere(const Point3& center, Scalar radius, const Material* material = NULL);
   virtual ~Sphere();
 
-  virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL);
+  virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
 
  private:
   Point3 center_;

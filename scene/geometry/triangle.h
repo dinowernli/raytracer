@@ -28,7 +28,7 @@ class Triangle : public Element {
   virtual ~Triangle();
   NO_COPY_ASSIGN(Triangle);
 
-  virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL);
+  virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
 
   const Vertex& vertex1() const { return *vertex1_; }
   const Vertex& vertex2() const { return *vertex2_; }

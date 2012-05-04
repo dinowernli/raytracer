@@ -30,7 +30,8 @@ class KdTree {
   void Init(const std::vector<std::unique_ptr<Element>>& elements);
 
   // Returns whether or not the ray intersects any of the elements. If data is
-  // not NULL, data about the first intersection is stored.
+  // not NULL, data about the first intersection is stored. If init has not
+  // been called, this returns false.
   bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
 
  private:

@@ -32,7 +32,7 @@ Triangle::~Triangle() {
   }
 }
 
-bool Triangle::Intersect(const Ray& ray, IntersectionData* data) {
+bool Triangle::Intersect(const Ray& ray, IntersectionData* data) const {
   Vector3 edge12(vertex1_->point().VectorTo(vertex2_->point()));
   Vector3 edge13(vertex1_->point().VectorTo(vertex3_->point()));
 

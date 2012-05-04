@@ -15,7 +15,7 @@ Plane::Plane(const Point3& point, const Vector3& normal,
 Plane::~Plane() {
 }
 
-bool Plane::Intersect(const Ray& ray, IntersectionData* data) {
+bool Plane::Intersect(const Ray& ray, IntersectionData* data) const {
   Scalar denominator = ray.direction().Dot(normal_);
   Scalar t = - normal_.Dot(point_.VectorTo(ray.origin())) / denominator;
 
