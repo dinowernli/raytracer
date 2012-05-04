@@ -35,6 +35,9 @@ class Mesh {
   // produced triangles.
   void CreateElements(std::vector<std::unique_ptr<Element>>* target) const;
 
+  // Moves and scales all vertices in place relative to the current center.
+  void Transform(Scalar scale, const Vector3& translation);
+
   // Does not take ownership of the passed material.
   void set_material(const Material* material) { material_ = material; }
 

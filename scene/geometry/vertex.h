@@ -24,7 +24,10 @@ class Vertex {
   }
 
   const Point3& point() const { return point_; }
+  void set_point(const Point3& point) { point_ = point; }
+
   const Vector3& normal() const { return normal_; }
+  void set_normal(const Vector3& normal) { normal_ = normal; }
 
  private:
   Point3 point_;

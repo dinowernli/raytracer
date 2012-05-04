@@ -8,6 +8,7 @@
 
 #include "scene/element.h"
 #include "scene/geometry/triangle.h"
+#include "util/bounding_box.h"
 #include "util/point3.h"
 #include "util/vector3.h"
 
@@ -37,5 +38,29 @@ void Mesh::CreateElements(std::vector<std::unique_ptr<Element>>* target) const {
     Triangle* triangle = new Triangle(v1, v2, v3, material_);
     DVLOG(3) << "Adding triangle " << *triangle;
     target->push_back(std::unique_ptr<Element>(triangle));
+  }
+}
+
+void Mesh::Transform(Scalar scale, const Vector3& translation) {
+  if (vertices_.size() == 0) {
+    return;
+  }
+
+  // TODO(dinow): This is a quick, dirty and inefficient way of mimicing the
+  // behavior of the original mesh loader in order to get identical scenes.
+  // Make this more intuitive/better might be worthwile.
+  BoundingBox box(vertices_[0]->point());
+  for (size_t i = 1; i < vertices_.size(); ++i) {
+    box.Include(vertices_[i]->point());
+  }
+
+  Point3 center = box.min() + 0.5 * (box.min().VectorTo(box.max()));
+  Scalar radius = Point3::SquaredDistance(center, box.max());
+
+  for (size_t i = 0; i < vertices_.size(); ++i) {
+    Vertex& vertex = *(vertices_[i]);
+    const Vector3 center_vector = center.VectorFromOrigin();
+    const Scalar factor = scale / radius;
+    vertex.set_point(factor * (vertex.point() - center_vector) + translation);
   }
 }

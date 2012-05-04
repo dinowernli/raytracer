@@ -7,6 +7,8 @@
 #ifndef POINT3_H_
 #define POINT3_H_
 
+#include <cmath>
+
 #include "util/axis.h"
 #include "util/numeric.h"
 #include "util/vector3.h"
@@ -21,6 +23,11 @@ class Point3 {
   // Returns a vector from *this to target.
   Vector3 VectorTo(const Point3& target) const {
     return Vector3(target.x_ - x_, target.y_ - y_, target.z_ - z_);
+  }
+
+  // Returns a vector from the origin to this point.
+  Vector3 VectorFromOrigin() const {
+    return Vector3(x_, y_, z_);
   }
 
   const Scalar& x() const { return x_; }
@@ -47,9 +54,22 @@ class Point3 {
     }
   }
 
+  static Scalar SquaredDistance(const Point3& first, const Point3& second) {
+    return first.VectorTo(second).SquaredLength();
+  }
+
+  static Scalar Distance(const Point3& first, const Point3& second) {
+    return sqrt(SquaredDistance(first, second));
+  }
+
  private:
   Scalar x_, y_, z_;
 };
+
+inline Point3 operator*(const Scalar& lhs, const Point3& rhs)
+{
+  return Point3(lhs * rhs.x(), lhs * rhs.y(), lhs * rhs.z());
+}
 
 inline Point3 operator+(const Point3& lhs, const Vector3& rhs)
 {
