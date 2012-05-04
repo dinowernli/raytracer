@@ -11,11 +11,14 @@
 
 class PhongShader : public Shader {
  public:
-  PhongShader();
+  PhongShader(bool shadows = true);
   virtual ~PhongShader();
   NO_COPY_ASSIGN(PhongShader);
 
   virtual Color3 Shade(const IntersectionData& data, const Scene& scene);
+
+ private:
+  bool shadows_;
 };
 
 #endif  /* PHONG_SHADER_H_ */

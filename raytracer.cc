@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
 
   raytracer::Configuration config;
   config.set_threads(4);
+  config.set_shadows(true);
 
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(config));
   renderer->AddListener(new PpmExporter("output/test.ppm"));

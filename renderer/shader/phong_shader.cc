@@ -13,7 +13,7 @@
 #include "scene/point_light.h"
 #include "scene/scene.h"
 
-PhongShader::PhongShader() {
+PhongShader::PhongShader(bool shadows) : shadows_(shadows) {
 }
 
 PhongShader::~PhongShader() {
@@ -41,9 +41,7 @@ Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
 
   for (auto it = lights.begin(); it != lights.end(); ++it) {
     const Light* light = it->get();
-
-    // Only consider lights which are not occluded in order to get shadows.
-    if (IsOccluded(scene, *light, data.position)) {
+    if (shadows_ && IsOccluded(scene, *light, data.position)) {
       continue;
     }
 

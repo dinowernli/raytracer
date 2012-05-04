@@ -2,4 +2,5 @@ package raytracer;
 
 message Configuration {
   optional uint32 threads = 1;
+  optional bool shadows = 2;
 }
