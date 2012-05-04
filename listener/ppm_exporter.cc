@@ -4,6 +4,7 @@
 
 #include "listener/ppm_exporter.h"
 
+#include <glog/logging.h>
 #include <fstream>
 
 #include "renderer/sampler/sampler.h"
@@ -26,6 +27,8 @@ void PpmExporter::Update(const Sampler& sampler) {
   if (!sampler.IsDone()) {
     return;
   }
+
+  LOG(INFO) << "Exporting image " << file_name_;
 
   const Image& image = sampler.image();
   std::ofstream file_stream(file_name_);
