@@ -86,7 +86,6 @@ void Renderer::Render(Scene* scene) {
 
 void Renderer::WorkerMain() {
   const Camera* camera = &scene_->camera();
-
   std::vector<Sample> samples(sampler_->MaxJobSize());
 
   size_t n_samples = 0;

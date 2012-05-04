@@ -33,22 +33,13 @@ class Sampler {
     }
   }
 
-  // Returns whether there is a next sample to be traced. If it returns true,
-  // then the next sample is stored in 'sample', the color of the sample is set
-  // to black.
-  virtual bool NextSample(Sample* sample) = 0;
+  // Returns the maximum size of a rendering job provided by NextJob.
+  virtual size_t MaxJobSize() const = 0;
 
   // Fills at most the first MaxJobSize() samples with new samples to be traced.
   // Expects the passed vector to be large enough already. Returns the number of
   // new jobs which were filled into the (beginning of the) vector.
   virtual size_t NextJob(std::vector<Sample>* samples) = 0;
-
-  // Indicated the maximum size of a rendering job which is fetched by the
-  // NextJob method.
-  virtual size_t MaxJobSize() const = 0;
-
-  // Stores the color of the sample in the image.
-  virtual void AcceptSample(const Sample& sample) = 0;
 
   // Writes the colors of the first n elements of "samples" into the image.
   virtual void AcceptJob(const std::vector<Sample>& samples, size_t n) = 0;

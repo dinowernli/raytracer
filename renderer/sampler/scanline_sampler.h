@@ -23,13 +23,9 @@ class ScanlineSampler : public Sampler {
   // Not made thread safe, expected to be called only once.
   virtual void Init(const Camera* camera);
 
-  virtual bool NextSample(Sample* sample);
-
   virtual size_t MaxJobSize() const { return kJobSize; }
 
   virtual size_t NextJob(std::vector<Sample>* samples);
-
-  virtual void AcceptSample(const Sample& sample);
 
   virtual void AcceptJob(const std::vector<Sample>& samples, size_t n);
 
@@ -38,11 +34,9 @@ class ScanlineSampler : public Sampler {
   virtual double Progress() const;
 
  private:
-  // Non-thread-safe version of NextSample which is used to fetch entire jobs.
+  // Helper method which fetches the next sample. Returns true if the new sample
+  // was successfully stored in sample, and false if there are no samples left.
   bool InternalNextSample(Sample* sample);
-
-  // Non-thread-safe version of AcceptSample.
-  void InternalAcceptSample(const Sample& sample);
 
   // Iteration variables for the scan line.
   size_t current_x_;

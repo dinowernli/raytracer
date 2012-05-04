@@ -59,40 +59,22 @@ size_t ScanlineSampler::NextJob(std::vector<Sample>* samples) {
   return jobs_added;
 }
 
-bool ScanlineSampler::NextSample(Sample* sample) {
-  std::unique_lock<std::mutex> guard;
-  if (thread_safe_) {
-    guard = std::move(std::unique_lock<std::mutex>(lock_));
-  }
-  return InternalNextSample(sample);
-}
-
-void ScanlineSampler::InternalAcceptSample(const Sample& sample) {
-  // The point (0, 0) in sample space is at the bottom left corner. However, in
-  // image space, (0, 0) represents the top left corner. Therefore, we must flip
-  // the y-coordinate when writing the color.
-  const size_t image_y = image_->SizeY() - sample.y() - 1;
-  image_->PutPixel(sample.color(), sample.x(), image_y);
-  ++accepted_;
-}
-
-void ScanlineSampler::AcceptSample(const Sample& sample) {
-  std::unique_lock<std::mutex> guard;
-  if (thread_safe_) {
-    guard = std::move(std::unique_lock<std::mutex>(lock_));
-  }
-  InternalAcceptSample(sample);
-}
-
 void ScanlineSampler::AcceptJob(const std::vector<Sample>& samples, size_t n) {
+  for (size_t i = 0; i < n; ++i) {
+    // The point (0, 0) in sample space is at the bottom left corner. However, in
+    // image space, (0, 0) represents the top left corner. Therefore, we must flip
+    // the y-coordinate when writing the color.
+    const Sample& sample = samples[i];
+    const size_t image_y = image_->SizeY() - sample.y() - 1;
+    image_->PutPixel(sample.color(), sample.x(), image_y);
+  }
+
+  // Only lock here because the code above is thread-safe.
   std::unique_lock<std::mutex> guard;
   if (thread_safe_) {
     guard = std::move(std::unique_lock<std::mutex>(lock_));
   }
-
-  for (size_t i = 0; i < n; ++i) {
-    InternalAcceptSample(samples[i]);
-  }
+  accepted_ += n;
 }
 
 double ScanlineSampler::Progress() const {
@@ -100,8 +82,11 @@ double ScanlineSampler::Progress() const {
   if (total_size == 0) {
     return 1;
   }
+
+  // TODO(dinow): Access to "accepted_" might have to be protected by a lock.
   return double(accepted_) / (image_->SizeX() * image_->SizeY());
 }
 
 // static
-const size_t ScanlineSampler::kJobSize = 256;
+// TODO(dinow): Figure out a decent job size by benchmarking.
+const size_t ScanlineSampler::kJobSize = 8;

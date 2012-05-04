@@ -19,7 +19,11 @@ class Sample {
   // Creates a sample of size 1 at (0, 0). The color defaults to black.
   Sample() : x_(0), y_(0), size_x_(1), size_y_(1) { };
   ~Sample() { }
-  NO_COPY_ASSIGN(Sample);
+
+  // TODO(dinow): Somehow, WorkerMain() in renderer.cc seems to indicate that
+  // std::vector requires this class to have a copy constructor. Possibly
+  // uncomment after further investigation.
+  // NO_COPY_ASSIGN(Sample);
 
   const Color3& color() const { return color_; }
   const size_t& x() const { return x_; }
