@@ -29,6 +29,15 @@ class Point3 {
   const Scalar& y() const { return y_; }
   const Scalar& z() const { return z_; }
 
+  // TODO(dinow): Figure out how to enforce axis \in {0, 1, 2}.
+  Scalar operator[](size_t axis) const {
+    switch(axis) {
+      case 0: return x_;
+      case 1: return y_;
+      case 2: return z_;
+    }
+  }
+
  private:
   Scalar x_, y_, z_;
 };
