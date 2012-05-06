@@ -23,29 +23,18 @@ void Camera::ComputeOrientation(const Vector3& view, const Vector3& up) {
   view_ = view.Normalized();
   right_ = (view_.Cross(up)).Normalized();
   up_ = (right_.Cross(view_)).Normalized();
-
-  DVLOG(2) << "Camera:";
-  DVLOG(2) << "\tup: " << up_;
-  DVLOG(2) << "\tdir: " << view_;
-  DVLOG(2) << "\tright: " << right_;
 }
 
 Vector3 Camera::ToWorld(const Vector3& vector) const {
-  // Execute the matrix multiplication M* [vector; 1] where M =
-  // [  right.x,  right.y,  right.z,  0
-  //    up.x,     up.y,     up.z,     0
-  //    dir.x,    dir.y,    dir.z,    0
-  //    0,        0,        0,        1   ].
+  // Execute the matrix multiplication M * [vector; 1] where M =
+  // [ right.x,  up.x,  view.x,  0
+  //   right.y,  up.y,  view.y,  0
+  //   right.z,  up.z,  view.z,  0
+  //   0,        0,     0,       1 ].
   // Note that we use [vector; 1] because we are transforming a direction and
   // not a point.
-
-  // TODO(dinow): Possibly precompute these, since they do not depend on vector.
-  Vector3 col1(right_.x(), up_.x(), view_.x());
-  Vector3 col2(right_.y(), up_.y(), view_.y());
-  Vector3 col3(right_.z(), up_.z(), view_.z());
-
-  Vector3 result = vector.x() * col1 + vector.y() * col2 + vector.z() * col3;
-  return result.Normalized();
+  Vector3 result = vector.x() * right_ + vector.y() * up_ + vector.z() * view_;
+  return result.Normalize();
 }
 
 Ray Camera::GenerateRay(const Sample& sample) const {
@@ -57,8 +46,10 @@ Ray Camera::GenerateRay(const Sample& sample) const {
   Scalar tangent = 2 * tan(opening_angle_ * PI / 180.0);
   Scalar factor = tangent / resolution_y_;
 
-  Scalar dx = (image_x - resolution_x_ / 2.0) * factor;
-  Scalar dy = (image_y - resolution_y_ / 2.0) * factor;
+  // TODO(dinow): The 2s belows should be 2.0 because of integer rounding.
+  // Right now, it's 2 to compare with the old raytracer.
+  Scalar dx = (image_x - resolution_x_ / 2) * factor;
+  Scalar dy = (image_y - resolution_y_ / 2) * factor;
 
   // Convert image coordinates to world coordinates.
   Vector3 camera_coords(dx, dy, 1);

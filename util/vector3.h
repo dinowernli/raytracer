@@ -63,8 +63,8 @@ class Vector3 {
   }
 
   // Normalize the vector in place.
-  void Normalize() {
-    (*this) /= Length();
+  Vector3& Normalize() {
+    return ((*this) /= Length());
   }
 
   // Returns the cross product of *this times other.
