@@ -47,19 +47,19 @@ void Scene::AddMesh(Mesh* mesh) {
 
 void Scene::Init() {
   DVLOG(1) << "Initializing scene with " << elements_.size() << " elements";
-  if(kd_tree_.get() != NULL) {
+  if(UsesKdTree()) {
     // TODO(dinow): Add the elements somewhere which are not part of the tree.
     LOG(WARNING) << "Ignoring all elements not in KdTree";
     kd_tree_->Init(elements_);
 
-    DVLOG(1) << "Built KdTree with " << kd_tree_->NumElementsWithDuplicates()
-             << " elements (with duplicates)";
+    LOG(INFO) << "Built KdTree with " << kd_tree_->NumElementsWithDuplicates()
+              << " elements (including duplicates)";
   }
-  DVLOG(1) << "Scene initialized.";
+  LOG(INFO) << "Scene initialized";
 }
 
 bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
-  if(kd_tree_.get() != NULL) {
+  if(UsesKdTree()) {
     return kd_tree_->Intersect(ray, data);
   } else {
     bool result = false;
@@ -77,8 +77,6 @@ bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
 
 // static
 Scene* Scene::FromConfig(const raytracer::SceneConfig& config) {
-  DVLOG(2) << "SceneConfig has KdTreeConfig: " << config.has_kd_tree_config();
-
   KdTree* tree = config.has_kd_tree_config() ? new KdTree() : NULL;
   return new Scene(tree);
 }
@@ -144,7 +142,7 @@ Scene* Scene::HorseScene(const raytracer::SceneConfig& config) {
   scene->set_background(Color3(0.8, 0.9, 1));
   scene->set_ambient(Color3(0.02, 0.02, 0.02));
   scene->set_camera(new Camera(Point3(6.5, 1, 3), Vector3(-2.5, -0.3, -1),
-                               Vector3(0, 1, 0), 20, 100, 100));
+                               Vector3(0, 1, 0), 20, 500, 500));
 
   Color3 b(0, 0, 0);
   Material* blue = new Material(b, Color3(0, 0, 1), Color3(0.2, 0.5, 1),

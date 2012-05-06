@@ -31,6 +31,12 @@ struct KdTree::Node {
   bool Intersect(const Ray& ray, Scalar t_near, Scalar t_far,
                  IntersectionData* data = NULL) const;
 
+  bool OwnRecursiveIntersect(const Ray& ray, Scalar t_near, Scalar t_far,
+                             IntersectionData* data = NULL) const;
+
+  bool NevRecursiveIntersect(const Ray& ray, Scalar t_near, Scalar t_far,
+                             IntersectionData* data = NULL) const;
+
   std::unique_ptr<std::vector<const Element*>> elements;
   std::unique_ptr<Node> left;
   std::unique_ptr<Node> right;
@@ -84,11 +90,73 @@ void KdTree::Node::Split(Axis axis, size_t depth, const BoundingBox* box) {
   CHECK(!IsLeaf()) << "KdTree node still leaf after split";
 }
 
-bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near, Scalar t_far,
-                             IntersectionData* data) const {
-  bool intersected;
+bool KdTree::Node::OwnRecursiveIntersect(const Ray& ray, Scalar t_near,
+    Scalar t_far, IntersectionData* data) const {
   if (IsLeaf()) {
-    intersected = false;
+    bool intersected = false;
+    for (size_t i = 0; i < elements->size(); ++i) {
+      intersected = intersected | elements->at(i)->Intersect(ray, data);
+      if (intersected && data == NULL) {
+        return true;
+      }
+    }
+    return intersected;
+  }
+
+  Scalar ray_direction_axis = ray.direction()[split_axis];
+  Scalar ray_origin_axis = ray.origin()[split_axis];
+  bool is_origin_left = (ray_origin_axis <= split_position);
+
+  // If ray is parallel to split axis, anyting the ray intersects with will
+  // have to be on the side of the origin.
+  if (ray_direction_axis == 0) {
+    if (is_origin_left) {
+      return left->Intersect(ray, t_near, t_far, data);
+    } else {
+      return right->Intersect(ray, t_near, t_far, data);
+    }
+  }
+
+  // The near child is the child which is closer to the ray's origin in split
+  // coordinates. The far child is the other one.
+  const Node* near = is_origin_left ? left.get() : right.get();
+  const Node* far = is_origin_left ? right.get() : left.get();
+
+  Scalar t_split = (split_position - ray_origin_axis) / ray_origin_axis;
+  if (t_split > t_far) {
+    return near->Intersect(ray, t_near, t_far, data);
+  } else if (t_split < t_near) {
+    // TODO(dinow): Divergence between nev's implementation and mine. Need to
+    // investigate further.
+    /*
+    if (ray.PointAt(t_near)[split_axis] < split_position) {
+      return left->Intersect(ray, t_near, t_far, data);
+    } else {
+      return right->Intersect(ray, t_near, t_far, data);
+    }
+    */
+
+    // TODO(dinow): It looks like the above is equivalent to the following
+    // because this is simply the near/far test again using the point at t_near
+    // instead of the origin.
+    return far->Intersect(ray, t_near, t_far, data);
+  } else {
+    // This is the case t_near <= t_split <= t_far. Test both children.
+    DVLOG(2) << "Intersecting both children";
+    bool intersected = false;
+    if ((intersected = near->Intersect(ray, t_near, t_split))
+        && (data == NULL || data->t < t_split)) {
+      return true;
+    } else {
+      return far->Intersect(ray, t_split, t_far, data) || intersected;
+    }
+  }
+}
+
+bool KdTree::Node::NevRecursiveIntersect(const Ray& ray, Scalar t_near,
+    Scalar t_far, IntersectionData* data) const {
+  if (IsLeaf()) {
+    bool intersected = false;
     for (size_t i = 0; i < elements->size(); ++i) {
       intersected = intersected | elements->at(i)->Intersect(ray, data);
       if (intersected && data == NULL) {
@@ -111,7 +179,7 @@ bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near, Scalar t_far,
     }
   }
 
-  intersected = false;
+  bool intersected = false;
 
   // Determine where on the ray the split happens.
   Scalar t_split = (split_position - ray_origin_axis) / ray_direction_axis;
@@ -134,6 +202,14 @@ bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near, Scalar t_far,
     intersected = second->Intersect(ray, t_split, t_far, data) || intersected;
   }
   return intersected;
+}
+
+
+bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near, Scalar t_far,
+                             IntersectionData* data) const {
+  // TODO(dinow): Debug implementations and clean this up.
+  //return OwnRecursiveIntersect(ray, t_near, t_far, data);
+  return NevRecursiveIntersect(ray, t_near, t_far, data);
 }
 
 KdTree::KdTree() {

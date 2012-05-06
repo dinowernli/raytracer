@@ -56,6 +56,8 @@ class Scene {
   void set_refraction_index(Scalar index) { refraction_index_ = index; }
   Scalar refraction_index() const { return refraction_index_; }
 
+  bool UsesKdTree() const { return kd_tree_.get() != NULL; }
+
   // Prepares the scene, builds data structures etc. Must be called before
   // before querying for intersections. If anything is added to the scene after
   // a call to Init(), it might be ignored until the next Init() call.
