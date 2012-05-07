@@ -80,7 +80,7 @@ void KdTree::Node::Split(Axis axis, size_t depth, const BoundingBox* box) {
   BoundingBox left_box(box->min(), left_max);
   left->Split(axis.Next(), depth + 1, &left_box);
 
-  Point3 right_min = box->max();
+  Point3 right_min = box->min();
   right_min[axis] = split_position;
   BoundingBox right_box(right_min, box->max());
   right->Split(axis.Next(), depth + 1, &right_box);
@@ -128,18 +128,18 @@ bool KdTree::Node::OwnRecursiveIntersect(const Ray& ray, Scalar t_near,
   } else if (t_split < t_near) {
     // TODO(dinow): Divergence between nev's implementation and mine. Need to
     // investigate further.
-    /*
+
     if (ray.PointAt(t_near)[split_axis] < split_position) {
       return left->Intersect(ray, t_near, t_far, data);
     } else {
       return right->Intersect(ray, t_near, t_far, data);
     }
-    */
+
 
     // TODO(dinow): It looks like the above is equivalent to the following
     // because this is simply the near/far test again using the point at t_near
     // instead of the origin.
-    return far->Intersect(ray, t_near, t_far, data);
+    //return far->Intersect(ray, t_near, t_far, data);
   } else {
     // This is the case t_near <= t_split <= t_far. Test both children.
     DVLOG(2) << "Intersecting both children";
@@ -194,22 +194,19 @@ bool KdTree::Node::NevRecursiveIntersect(const Ray& ray, Scalar t_near,
     return first->Intersect(ray, t_near, t_far, data);
   } else if (t_split < t_near) {
     return second->Intersect(ray, t_near, t_far, data);
-  } else if ((intersected |= first->Intersect(ray, t_near, t_split, data))) {
-    if (data == NULL || data->t < t_split) {
+  } else if ((intersected = first->Intersect(ray, t_near, t_split, data))
+             && (data == NULL || data->t < t_split)) {
       return true;
-    }
   } else {
-    intersected = second->Intersect(ray, t_split, t_far, data) || intersected;
+    return second->Intersect(ray, t_split, t_far, data) || intersected;
   }
-  return intersected;
 }
-
 
 bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near, Scalar t_far,
                              IntersectionData* data) const {
   // TODO(dinow): Debug implementations and clean this up.
-  return OwnRecursiveIntersect(ray, t_near, t_far, data);
-  //return NevRecursiveIntersect(ray, t_near, t_far, data);
+  //return OwnRecursiveIntersect(ray, t_near, t_far, data);
+  return NevRecursiveIntersect(ray, t_near, t_far, data);
 }
 
 KdTree::KdTree() {
