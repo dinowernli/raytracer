@@ -261,7 +261,6 @@ bool KdTree::Intersect(const Ray& ray, IntersectionData* data) const {
 
   Scalar t_near, t_far;
   if (!bounding_box_->Intersect(ray, &t_near, &t_far)) {
-  //if (!bounding_box_->IntersectVoodoo(ray, &t_near, &t_far)) {
     DVLOG(2) << "Bounding box did not intersect";
     return false;
   }

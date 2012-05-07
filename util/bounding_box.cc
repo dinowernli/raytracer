@@ -35,49 +35,9 @@ BoundingBox& BoundingBox::Include(const Point3& point) {
 }
 
 BoundingBox& BoundingBox::Include(const BoundingBox& other) {
-  DVLOG(4) << "Bounding box include: ";
-  DVLOG(4) << "\tThis: " << *this;
-  DVLOG(4) << "\tOther: " << other;
   Include(other.min());
   Include(other.max());
-  DVLOG(4) << "\tFinal: " << *this;
   return *this;
-}
-
-bool BoundingBox::IntersectVoodoo(const Ray& ray, Scalar* t_near,
-                                  Scalar* t_far) const {
-  Scalar tmin = ray.min_t();
-  Scalar tmax = ray.max_t();
-  Axis axes[] = {Axis::x(), Axis::y(), Axis::z()};
-  for (int i = 0; i < 3; ++i) {
-    Axis a = axes[i];
-
-    Scalar ray_origin = ray.origin()[a];
-    Scalar ray_direction = ray.direction()[a];
-    if (ray_direction == 0) {
-      if (min()[a] > ray_origin || max()[a] < ray_origin) {
-        return false;
-      }
-      continue;
-    }
-
-    Scalar tlower = (min()[a] - ray_origin) / ray_direction;
-    Scalar tupper = (max()[a] - ray_origin) / ray_direction;
-
-    Scalar tentry = std::min(tlower, tupper);
-    Scalar texit = std::max(tlower, tupper);
-
-    tmin = std::max(tmin, tentry);
-    tmax = std::min(tmax, texit);
-
-    if (tmin > tmax) {
-      return false;
-    }
-  }
-
-  *t_near = tmin;
-  *t_far = tmax;
-  return true;
 }
 
 bool BoundingBox::Intersect(const Ray& ray, Scalar* t_near,
@@ -85,15 +45,15 @@ bool BoundingBox::Intersect(const Ray& ray, Scalar* t_near,
   *t_near = -std::numeric_limits<Scalar>::infinity();
   *t_far = std::numeric_limits<Scalar>::infinity();
 
-  bool intersected = AxisIntersect(Axis::x(), ray, t_near, t_far)
-        && AxisIntersect(Axis::y(), ray, t_near, t_far)
-        && AxisIntersect(Axis::z(), ray, t_near, t_far)
-        && (!(*t_far < ray.min_t()))  && (!(*t_near > ray.max_t()));
+  Axis axes[3] = { Axis::x(), Axis::y(), Axis::z() };
+  for(size_t i = 0; i < 3; ++i) {
+    if (!AxisIntersect(axes[i], ray, t_near, t_far)) {
+      return false;
+    }
+  }
 
-  DVLOG(2) << "t_near: " << *t_near << ", t_far: " << *t_far
-           << ", intersected: " << intersected;
-
-  return intersected;
+  // Only return true if the [t_near, t_far] overlaps with [ray_min, ray_max].
+  return (*t_far >= ray.min_t()) || (*t_near <= ray.max_t());
 }
 
 bool BoundingBox::AxisIntersect(Axis axis, const Ray& ray,
@@ -118,7 +78,6 @@ bool BoundingBox::AxisIntersect(Axis axis, const Ray& ray,
     if (t2 < *t_far) *t_far = t2;
 
     if (*t_near > *t_far) {
-      DVLOG(3) << "Missed box entirely";
       return false;
     }
   }

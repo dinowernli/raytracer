@@ -33,8 +33,6 @@ class BoundingBox {
   // only one intersection point, it is stored in both.
   bool Intersect(const Ray& ray, Scalar* t_near, Scalar* t_far) const;
 
-  bool IntersectVoodoo(const Ray& ray, Scalar* t_near, Scalar* t_far) const;
-
   Point3 min() const { return Point3(xmin_, ymin_, zmin_); }
   Point3 max() const { return Point3(xmax_, ymax_, zmax_); }
 
