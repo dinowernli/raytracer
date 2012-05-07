@@ -44,6 +44,42 @@ BoundingBox& BoundingBox::Include(const BoundingBox& other) {
   return *this;
 }
 
+bool BoundingBox::IntersectVoodoo(const Ray& ray, Scalar* t_near,
+                                  Scalar* t_far) const {
+  Scalar tmin = ray.min_t();
+  Scalar tmax = ray.max_t();
+  Axis axes[] = {Axis::x(), Axis::y(), Axis::z()};
+  for (int i = 0; i < 3; ++i) {
+    Axis a = axes[i];
+
+    Scalar ray_origin = ray.origin()[a];
+    Scalar ray_direction = ray.direction()[a];
+    if (ray_direction == 0) {
+      if (min()[a] > ray_origin || max()[a] < ray_origin) {
+        return false;
+      }
+      continue;
+    }
+
+    Scalar tlower = (min()[a] - ray_origin) / ray_direction;
+    Scalar tupper = (max()[a] - ray_origin) / ray_direction;
+
+    Scalar tentry = std::min(tlower, tupper);
+    Scalar texit = std::max(tlower, tupper);
+
+    tmin = std::max(tmin, tentry);
+    tmax = std::min(tmax, texit);
+
+    if (tmin > tmax) {
+      return false;
+    }
+  }
+
+  *t_near = tmin;
+  *t_far = tmax;
+  return true;
+}
+
 bool BoundingBox::Intersect(const Ray& ray, Scalar* t_near,
                             Scalar* t_far) const {
   *t_near = -std::numeric_limits<Scalar>::infinity();

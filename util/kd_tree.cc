@@ -208,8 +208,8 @@ bool KdTree::Node::NevRecursiveIntersect(const Ray& ray, Scalar t_near,
 bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near, Scalar t_far,
                              IntersectionData* data) const {
   // TODO(dinow): Debug implementations and clean this up.
-  //return OwnRecursiveIntersect(ray, t_near, t_far, data);
-  return NevRecursiveIntersect(ray, t_near, t_far, data);
+  return OwnRecursiveIntersect(ray, t_near, t_far, data);
+  //return NevRecursiveIntersect(ray, t_near, t_far, data);
 }
 
 KdTree::KdTree() {
@@ -264,9 +264,11 @@ bool KdTree::Intersect(const Ray& ray, IntersectionData* data) const {
 
   Scalar t_near, t_far;
   if (!bounding_box_->Intersect(ray, &t_near, &t_far)) {
+  //if (!bounding_box_->IntersectVoodoo(ray, &t_near, &t_far)) {
     DVLOG(2) << "Bounding box did not intersect";
     return false;
   }
+
   return root_->Intersect(ray, t_near, t_far, data);
 }
 
