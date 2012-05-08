@@ -1,6 +1,8 @@
 /*
- * A 3D hierarchical intersection data structure. Elements are only contained
- * in leaves of the tree.
+ * A 3D hierarchical intersection data structure which accepts all elements,
+ * including elements which are not spacially bounded. The latter are held in a
+ * separate structure and are considered during intersection. Elements are only
+ * contained in leaves of the tree.
  *
  * TODO(dinow): Extract some sort of SplittingStrategy notion.
  *
@@ -27,7 +29,6 @@ class KdTree {
 
   // Builds a tree which contains pointers to the passed elements. No ownership
   // is taken for any of the elements, none of the elements will be changed.
-  // Only elements which are bounded will be incorporated in the tree.
   void Init(const std::vector<std::unique_ptr<Element>>& elements);
 
   // Returns whether or not the ray intersects any of the elements. If data is
@@ -35,15 +36,20 @@ class KdTree {
   // been called, this returns false.
   bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
 
-  // Returns the total number of elements stored in all leaves of the tree.
-  // Note that this potentially elements multiple times if they were added to
-  // the left and to the right.
-  size_t NumElementsWithDuplicates() const;
-
  private:
   struct Node;
   std::unique_ptr<Node> root_;
+
+  // Returns the total number of elements stored in all leaves of the tree.
+  // Note that this potentially elements multiple times if they were added to
+  // the left and to the right.
+  size_t NumElementsInLeaves() const;
+
+  // A bounding box which contains all bounded elements of the tree.
   std::unique_ptr<BoundingBox> bounding_box_;
+
+  // A separate container for all elements which are not bounded.
+  std::vector<const Element*> unbounded_elements_;
 
   // TODO(dinow): Create an enum for axis somewhere.
   const static Axis kInitialSplitAxis;

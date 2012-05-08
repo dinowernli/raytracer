@@ -48,12 +48,7 @@ void Scene::AddMesh(Mesh* mesh) {
 void Scene::Init() {
   DVLOG(1) << "Initializing scene with " << elements_.size() << " elements";
   if(UsesKdTree()) {
-    // TODO(dinow): Add the elements somewhere which are not part of the tree.
-    LOG(WARNING) << "Ignoring all elements not in KdTree";
     kd_tree_->Init(elements_);
-
-    LOG(INFO) << "Built KdTree with " << kd_tree_->NumElementsWithDuplicates()
-              << " elements (including duplicates)";
   }
   LOG(INFO) << "Scene initialized";
 }
@@ -64,9 +59,7 @@ bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
   } else {
     bool result = false;
     for (auto it = elements_.begin(); it != elements_.end(); ++it) {
-      result = result | it->get()->Intersect(ray, data);
-
-      // Only return early if data is irrelevant.
+      result = it->get()->Intersect(ray, data) | result;
       if (result && data == NULL) {
         return true;
       }
@@ -147,7 +140,12 @@ Scene* Scene::HorseScene(const raytracer::SceneConfig& config) {
   Color3 b(0, 0, 0);
   Material* blue = new Material(b, Color3(0, 0, 1), Color3(0.2, 0.5, 1),
                                 Color3(0, 0, 0.3));
+  Material* green = new Material(b, Color3(0, 0.1, 0), Color3(0, 0.5, 0),
+                                 Color3(0, 0.3, 0));
+  scene->AddMaterial(green);
   scene->AddMaterial(blue);
+
+  scene->AddElement(new Plane(Point3(0, -1.5, 0), Vector3(0, 1, 0), green));
 
   MeshParser parser;
   Mesh* horse = parser.LoadFile("data/mesh/horse.obj");

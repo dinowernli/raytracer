@@ -10,6 +10,21 @@
 #include "scene/element.h"
 #include "util/ray.h"
 
+// Convenience method which takes care of linearly testing all elements for
+// intersection.
+static bool LinearIntersect(const std::vector<const Element*>& elements,
+                            const Ray& ray, IntersectionData* data) {
+  bool intersected = false;
+  for (size_t i = 0; i < elements.size(); ++i) {
+    intersected = elements[i]->Intersect(ray, data) | intersected;
+    if (intersected && data == NULL) {
+      return true;
+    }
+  }
+  return intersected;
+}
+
+
 struct KdTree::Node {
   // Creates an empty leaf. Sets axis to X.
   Node();
@@ -87,14 +102,7 @@ void KdTree::Node::Split(Axis axis, size_t depth, const BoundingBox* box) {
 bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near,
     Scalar t_far, IntersectionData* data) const {
   if (IsLeaf()) {
-    bool intersected = false;
-    for (size_t i = 0; i < elements->size(); ++i) {
-      intersected = intersected | elements->at(i)->Intersect(ray, data);
-      if (intersected && data == NULL) {
-        return true;
-      }
-    }
-    return intersected;
+    return LinearIntersect(*elements, ray, data);
   }
 
   Scalar ray_direction_axis = ray.direction()[split_axis];
@@ -110,10 +118,9 @@ bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near,
     }
   }
 
-  bool intersected = false;
-
   // Determine where on the ray the split happens.
   Scalar t_split = (split_position - ray_origin_axis) / ray_direction_axis;
+  bool intersected = false;
 
   // Determine which is the first child traversed by the ray.
   const Node* first = left.get();
@@ -139,7 +146,7 @@ KdTree::KdTree() {
 KdTree::~KdTree() {
 }
 
-size_t KdTree::NumElementsWithDuplicates() const {
+size_t KdTree::NumElementsInLeaves() const {
   if (root_.get() == NULL) {
     return 0;
   } else {
@@ -149,6 +156,10 @@ size_t KdTree::NumElementsWithDuplicates() const {
 
 void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {
   root_.reset(new Node());
+  unbounded_elements_.clear();
+
+  // TODO(dinow): Replace this once the hack below is removed.
+  bounding_box_.reset(NULL);
 
   // Take the first bounded element as original box, and merge all the
   // following boxes.
@@ -157,6 +168,7 @@ void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {
     const Element* element = it->get();
     if (element->IsBounded()) {
       const BoundingBox& box = *element->bounding_box();
+      // TODO(dinow): Remove this hack and replace with decent BB constructor.
       if (first) {
         bounding_box_.reset(new BoundingBox(box));
         first = false;
@@ -164,32 +176,32 @@ void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {
         bounding_box_->Include(box);
       }
       root_->elements->push_back(element);
+    } else {
+      unbounded_elements_.push_back(element);
     }
   }
 
-  LOG(INFO) << "Building KdTree for " << root_->elements->size() << " elements";
-
+  const size_t n_bounded_elements = root_->elements->size();
   root_->Split(kInitialSplitAxis, 0, bounding_box_.get());
-
-  if (bounding_box_.get() != NULL) {
-    DVLOG(2) << "Built KdTree with bounding box " << *bounding_box_;
-  }
+  LOG(INFO) << "Built KdTree for " << n_bounded_elements
+            << " bounded elements and " << unbounded_elements_.size()
+            << " unbounded elements";
+  LOG(INFO) << "Number of (bounded) elements in KdTree leaves is "
+            << NumElementsInLeaves();
 }
 
 bool KdTree::Intersect(const Ray& ray, IntersectionData* data) const {
   if (root_.get() == NULL) {
     LOG(WARNING) << "Called intersect on uninitialized KdTree. Returning false";
-  }
-
-  DVLOG(2) << "Intersecting with ray " << ray;
-
-  Scalar t_near, t_far;
-  if (!bounding_box_->Intersect(ray, &t_near, &t_far)) {
-    DVLOG(2) << "Bounding box did not intersect";
     return false;
   }
 
-  return root_->Intersect(ray, t_near, t_far, data);
+  bool intersected = LinearIntersect(unbounded_elements_, ray, data);
+  Scalar t_near, t_far;
+  if (bounding_box_->Intersect(ray, &t_near, &t_far)) {
+    intersected = root_->Intersect(ray, t_near, t_far, data) | intersected;
+  }
+  return intersected;
 }
 
 // static
