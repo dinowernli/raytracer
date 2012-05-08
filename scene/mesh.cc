@@ -61,3 +61,27 @@ void Mesh::Transform(Scalar scale, const Vector3& translation) {
     vertex.set_point(factor * (vertex.point() - center_vector) + translation);
   }
 }
+
+void Mesh::InferNormals() {
+  for(size_t i = 0; i < vertices_.size(); ++i) {
+    vertices_[i]->set_normal(Vector3(0, 0, 0));
+  }
+
+  for(size_t i = 0; i < descriptors_.size(); ++i) {
+    Vertex& v1 = *vertices_[descriptors_[i].v1_];
+    Vertex& v2 = *vertices_[descriptors_[i].v2_];
+    Vertex& v3 = *vertices_[descriptors_[i].v3_];
+
+    Vector3 normal = v1.point().VectorTo(v2.point())
+        .Cross(v1.point().VectorTo(v3.point())).Normalize();
+
+    v1.set_normal(v1.normal() + normal);
+    v2.set_normal(v2.normal() + normal);
+    v3.set_normal(v3.normal() + normal);
+  }
+
+  for(size_t i = 0; i < vertices_.size(); ++i) {
+    Vertex& vertex = *vertices_[i];
+    vertex.set_normal(vertex.normal().Normalized());
+  }
+}

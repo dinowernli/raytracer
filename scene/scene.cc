@@ -151,6 +151,7 @@ Scene* Scene::HorseScene(const raytracer::SceneConfig& config) {
   Mesh* horse = parser.LoadFile("data/mesh/horse.obj");
   horse->set_material(blue);
   horse->Transform(2, Vector3(0, 0, 0));
+  horse->InferNormals();
   scene->AddMesh(horse);
 
   return scene;

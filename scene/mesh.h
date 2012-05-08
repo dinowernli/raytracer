@@ -39,6 +39,10 @@ class Mesh {
   // WARNING: Is not intuitive to use, but needed for compatibility.
   void Transform(Scalar scale, const Vector3& translation);
 
+  // Recomputes the vertex normals from the triangles by averaging the normals
+  // of the faces of the surrounding triangles.
+  void InferNormals();
+
   // Does not take ownership of the passed material.
   void set_material(const Material* material) { material_ = material; }
 
