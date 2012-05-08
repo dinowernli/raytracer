@@ -24,7 +24,6 @@ static bool LinearIntersect(const std::vector<const Element*>& elements,
   return intersected;
 }
 
-
 struct KdTree::Node {
   // Creates an empty leaf. Sets axis to X.
   Node();
@@ -152,25 +151,13 @@ size_t KdTree::NumElementsInLeaves() const {
 
 void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {
   root_.reset(new Node());
+  bounding_box_.reset(new BoundingBox());
   unbounded_elements_.clear();
 
-  // TODO(dinow): Replace this once the hack below is removed.
-  bounding_box_.reset(NULL);
-
-  // Take the first bounded element as original box, and merge all the
-  // following boxes.
-  bool first = true;
   for (auto it = elements.begin(); it != elements.end(); ++it) {
     const Element* element = it->get();
     if (element->IsBounded()) {
-      const BoundingBox& box = *element->bounding_box();
-      // TODO(dinow): Remove this hack and replace with decent BB constructor.
-      if (first) {
-        bounding_box_.reset(new BoundingBox(box));
-        first = false;
-      } else {
-        bounding_box_->Include(box);
-      }
+      bounding_box_->Include(*element->bounding_box());
       root_->elements->push_back(element);
     } else {
       unbounded_elements_.push_back(element);

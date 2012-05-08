@@ -7,19 +7,33 @@
 #include <algorithm>
 #include <glog/logging.h>
 
+#include "util/numeric.h"
 #include "util/ray.h"
 
-BoundingBox::BoundingBox(const Point3& p) : xmin_(p.x()), xmax_(p.x()),
-    ymin_(p.y()), ymax_(p.y()), zmin_(p.z()), zmax_(p.z()) {
+
+BoundingBox::BoundingBox() {
+  Init();
 }
 
-BoundingBox::BoundingBox(const Point3& p1, const Point3& p2)
-    : xmin_(std::min(p1.x(), p2.x())), xmax_(std::max(p1.x(), p2.x())),
-      ymin_(std::min(p1.y(), p2.y())), ymax_(std::max(p1.y(), p2.y())),
-      zmin_(std::min(p1.z(), p2.z())), zmax_(std::max(p1.z(), p2.z())) {
+BoundingBox::BoundingBox(const Point3& p) {
+  Init();
+  Include(p);
+}
+
+BoundingBox::BoundingBox(const Point3& p1, const Point3& p2) {
+  Init();
+  Include(p1);
+  Include(p2);
 }
 
 BoundingBox::~BoundingBox() {
+}
+
+void BoundingBox::Init() {
+  Scalar inf = std::numeric_limits<Scalar>::infinity();
+  xmin_ = inf; xmax_ = -inf;
+  ymin_ = inf; ymax_ = -inf;
+  zmin_ = inf; zmax_ = -inf;
 }
 
 BoundingBox& BoundingBox::Include(const Point3& point) {

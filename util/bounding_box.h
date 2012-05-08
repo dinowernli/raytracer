@@ -14,6 +14,9 @@ class Ray;
 
 class BoundingBox {
  public:
+  // Creates an empty bounding box which contains nothing.
+  BoundingBox();
+
   // Creates a box containing exactly the passed point.
   BoundingBox(const Point3& point);
 
@@ -37,6 +40,9 @@ class BoundingBox {
   Point3 max() const { return Point3(xmax_, ymax_, zmax_); }
 
  private:
+  // Initializer which allows code sharing between constructors.
+  void Init();
+
   bool AxisIntersect(Axis axis, const Ray& ray, Scalar* t_min,
                      Scalar* t_max) const;
 
