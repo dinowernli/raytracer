@@ -51,7 +51,6 @@ class KdTree {
   // A separate container for all elements which are not bounded.
   std::vector<const Element*> unbounded_elements_;
 
-  // TODO(dinow): Create an enum for axis somewhere.
   const static Axis kInitialSplitAxis;
 
   // If the root is at depth 0, no leaf will be at depth greater than this.
