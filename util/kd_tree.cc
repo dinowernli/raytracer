@@ -31,7 +31,7 @@ struct KdTree::Node {
 
   // Only to be called on leaves. Expects depth to be the current depth of the
   // leaf before splitting.
-  void Split(Axis axis, size_t depth, const BoundingBox* box);
+  void Split(Axis axis, size_t depth, const BoundingBox& box);
 
   // It is theoretically possible for leaves to have empty element vectors.
   bool IsLeaf() const { return left.get() == NULL && right.get() == NULL; }
@@ -57,18 +57,14 @@ KdTree::Node::Node() : split_axis(Axis::x()) {
   this->elements.reset(new std::vector<const Element*>());
 }
 
-void KdTree::Node::Split(Axis axis, size_t depth, const BoundingBox* box) {
+void KdTree::Node::Split(Axis axis, size_t depth, const BoundingBox& box) {
   CHECK(IsLeaf()) << "Split() can only be called on leaf nodes";
-  if (box == NULL) {
-    CHECK(elements->size() == 0) << "Invalid bounding box during split";
-  }
-
   if (depth > kTreeDepth || elements->size() < kLeafSizeThreshold) {
     return;
   }
 
   // TODO(dinow): Implement other strategies than MidPointSplit.
-  split_position = (box->min()[axis] + box->max()[axis]) / 2.0;
+  split_position = (box.min()[axis] + box.max()[axis]) / 2.0;
   split_axis = axis;
   left.reset(new Node());
   right.reset(new Node());
@@ -84,15 +80,15 @@ void KdTree::Node::Split(Axis axis, size_t depth, const BoundingBox* box) {
   }
 
   // Recursively split children.
-  Point3 left_max = box->max();
+  Point3 left_max = box.max();
   left_max[axis] = split_position;
-  BoundingBox left_box(box->min(), left_max);
-  left->Split(axis.Next(), depth + 1, &left_box);
+  BoundingBox left_box(box.min(), left_max);
+  left->Split(axis.Next(), depth + 1, left_box);
 
-  Point3 right_min = box->min();
+  Point3 right_min = box.min();
   right_min[axis] = split_position;
-  BoundingBox right_box(right_min, box->max());
-  right->Split(axis.Next(), depth + 1, &right_box);
+  BoundingBox right_box(right_min, box.max());
+  right->Split(axis.Next(), depth + 1, right_box);
 
   // Clean up elements.
   elements.reset();
@@ -182,7 +178,7 @@ void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {
   }
 
   const size_t n_bounded_elements = root_->elements->size();
-  root_->Split(kInitialSplitAxis, 0, bounding_box_.get());
+  root_->Split(kInitialSplitAxis, 0, *bounding_box_.get());
   LOG(INFO) << "Built KdTree for " << n_bounded_elements
             << " bounded elements and " << unbounded_elements_.size()
             << " unbounded elements";

@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
   //std::unique_ptr<Scene> scene(Scene::TestScene(s_config));
 
   RendererConfig r_config;
-  r_config.set_threads(1);
+  r_config.set_threads(8);
   r_config.set_shadows(true);
 
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(r_config));
