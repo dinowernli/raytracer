@@ -46,9 +46,6 @@ void Mesh::Transform(Scalar scale, const Vector3& translation) {
     return;
   }
 
-  // TODO(dinow): This is a quick, dirty and inefficient way of mimicing the
-  // behavior of the original mesh loader in order to get identical scenes.
-  // Make this more intuitive/better might be worthwile.
   BoundingBox box;
   for (size_t i = 0; i < vertices_.size(); ++i) {
     box.Include(vertices_[i]->point());

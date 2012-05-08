@@ -35,7 +35,8 @@ class Mesh {
   // produced triangles.
   void CreateElements(std::vector<std::unique_ptr<Element>>* target) const;
 
-  // Moves and scales all vertices in place relative to the current center.
+  // Mimics the old transformation from the course XML files.
+  // WARNING: Is not intuitive to use, but needed for compatibility.
   void Transform(Scalar scale, const Vector3& translation);
 
   // Does not take ownership of the passed material.
