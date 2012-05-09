@@ -7,20 +7,23 @@
 #ifndef AXIS_H_
 #define AXIS_H_
 
+#include <cstddef>
+
 class Axis {
  public:
+  // Build an Axis from the rest of "id" modulo 3.
+  explicit Axis(size_t id) : id_(id % 3) {}
+
   static inline Axis x() { return Axis(0); }
   static inline Axis y() { return Axis(1); }
   static inline Axis z() { return Axis(2); }
 
   // Maps x to y, y to z and z to x.
-  Axis Next() const { return Axis((id_ + 1) % 3); }
+  Axis Next() const { return Axis(id_ + 1); }
   bool operator==(const Axis& other) const { return other.id_ == id_; }
 
  private:
-  typedef unsigned char axis_id_t;
-  explicit Axis(axis_id_t id) : id_(id) {}
-  axis_id_t id_;
+  size_t id_;
 };
 
 #endif  /* AXIS_H_ */

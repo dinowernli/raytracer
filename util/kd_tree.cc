@@ -30,7 +30,8 @@ struct KdTree::Node {
 
   // Only to be called on leaves. Expects depth to be the current depth of the
   // leaf before splitting.
-  void Split(Axis axis, size_t depth, const BoundingBox& box);
+  void Split(size_t depth, const BoundingBox& box,
+             const SplittingStrategy& strategy);
 
   // It is theoretically possible for leaves to have empty element vectors.
   bool IsLeaf() const { return left.get() == NULL && right.get() == NULL; }
@@ -56,38 +57,40 @@ KdTree::Node::Node() : split_axis(Axis::x()) {
   this->elements.reset(new std::vector<const Element*>());
 }
 
-void KdTree::Node::Split(Axis axis, size_t depth, const BoundingBox& box) {
+void KdTree::Node::Split(size_t depth, const BoundingBox& box,
+                         const SplittingStrategy& strategy) {
   CHECK(IsLeaf()) << "Split() can only be called on leaf nodes";
-  if (depth > kTreeDepth || elements->size() < kLeafSizeThreshold) {
+  SplitInformation info = strategy.ComputeSplit(depth, box, *elements);
+
+  if (!info.should_split) {
     return;
   }
 
-  // TODO(dinow): Implement other strategies than MidPointSplit.
-  split_position = (box.min()[axis] + box.max()[axis]) / 2.0;
-  split_axis = axis;
+  split_position = info.split_position;
+  split_axis = info.split_axis;
   left.reset(new Node());
   right.reset(new Node());
 
   // Move elements to either 1 or 2 relevant children.
   for (size_t i = 0; i < elements->size(); ++i) {
-    if (elements->at(i)->bounding_box()->min()[axis] <= split_position) {
+    if (elements->at(i)->bounding_box()->min()[split_axis] <= split_position) {
       left->elements->push_back(elements->at(i));
     }
-    if (elements->at(i)->bounding_box()->max()[axis] >= split_position) {
+    if (elements->at(i)->bounding_box()->max()[split_axis] >= split_position) {
       right->elements->push_back(elements->at(i));
     }
   }
 
   // Recursively split children.
   Point3 left_max = box.max();
-  left_max[axis] = split_position;
+  left_max[split_axis] = split_position;
   BoundingBox left_box(box.min(), left_max);
-  left->Split(axis.Next(), depth + 1, left_box);
+  left->Split(depth + 1, left_box, strategy);
 
   Point3 right_min = box.min();
-  right_min[axis] = split_position;
+  right_min[split_axis] = split_position;
   BoundingBox right_box(right_min, box.max());
-  right->Split(axis.Next(), depth + 1, right_box);
+  right->Split(depth + 1, right_box, strategy);
 
   // Clean up elements.
   elements.reset();
@@ -135,7 +138,7 @@ bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near,
   }
 }
 
-KdTree::KdTree() {
+KdTree::KdTree(SplittingStrategy* strategy) : strategy_(strategy) {
 }
 
 KdTree::~KdTree() {
@@ -165,7 +168,7 @@ void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {
   }
 
   const size_t n_bounded_elements = root_->elements->size();
-  root_->Split(kInitialSplitAxis, 0, *bounding_box_.get());
+  root_->Split(0, *bounding_box_, *strategy_);
   LOG(INFO) << "Built KdTree for " << n_bounded_elements
             << " bounded elements and " << unbounded_elements_.size()
             << " unbounded elements";
@@ -186,12 +189,3 @@ bool KdTree::Intersect(const Ray& ray, IntersectionData* data) const {
   }
   return intersected;
 }
-
-// static
-const Axis KdTree::kInitialSplitAxis = Axis::x();
-
-// static
-const size_t KdTree::kTreeDepth = 20;
-
-// static
-const size_t KdTree::kLeafSizeThreshold = 40;

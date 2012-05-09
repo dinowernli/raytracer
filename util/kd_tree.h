@@ -4,8 +4,6 @@
  * separate structure and are considered during intersection. Elements are only
  * contained in leaves of the tree.
  *
- * TODO(dinow): Extract some sort of SplittingStrategy notion.
- *
  * Author: Dino Wernli
  */
 
@@ -17,6 +15,7 @@
 
 #include "util/axis.h"
 #include "util/bounding_box.h"
+#include "util/splitting_strategy.h"
 
 class Element;
 class IntersectionData;
@@ -24,7 +23,8 @@ class Ray;
 
 class KdTree {
  public:
-  KdTree();
+  // Takes ownership of the passed SplittingStrategy.
+  KdTree(SplittingStrategy* strategy = new MidpointSplit());
   virtual ~KdTree();
 
   // Builds a tree which contains pointers to the passed elements. No ownership
@@ -51,14 +51,7 @@ class KdTree {
   // A separate container for all elements which are not bounded.
   std::vector<const Element*> unbounded_elements_;
 
-  const static Axis kInitialSplitAxis;
-
-  // If the root is at depth 0, no leaf will be at depth greater than this.
-  const static size_t kTreeDepth;
-
-  // If the number of elements in a leaf goes below this threshold, it will not
-  // be split.
-  const static size_t kLeafSizeThreshold;
+  std::unique_ptr<SplittingStrategy> strategy_;
 };
 
 #endif  /* KD_TREE_H_ */
