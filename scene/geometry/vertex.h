@@ -1,6 +1,6 @@
 /*
- * Consists of a point and a normal in 3D space. Used as a basic building block
- * for meshes, triangles and other primitives.
+ * Consists of a point and a normal in 3D space. Used as a building block of
+ * triangles.
  *
  * Author: Dino Wernli
  */
