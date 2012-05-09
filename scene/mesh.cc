@@ -18,70 +18,71 @@ Mesh::Mesh() {
 Mesh::~Mesh() {
 }
 
-size_t Mesh::AddVertex(const Point3& point, const Vector3& normal) {
-  vertices_.push_back(std::unique_ptr<Vertex>(new Vertex(point, normal)));
-  return vertices_.size() - 1;
+size_t Mesh::AddPoint(const Point3& point) {
+  points_.push_back(point);
+  return points_.size() - 1;
 }
 
-void Mesh::AddTriangle(size_t v1, size_t v2, size_t v3) {
-  descriptors_.push_back(TriangleDescriptor(v1, v2, v3));
+size_t Mesh::AddNormal(const Vector3& normal) {
+  normals_.push_back(normal);
+  return normals_.size() - 1;
+}
+
+void Mesh::AddTriangle(size_t v1, size_t n1, size_t v2, size_t n2, size_t v3,
+                       size_t n3) {
+  descriptors_.push_back(TriangleDescriptor(v1, n1, v2, n2, v3, n3));
 }
 
 void Mesh::CreateElements(std::vector<std::unique_ptr<Element>>* target) const {
-  DVLOG(2) << "Creating elements with " << vertices_.size() << " vertices and "
-           << descriptors_.size() << " triangles";
+  DVLOG(2) << "Creating " << descriptors_.size() << " triangles from mesh";
   for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it) {
-    const Vertex* v1 = vertices_[it->v1_].get();
-    const Vertex* v2 = vertices_[it->v2_].get();
-    const Vertex* v3 = vertices_[it->v3_].get();
+    const Point3* p1 = &points_[it->p1];
+    const Point3* p2 = &points_[it->p2];
+    const Point3* p3 = &points_[it->p3];
 
-    Triangle* triangle = new Triangle(v1, v2, v3, material_);
+    const Vector3* n1 = &normals_[it->n1];
+    const Vector3* n2 = &normals_[it->n2];
+    const Vector3* n3 = &normals_[it->n3];
+
+    Triangle* triangle = new Triangle(p1, p2, p3, n1, n2, n3, material_);
     DVLOG(3) << "Adding triangle " << *triangle;
     target->push_back(std::unique_ptr<Element>(triangle));
   }
 }
 
 void Mesh::Transform(Scalar scale, const Vector3& translation) {
-  if (vertices_.size() == 0) {
-    return;
-  }
-
   BoundingBox box;
-  for (size_t i = 0; i < vertices_.size(); ++i) {
-    box.Include(vertices_[i]->point());
+  for (size_t i = 0; i < points_.size(); ++i) {
+    box.Include(points_[i]);
   }
 
-  Point3 center = box.min() + 0.5 * (box.min().VectorTo(box.max()));
-  Scalar radius = Point3::SquaredDistance(center, box.max());
+  const Point3 center = box.min() + 0.5 * (box.min().VectorTo(box.max()));
+  const Vector3 center_vector = center.VectorFromOrigin();
+  const Scalar factor = scale / Point3::SquaredDistance(center, box.max());
 
-  for (size_t i = 0; i < vertices_.size(); ++i) {
-    Vertex& vertex = *(vertices_[i]);
-    const Vector3 center_vector = center.VectorFromOrigin();
-    const Scalar factor = scale / radius;
-    vertex.set_point(factor * (vertex.point() - center_vector) + translation);
+  for (size_t i = 0; i < points_.size(); ++i) {
+    points_[i].ReplaceWith(factor * (points_[i] - center_vector) + translation);
   }
 }
 
 void Mesh::InferNormals() {
-  for(size_t i = 0; i < vertices_.size(); ++i) {
-    vertices_[i]->set_normal(Vector3(0, 0, 0));
+  for(size_t i = 0; i < normals_.size(); ++i) {
+    normals_[i].ReplaceWith(Vector3(0, 0, 0));
   }
 
   for(size_t i = 0; i < descriptors_.size(); ++i) {
-    Vertex& v1 = *vertices_[descriptors_[i].v1_];
-    Vertex& v2 = *vertices_[descriptors_[i].v2_];
-    Vertex& v3 = *vertices_[descriptors_[i].v3_];
+    const Point3& p1 = points_[descriptors_[i].p1];
+    const Point3& p2 = points_[descriptors_[i].p2];
+    const Point3& p3 = points_[descriptors_[i].p3];
 
-    Vector3 normal = v1.point().VectorTo(v2.point())
-        .Cross(v1.point().VectorTo(v3.point())).Normalize();
+    Vector3 n = p1.VectorTo(p2).Cross(p1.VectorTo(p3)).Normalize();
 
-    v1.set_normal(v1.normal() + normal);
-    v2.set_normal(v2.normal() + normal);
-    v3.set_normal(v3.normal() + normal);
+    normals_[descriptors_[i].n1].ReplaceWith(normals_[descriptors_[i].n1] + n);
+    normals_[descriptors_[i].n2].ReplaceWith(normals_[descriptors_[i].n2] + n);
+    normals_[descriptors_[i].n3].ReplaceWith(normals_[descriptors_[i].n3] + n);
   }
 
-  for(size_t i = 0; i < vertices_.size(); ++i) {
-    Vertex& vertex = *vertices_[i];
-    vertex.set_normal(vertex.normal().Normalized());
+  for(size_t i = 0; i < normals_.size(); ++i) {
+    normals_[i].Normalize();
   }
 }

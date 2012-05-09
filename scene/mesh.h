@@ -10,7 +10,7 @@
 #include<memory>
 #include<vector>
 
-#include "scene/geometry/vertex.h"
+#include "util/numeric.h"
 
 class Element;
 class Material;
@@ -23,13 +23,17 @@ class Mesh {
   Mesh();
   virtual ~Mesh();
 
-  // Adds a new vertex to the mesh and returns the index of the vertex. The
-  // mesh guarantees that the first added vertex will have index 0 and that
-  // every subsequent add will increase the vertex index by 1.
-  size_t AddVertex(const Point3& point, const Vector3& normal);
+  // Adds a copy of the passed point and returns the index of the new point.
+  // The mesh guarantees that every new point increases the index by 1.
+  size_t AddPoint(const Point3& point);
+
+  // Adds a copy of the passed normal and returns the index of the new normal.
+  // The mesh guarantees that every new normal increases the index by 1.
+  size_t AddNormal(const Vector3& normal);
 
   // Declares a triangle using the three passed vertex indices.
-  void AddTriangle(size_t v1, size_t v2, size_t v3);
+  void AddTriangle(size_t v1, size_t n1, size_t v2, size_t n2, size_t v3,
+                   size_t n3);
 
   // Adds light-weight triangles to target. The caller takes ownership of the
   // produced triangles.
@@ -48,15 +52,15 @@ class Mesh {
 
  private:
   struct TriangleDescriptor {
-    TriangleDescriptor(size_t v1, size_t v2, size_t v3) : v1_(v1), v2_(v2),
-                                                          v3_(v3) {
+    TriangleDescriptor(size_t p1_, size_t n1_, size_t p2_, size_t n2_,
+                       size_t p3_, size_t n3_)
+        : p1(p1_), n1(n1_), p2(p2_), n2(n2_), p3(p3_), n3(n3_) {
     }
-    size_t v1_;
-    size_t v2_;
-    size_t v3_;
+    size_t p1, n1, p2, n2, p3, n3;
   };
 
-  std::vector<std::unique_ptr<Vertex>> vertices_;
+  std::vector<Point3> points_;
+  std::vector<Vector3> normals_;
   std::vector<TriangleDescriptor> descriptors_;
   const Material* material_;
 };

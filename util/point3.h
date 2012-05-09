@@ -30,6 +30,13 @@ class Point3 {
     return Vector3(x_, y_, z_);
   }
 
+  // Replaces the data of this point with the data from other.
+  void ReplaceWith(const Point3& other) {
+    x_ = other.x_;
+    y_ = other.y_;
+    z_ = other.z_;
+  }
+
   const Scalar& x() const { return x_; }
   const Scalar& y() const { return y_; }
   const Scalar& z() const { return z_; }

@@ -25,6 +25,13 @@ class Vector3 {
   Vector3(const Scalar& x, const Scalar& y, const Scalar& z)
       : x_(x), y_(y), z_(z) {}
 
+  // Replaces the data of this vector with the data from other.
+  void ReplaceWith(const Vector3& other) {
+    x_ = other.x_;
+    y_ = other.y_;
+    z_ = other.z_;
+  }
+
   const Scalar& x() const { return x_; }
   const Scalar& y() const { return y_; }
   const Scalar& z() const { return z_; }

@@ -14,15 +14,15 @@ class Material;
 
 class Triangle : public Element {
  public:
-  // Allocates new vertices where the points and normals are copied. Does not
-  // take ownership of any passed data. Any normal which is NULL is inferred as
-  // well as possible.
+  // Copies the points and normals. Does not take ownership of any passed data.
+  // Any normal which is NULL is inferred as well as possible.
   Triangle(const Point3& c1, const Point3& c2, const Point3& c3,
            const Material* material = NULL, const Vector3* n1 = NULL,
            const Vector3* n2 = NULL, const Vector3* n3 = NULL);
 
-  // Takes no ownerhip of any passed pointers.
-  Triangle(const Vertex* v1, const Vertex* v2, const Vertex* v3,
+  // Takes no ownership of the passed data, all pointers are simply copied.
+  Triangle(const Point3* c1, const Point3* c2, const Point3* c3,
+           const Vector3* n1, const Vector3* n2, const Vector3* n3,
            const Material* material = NULL);
 
   virtual ~Triangle();
@@ -36,13 +36,9 @@ class Triangle : public Element {
 
  private:
   const Material* material_;
-  const Vertex* vertex1_;
-  const Vertex* vertex2_;
-  const Vertex* vertex3_;
-
-  // TODO(dinow): Figure out if there is another way to decide whether or not
-  // to delete the vertices in the destructor.
-  bool owns_vertices_;
+  std::unique_ptr<Vertex> vertex1_;
+  std::unique_ptr<Vertex> vertex2_;
+  std::unique_ptr<Vertex> vertex3_;
 };
 
 template<class OStream>
