@@ -23,6 +23,7 @@ else:
 
 # Add support for glog.
 environment.ParseConfig('pkg-config --cflags --libs libglog')
+environment.ParseConfig('pkg-config --cflags --libs libgflags')
 
 # Build protos.
 proto_sources = [str(s) for s in Glob(os.path.join(proto_dir, '*.proto'))]
