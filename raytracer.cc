@@ -24,7 +24,7 @@ DEFINE_bool(use_kd_tree, true, "Whether or not to use a KdTree in the scene");
 
 DEFINE_uint64(worker_threads, 8, "Number of rendering worker threads to use");
 
-DEFINE_string(bmp_file, "output", "If <file> is passed, a BMP image will be "
+DEFINE_string(bmp_file, "image", "If <file> is passed, a BMP image will be "
                                   "saved at 'output/<file>.bmp'");
 
 DEFINE_string(ppm_file, "", "If <file> is passed, a PPM image will be saved at "
