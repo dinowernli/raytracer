@@ -16,7 +16,7 @@ unsigned int ScaleIntensity(Intensity intensity) {
   return intensity * PpmExporter::kMaxPixelValue;
 }
 
-PpmExporter::PpmExporter(std::string file_name) : file_name_(file_name) {
+PpmExporter::PpmExporter(const std::string& file_name) : file_name_(file_name) {
 }
 
 PpmExporter::~PpmExporter() {

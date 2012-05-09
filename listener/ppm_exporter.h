@@ -5,16 +5,19 @@
 #ifndef PPM_EXPORTER_H_
 #define PPM_EXPORTER_H_
 
-#include "renderer/updatable.h"
-
 #include <string>
+
+#include "renderer/updatable.h"
+#include "util/no_copy_assign.h"
 
 class Sampler;
 
 class PpmExporter : public Updatable{
  public:
-  PpmExporter(std::string file_name);
+  PpmExporter(const std::string& file_name);
   virtual ~PpmExporter();
+  NO_COPY_ASSIGN(PpmExporter);
+
   virtual void Update(const Sampler& sampler);
 
   const static size_t kMaxPixelValue;
