@@ -15,6 +15,7 @@ environment = Environment(
 if ARGUMENTS.get('debug') == '0' or ARGUMENTS.get('release') == '1':
 	environment.Append(CCFLAGS = ['-O2'])
 	environment.Append(CCFLAGS = ['-DNDEBUG'])
+	environment.Append(CCFLAGS = ['-march=native'])
 else:
 	environment.Append(CCFLAGS = ['-g'])
 	if ARGUMENTS.get('profile') == '1':
