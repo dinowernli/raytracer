@@ -7,6 +7,7 @@
 #include <glog/logging.h>
 
 #include "parser/mesh_parser.h"
+#include "parser/scene_parser.h"
 #include "proto/configuration.pb.h"
 #include "renderer/intersection_data.h"
 #include "scene/camera.h"
@@ -71,7 +72,9 @@ bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
 // static
 Scene* Scene::FromConfig(const raytracer::SceneConfig& config) {
   KdTree* tree = config.has_kd_tree_config() ? new KdTree() : NULL;
-  return new Scene(tree);
+  Scene* scene = new Scene(tree);
+  SceneParser::ParseScene(config.scene_data(), scene);
+  return scene;
 }
 
 // static

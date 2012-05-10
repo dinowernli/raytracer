@@ -8,7 +8,7 @@ message SceneConfig {
   optional KdTreeConfig kd_tree_config = 1;
   
   // A container for the items of the scene, including lights, elements etc.
-  optional SceneData data = 2;
+  optional SceneData scene_data = 2;
 }
 
 message RendererConfig {
