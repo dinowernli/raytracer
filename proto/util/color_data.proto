@@ -1,0 +1,7 @@
+package raytracer;
+
+message ColorData {
+  optional double r = 1;
+  optional double g = 2;
+  optional double b = 3;
+}

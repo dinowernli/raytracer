@@ -1,0 +1,11 @@
+package raytracer;
+
+import "proto/util/color_data.proto";
+
+message MaterialData {
+  optional ColorData emission = 1;
+  optional ColorData ambient = 2;
+  optional ColorData diffuse = 3;
+  optional ColorData specular = 4;
+  optional double shininess = 5;
+}

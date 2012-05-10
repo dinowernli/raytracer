@@ -1,0 +1,11 @@
+package raytracer;
+
+import "proto/scene/triangle_data.proto";
+
+message ElementGroup {
+  repeated TriangleData triangles = 1;
+}
+
+message SceneData {
+  repeated ElementGroup element_groups = 1;
+}

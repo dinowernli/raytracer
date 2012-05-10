@@ -1,0 +1,9 @@
+package raytracer;
+
+import "proto/util/point_data.proto";
+import "proto/util/vector_data.proto";
+
+message PlaneData {
+  optional PointData point = 1;
+  optional VectorData normal = 2;
+}

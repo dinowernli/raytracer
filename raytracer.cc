@@ -18,7 +18,7 @@
 
 using raytracer::RendererConfig;
 using raytracer::SceneConfig;
-using raytracer::scene::TriangleData;
+using raytracer::TriangleData;
 
 DEFINE_bool(shadows, true, "Whether or not shadows are rendered");
 

@@ -1,11 +1,14 @@
 package raytracer;
 
-message KdTreeConfig {
-}
+import "proto/scene/kd_tree_config.proto";
+import "proto/scene/scene_data.proto";
 
 message SceneConfig {
   // Absence of one of these means that no KdTree will be used.
   optional KdTreeConfig kd_tree_config = 1;
+  
+  // A container for the items of the scene, including lights, elements etc.
+  optional SceneData data = 2;
 }
 
 message RendererConfig {

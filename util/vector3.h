@@ -10,8 +10,11 @@
 #include <cmath>
 #include <cstddef>
 
+#include "proto/util/vector_data.pb.h"
 #include "util/axis.h"
 #include "util/numeric.h"
+
+using raytracer::VectorData;
 
 class Point3;
 class Vector3;
@@ -97,6 +100,10 @@ class Vector3 {
     y_ /= rhs;
     z_ /= rhs;
     return *this;
+  }
+
+  static Vector3 FromConfig(const VectorData& data) {
+    return Vector3(data.x(), data.y(), data.z());
   }
 
  private:
