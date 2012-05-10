@@ -31,6 +31,13 @@ DEFINE_string(bmp_file, "image", "If <file> is passed, a BMP image will be "
 DEFINE_string(ppm_file, "", "If <file> is passed, a PPM image will be saved at "
                             "'output/<file>.ppm'");
 
+// Genera TODO(dinow):
+// * Rename proto namespace to "config" or "proto"
+// * Put everything else in namespace "raytracer"
+// * Implement relfection/refraction
+// * Implement a GUI and/or webserver
+// * Implement statistics (intersection counting)
+
 int main(int argc, char **argv) {
   // LOG(INFO): Always logged.
   // DVLOG(i): Only compiled in if DEBUG flag set, logged if log level is >= i.
@@ -47,6 +54,8 @@ int main(int argc, char **argv) {
   if (FLAGS_use_kd_tree) {
     s_config.mutable_kd_tree_config();
   }
+  // TODO(dinow): Parse command line arguments, get a file path, load the file
+  // into a proto, put the proto in s_config.
 
   //std::unique_ptr<Scene> scene(Scene::QuadricsScene(s_config));
   std::unique_ptr<Scene> scene(Scene::HorseScene(s_config));

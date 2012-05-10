@@ -1,0 +1,9 @@
+package raytracer;
+
+import "proto/util/color_data.proto";
+import "proto/util/point_data.proto";
+
+message PointLightData {
+  optional PointData position = 1;
+  optional ColorData color = 2;
+}

@@ -1,0 +1,17 @@
+package raytracer;
+
+import "proto/util/point_data.proto";
+import "proto/util/vector_data.proto";
+
+message CameraData {
+  optional PointData position = 1;
+  optional VectorData view = 2;
+  optional VectorData up = 3;
+  optional VectorData right = 4;
+
+  // Angle between the top and the bottom of the image.
+  optional double opening_angle = 5;
+
+  optional uint64 resolution_x = 6;
+  optional uint64 resolution_y = 7;
+}

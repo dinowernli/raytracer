@@ -45,6 +45,8 @@ class Camera {
   Vector3 view_;  // Ensured to always be of length 1.
   Vector3 up_;  // Ensured to always be of length 1.
   Vector3 right_;  // Ensured to always be of length 1.
+
+  // Angle between the top and the bottom of the image.
   Scalar opening_angle_;
 
   size_t resolution_x_;
