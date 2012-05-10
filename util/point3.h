@@ -9,9 +9,12 @@
 
 #include <cmath>
 
+#include "proto/util/point_data.pb.h"
 #include "util/axis.h"
 #include "util/numeric.h"
 #include "util/vector3.h"
+
+using raytracer::PointData;
 
 class Point3 {
  public:
@@ -67,6 +70,10 @@ class Point3 {
 
   static Scalar Distance(const Point3& first, const Point3& second) {
     return sqrt(SquaredDistance(first, second));
+  }
+
+  static Point3 FromConfig(const PointData& data) {
+    return Point3(data.x(), data.y(), data.z());
   }
 
  private:

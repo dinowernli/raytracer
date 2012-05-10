@@ -6,7 +6,10 @@
 #ifndef COLOR3_H_
 #define COLOR3_H_
 
+#include "proto/util/color_data.pb.h"
 #include "util/numeric.h"
+
+using raytracer::ColorData;
 
 class Color3 {
  public:
@@ -46,6 +49,10 @@ class Color3 {
   const Intensity& r() const { return r_; }
   const Intensity& g() const { return g_; }
   const Intensity& b() const { return b_; }
+
+  static Color3 FromConfig(const ColorData& data) {
+    return Color3(data.r(), data.g(), data.b());
+  }
 
  private:
   Intensity r_, g_, b_;
