@@ -5,6 +5,7 @@ import "proto/scene/light_data.proto";
 import "proto/scene/plane_data.proto";
 import "proto/scene/triangle_data.proto";
 import "proto/scene/sphere_data.proto";
+import "proto/util/color_data.proto";
 import "proto/util/material_data.proto";
 
 message ElementGroup {

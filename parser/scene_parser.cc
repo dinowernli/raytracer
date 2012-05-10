@@ -40,10 +40,17 @@ static Point3 Parse(const raytracer::PointData& data) {
   return Point3(data.x(), data.y(), data.z());
 }
 
+// Fetches the material pointer from the map, returns none if it is not found.
+static const Material* GetMaterial(
+    const std::string& id, const std::map<std::string, const Material*>& map) {
+  auto it = map.find(id);
+  return ((it == map.end()) ? NULL : it->second);
+}
+
 // static
 void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
   // Maps material identifiers to materials.
-  std::map<std::string, Material*> material_map;
+  std::map<std::string, const Material*> material_map;
 
   for (int i = 0; i < data.materials_size(); ++i) {
     const auto& mat_data = data.materials(i);
@@ -102,11 +109,12 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
           new Vector3(Parse(triangle.n3())) : NULL);
 
       if (triangle.has_p1() && triangle.has_p2() && triangle.has_p3()) {
-        scene->AddElement(new Triangle(Parse(triangle.p1()),
-                                       Parse(triangle.p2()),
-                                       Parse(triangle.p3()),
-                                       material_map[triangle.material_id()],
-                                       n1.get(), n2.get(), n3.get()));
+        scene->AddElement(
+            new Triangle(Parse(triangle.p1()),
+                         Parse(triangle.p2()),
+                         Parse(triangle.p3()),
+                         GetMaterial(triangle.material_id(), material_map),
+                         n1.get(), n2.get(), n3.get()));
       } else {
         LOG(WARNING) << "Skipping incomplete triangle";
       }
@@ -116,9 +124,10 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
     for (int j = 0; j < group.planes_size(); ++j) {
       const auto& plane = group.planes(j);
       if (plane.has_point() && plane.has_normal()) {
-        scene->AddElement(new Plane(Parse(plane.point()),
-                                    Parse(plane.normal()),
-                                    material_map[plane.material_id()]));
+        scene->AddElement(
+            new Plane(Parse(plane.point()),
+                      Parse(plane.normal()),
+                      GetMaterial(plane.material_id(), material_map)));
       } else {
         LOG(WARNING) << "Skipping incomplete plane";
       }
