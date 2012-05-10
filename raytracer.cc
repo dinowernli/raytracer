@@ -32,11 +32,13 @@ DEFINE_string(ppm_file, "", "If <file> is passed, a PPM image will be saved at "
                             "'output/<file>.ppm'");
 
 // Genera TODO(dinow):
-// * Rename proto namespace to "config" or "proto"
-// * Put everything else in namespace "raytracer"
-// * Implement relfection/refraction
-// * Implement a GUI and/or webserver
-// * Implement statistics (intersection counting)
+// * Rename proto namespace to "config" or "proto".
+// * Put everything else in namespace "raytracer".
+// * Implement relfection/refraction.
+// * Implement a GUI and/or webserver.
+// * Implement statistics (intersection counting).
+// * Remove the default values from the object constructors. Leave them only in
+//   the protos. Or leave them in both but always pass the arguments.
 
 int main(int argc, char **argv) {
   // LOG(INFO): Always logged.
