@@ -8,4 +8,5 @@ message MaterialData {
   optional ColorData diffuse = 3;
   optional ColorData specular = 4;
   optional double shininess = 5;
+  optional string identifier = 6;
 }

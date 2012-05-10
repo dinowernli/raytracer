@@ -4,10 +4,11 @@ import "proto/util/point_data.proto";
 import "proto/util/vector_data.proto";
 
 message TriangleData {
-  optional PointData point1 = 1;
-  optional VectorData normal1 = 2;
-  optional PointData p2 = 3;
-  optional VectorData n2 = 4;
-  optional PointData p3 = 5;
-  optional VectorData n1 = 6;
+  optional string material_id = 1;
+  optional PointData point1 = 2;
+  optional VectorData normal1 = 3;
+  optional PointData p2 = 4;
+  optional VectorData n2 = 5;
+  optional PointData p3 = 6;
+  optional VectorData n1 = 7;
 }

@@ -1,4 +1,11 @@
 package raytracer;
 
 message KdTreeConfig {
+  enum SplittingStrategyData {
+    MIDPOINT = 0;
+  }
+
+  optional SplittingStrategyData splitting_startegy = 1;
+
+  optional bool visualization = 2;
 }

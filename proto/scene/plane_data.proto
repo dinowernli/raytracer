@@ -4,6 +4,7 @@ import "proto/util/point_data.proto";
 import "proto/util/vector_data.proto";
 
 message PlaneData {
-  optional PointData point = 1;
-  optional VectorData normal = 2;
+  optional string material_id = 1;
+  optional PointData point = 2;
+  optional VectorData normal = 3;
 }
