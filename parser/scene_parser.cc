@@ -66,6 +66,7 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
                                      Parse(mat_data.diffuse()),
                                      Parse(mat_data.specular()),
                                      mat_data.shininess());
+    // Ownership taken by scene.
     scene->AddMaterial(current);
     material_map[mat_data.identifier()] = current;
   }
@@ -130,6 +131,19 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
                       GetMaterial(plane.material_id(), material_map)));
       } else {
         LOG(WARNING) << "Skipping incomplete plane";
+      }
+    }
+
+    // Parse spheres if any.
+    for (int j = 0; j < group.spheres_size(); ++j) {
+      const auto& sphere = group.spheres(j);
+      if (!(sphere.has_center() && sphere.has_radius())) {
+        scene->AddElement(new Sphere(Parse(sphere.center()),
+                                     sphere.radius(),
+                                     GetMaterial(sphere.material_id(),
+                                                 material_map)));
+      } else {
+        LOG(WARNING) << "Skipping incomplete sphere";
       }
     }
   }
