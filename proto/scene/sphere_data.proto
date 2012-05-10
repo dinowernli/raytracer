@@ -1,0 +1,9 @@
+package raytracer;
+
+import "proto/util/point_data.proto";
+
+message SphereData {
+  optional string material_id = 1;
+  optional PointData center = 2;
+  optional double radius = 3;
+}
