@@ -12,11 +12,13 @@
 #include "listener/ppm_exporter.h"
 #include "listener/progress_listener.h"
 #include "proto/configuration.pb.h"
+#include "proto/scene/triangle_data.pb.h"
 #include "renderer/renderer.h"
 #include "scene/scene.h"
 
 using raytracer::RendererConfig;
 using raytracer::SceneConfig;
+using raytracer::scene::TriangleData;
 
 DEFINE_bool(shadows, true, "Whether or not shadows are rendered");
 
@@ -46,6 +48,9 @@ int main(int argc, char **argv) {
   if (FLAGS_use_kd_tree) {
     s_config.mutable_kd_tree_config();
   }
+
+  // Just for debugging purposes.
+  TriangleData data;
 
   //std::unique_ptr<Scene> scene(Scene::QuadricsScene(s_config));
   std::unique_ptr<Scene> scene(Scene::HorseScene(s_config));

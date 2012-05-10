@@ -5,10 +5,9 @@ proto_dir = 'proto'
 
 environment = Environment(
   CCFLAGS = ['-Wall', '-pipe', '-std=c++0x', '-pthread'],
-  LIBS = ['-lprotobuf', '-lz', '-lpthread'],
+  LIBS = ['-lpthread'],
   ENV = os.environ,
   CPPPATH = ['.'],
-  tools = ['default'],
 )
 
 # Configure different build modes.
@@ -25,9 +24,11 @@ else:
 # Add support for glog.
 environment.ParseConfig('pkg-config --cflags --libs libglog')
 environment.ParseConfig('pkg-config --cflags --libs libgflags')
+environment.ParseConfig('pkg-config --cflags --libs protobuf')
 
 # Build protos.
 proto_sources = [str(s) for s in Glob(os.path.join(proto_dir, '*.proto'))]
+proto_sources.extend([str(s) for s in Glob(os.path.join(proto_dir, 'scene/*.proto'))])
 source_target = [(s,  os.path.splitext(s)[0] + '.pb.h', os.path.splitext(s)[0] + '.pb.cc') for s in proto_sources]
 
 for st in source_target:

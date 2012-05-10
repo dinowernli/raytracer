@@ -1,0 +1,7 @@
+package raytracer.scene;
+
+message Point {
+  optional double x = 1;
+  optional double y = 2;
+  optional double z = 3;
+}

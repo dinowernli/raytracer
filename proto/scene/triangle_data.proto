@@ -1,0 +1,13 @@
+import "proto/scene/point.proto";
+import "proto/scene/vector.proto";
+
+package raytracer.scene;
+
+message TriangleData {
+  optional Point point1 = 1;
+  optional Vector normal1 = 2;
+  optional Point p2 = 3;
+  optional Vector n2 = 4;
+  optional Point p3 = 5;
+  optional Vector n1 = 6;
+}
