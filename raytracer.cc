@@ -18,7 +18,6 @@
 
 using raytracer::RendererConfig;
 using raytracer::SceneConfig;
-using raytracer::TriangleData;
 
 DEFINE_bool(shadows, true, "Whether or not shadows are rendered");
 
@@ -48,9 +47,6 @@ int main(int argc, char **argv) {
   if (FLAGS_use_kd_tree) {
     s_config.mutable_kd_tree_config();
   }
-
-  // Just for debugging purposes.
-  TriangleData data;
 
   //std::unique_ptr<Scene> scene(Scene::QuadricsScene(s_config));
   std::unique_ptr<Scene> scene(Scene::HorseScene(s_config));
