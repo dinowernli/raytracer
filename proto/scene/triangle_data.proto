@@ -5,10 +5,10 @@ import "proto/util/vector_data.proto";
 
 message TriangleData {
   optional string material_id = 1;
-  optional PointData point1 = 2;
-  optional VectorData normal1 = 3;
+  optional PointData p1 = 2;
+  optional VectorData n1 = 3;
   optional PointData p2 = 4;
   optional VectorData n2 = 5;
   optional PointData p3 = 6;
-  optional VectorData n1 = 7;
+  optional VectorData n3 = 7;
 }

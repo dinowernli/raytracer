@@ -50,10 +50,6 @@ class Color3 {
   const Intensity& g() const { return g_; }
   const Intensity& b() const { return b_; }
 
-  static Color3 FromConfig(const ColorData& data) {
-    return Color3(data.r(), data.g(), data.b());
-  }
-
  private:
   Intensity r_, g_, b_;
 };

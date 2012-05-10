@@ -72,10 +72,6 @@ class Point3 {
     return sqrt(SquaredDistance(first, second));
   }
 
-  static Point3 FromConfig(const PointData& data) {
-    return Point3(data.x(), data.y(), data.z());
-  }
-
  private:
   Scalar x_, y_, z_;
 };

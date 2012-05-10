@@ -102,10 +102,6 @@ class Vector3 {
     return *this;
   }
 
-  static Vector3 FromConfig(const VectorData& data) {
-    return Vector3(data.x(), data.y(), data.z());
-  }
-
  private:
   Scalar x_, y_, z_;
 };

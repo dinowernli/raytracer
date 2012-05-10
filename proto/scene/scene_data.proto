@@ -4,6 +4,7 @@ import "proto/scene/camera_data.proto";
 import "proto/scene/light_data.proto";
 import "proto/scene/plane_data.proto";
 import "proto/scene/triangle_data.proto";
+import "proto/util/material_data.proto";
 
 message ElementGroup {
   repeated TriangleData triangles = 1;
@@ -13,5 +14,6 @@ message ElementGroup {
 message SceneData {
   optional CameraData camera = 1;
   repeated PointLightData lights = 2;
-  repeated ElementGroup element_groups = 3;
+  repeated MaterialData materials = 3;
+  repeated ElementGroup element_groups = 4;
 }
