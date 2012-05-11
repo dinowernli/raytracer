@@ -40,6 +40,7 @@ DEFINE_string(scene_file, "data/scene/quadrics_tori.scene",
                           "A file from which to parse the items in the scene");
 
 // Genera TODO(dinow):
+// * Remove ElementGroup since it is not necessary.
 // * Rename proto namespace to "config" or "proto".
 // * Put everything else in namespace "raytracer".
 // * Implement relfection/refraction.

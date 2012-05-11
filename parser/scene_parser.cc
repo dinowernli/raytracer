@@ -138,7 +138,7 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
     // Parse spheres if any.
     for (int j = 0; j < group.spheres_size(); ++j) {
       const auto& sphere = group.spheres(j);
-      if (!(sphere.has_center() && sphere.has_radius())) {
+      if (sphere.has_center() && sphere.has_radius()) {
         scene->AddElement(new Sphere(Parse(sphere.center()),
                                      sphere.radius(),
                                      GetMaterial(sphere.material_id(),
