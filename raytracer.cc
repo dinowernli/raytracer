@@ -3,15 +3,20 @@
  * Autor: Dino Wernli
  */
 
+#include <fstream>
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/text_format.h>
 #include <memory>
+#include <streambuf>
+#include <string>
 
 #include "listener/bmp_exporter.h"
 #include "listener/ppm_exporter.h"
 #include "listener/progress_listener.h"
 #include "proto/configuration.pb.h"
+#include "proto/scene/scene_data.pb.h"
 #include "proto/scene/triangle_data.pb.h"
 #include "renderer/renderer.h"
 #include "scene/scene.h"
@@ -31,6 +36,9 @@ DEFINE_string(bmp_file, "image", "If <file> is passed, a BMP image will be "
 DEFINE_string(ppm_file, "", "If <file> is passed, a PPM image will be saved at "
                             "'output/<file>.ppm'");
 
+DEFINE_string(scene_file, "data/scene/quadrics_tori.scene",
+                          "A file from which to parse the items in the scene");
+
 // Genera TODO(dinow):
 // * Rename proto namespace to "config" or "proto".
 // * Put everything else in namespace "raytracer".
@@ -39,6 +47,16 @@ DEFINE_string(ppm_file, "", "If <file> is passed, a PPM image will be saved at "
 // * Implement statistics (intersection counting).
 // * Remove the default values from the object constructors. Leave them only in
 //   the protos. Or leave them in both but always pass the arguments.
+
+bool LoadSceneData(const std::string& path, raytracer::SceneData* output) {
+  std::ifstream stream(path);
+  if (!stream.is_open()) {
+    return false;
+  }
+  std::string string((std::istreambuf_iterator<char>(stream)),
+                      std::istreambuf_iterator<char>());
+  return google::protobuf::TextFormat::ParseFromString(string, output);
+}
 
 int main(int argc, char **argv) {
   // LOG(INFO): Always logged.
@@ -52,34 +70,48 @@ int main(int argc, char **argv) {
   // remove the flags from argc and argv, so that only real arguments remain.
   google::ParseCommandLineFlags(&argc, &argv, true);
 
-  SceneConfig s_config;
+  // Load the configuration from the passed arguments.
+  SceneConfig scene_config;
   if (FLAGS_use_kd_tree) {
-    s_config.mutable_kd_tree_config();
+    scene_config.mutable_kd_tree_config();
   }
-  // TODO(dinow): Parse command line arguments, get a file path, load the file
-  // into a proto, put the proto in s_config.
+  if (FLAGS_scene_file.empty()) {
+    LOG(ERROR) << "Failed to load scene data, no file provided";
+    return EXIT_FAILURE;
+  }
+  if (LoadSceneData(FLAGS_scene_file, scene_config.mutable_scene_data())) {
+    LOG(INFO) << "Loaded scene data from: " << FLAGS_scene_file;
+  } else {
+    LOG(ERROR) << "Failed to load scene data from: " << FLAGS_scene_file;
+    return EXIT_FAILURE;
+  }
 
+  // Build the scene from the config.
+  std::unique_ptr<Scene> scene(Scene::FromConfig(scene_config));
   //std::unique_ptr<Scene> scene(Scene::QuadricsScene(s_config));
-  std::unique_ptr<Scene> scene(Scene::HorseScene(s_config));
+  //std::unique_ptr<Scene> scene(Scene::HorseScene(scene_config));
   //std::unique_ptr<Scene> scene(Scene::TestScene(s_config));
 
-  RendererConfig r_config;
-  r_config.set_threads(FLAGS_worker_threads);
-  r_config.set_shadows(FLAGS_shadows);
+  // Load renderer config from flags.
+  RendererConfig renderer_config;
+  renderer_config.set_threads(FLAGS_worker_threads);
+  renderer_config.set_shadows(FLAGS_shadows);
 
-  std::unique_ptr<Renderer> renderer(Renderer::FromConfig(r_config));
+  // Build a renderer from the config.
+  std::unique_ptr<Renderer> renderer(Renderer::FromConfig(renderer_config));
+
   if (!FLAGS_bmp_file.empty()) {
     renderer->AddListener(new BmpExporter("output/" + FLAGS_bmp_file + ".bmp"));
   }
-
   if (!FLAGS_ppm_file.empty()) {
     renderer->AddListener(new PpmExporter("output/" + FLAGS_ppm_file + ".ppm"));
   }
-
   renderer->AddListener(new ProgressListener());
+
+  // Render the image.
   renderer->Render(scene.get());
 
   // Free all memory in the protocol buffer library.
   google::protobuf::ShutdownProtobufLibrary();
-  return 0;
+  return EXIT_SUCCESS;
 }
