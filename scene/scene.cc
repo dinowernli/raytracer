@@ -7,7 +7,7 @@
 #include <glog/logging.h>
 
 #include "parser/scene_parser.h"
-#include "proto/configuration.pb.h"
+#include "proto/config/scene_config.pb.h"
 #include "scene/element.h"
 #include "scene/light.h"
 #include "scene/material.h"

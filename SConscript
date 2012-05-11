@@ -30,6 +30,7 @@ environment.ParseConfig('pkg-config --cflags --libs protobuf')
 
 # Build protos.
 proto_sources = [str(s) for s in Glob(os.path.join(proto_dir, '*.proto'))]
+proto_sources.extend([str(s) for s in Glob(os.path.join(proto_dir, 'config/*.proto'))])
 proto_sources.extend([str(s) for s in Glob(os.path.join(proto_dir, 'scene/*.proto'))])
 proto_sources.extend([str(s) for s in Glob(os.path.join(proto_dir, 'util/*.proto'))])
 source_target = [(s,  os.path.splitext(s)[0] + '.pb.h', os.path.splitext(s)[0] + '.pb.cc') for s in proto_sources]

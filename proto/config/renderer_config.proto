@@ -1,0 +1,9 @@
+package raytracer;
+
+message RendererConfig {
+  // The number of worker threads used in the renderer.
+  optional uint32 threads = 1;
+
+  // Whether or not to ignore lights which are occluded.
+  optional bool shadows = 2;
+}

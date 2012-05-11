@@ -9,7 +9,7 @@
 #include <thread>
 #include <unistd.h>
 
-#include "proto/configuration.pb.h"
+#include "proto/config/renderer_config.pb.h"
 #include "renderer/intersection_data.h"
 #include "renderer/sampler/sample.h"
 #include "renderer/sampler/sampler.h"
@@ -19,8 +19,6 @@
 #include "renderer/updatable.h"
 #include "scene/scene.h"
 #include "util/ray.h"
-
-using raytracer::RendererConfig;
 
 Renderer::Renderer(Sampler* sampler, Shader* shader, size_t num_threads)
     : sampler_(sampler), shader_(shader), num_threads_(num_threads) {
@@ -122,7 +120,7 @@ const size_t Renderer::kSleepTimeMilli = 300;
 const size_t Renderer::kMicroToMilli = 1000;
 
 // static
-Renderer* Renderer::FromConfig(const RendererConfig& config) {
+Renderer* Renderer::FromConfig(const raytracer::RendererConfig& config) {
   Sampler* sampler = new ScanlineSampler(config.threads() > 0);
   Shader* shader = new PhongShader(config.shadows());
   return new Renderer(sampler, shader, config.threads());

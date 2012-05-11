@@ -1,20 +1,21 @@
 package raytracer;
 
-import "proto/scene/kd_tree_config.proto";
 import "proto/scene/scene_data.proto";
+
+message KdTreeConfig {
+  enum SplittingStrategyData {
+    MIDPOINT = 0;
+  }
+
+  optional SplittingStrategyData splitting_startegy = 1;
+
+  optional bool visualization = 2;
+}
 
 message SceneConfig {
   // Absence of one of these means that no KdTree will be used.
   optional KdTreeConfig kd_tree_config = 1;
-  
+
   // A container for the items of the scene, including lights, elements etc.
   optional SceneData scene_data = 2;
-}
-
-message RendererConfig {
-  // The number of worker threads used in the renderer.
-  optional uint32 threads = 1;
-
-  // Whether or not to ignore lights which are occluded.
-  optional bool shadows = 2;
 }
