@@ -14,6 +14,7 @@
 #include "scene/camera.h"
 #include "scene/element.h"
 #include "scene/geometry/plane.h"
+#include "scene/geometry/sphere.h"
 #include "scene/geometry/triangle.h"
 #include "scene/material.h"
 #include "scene/point_light.h"
