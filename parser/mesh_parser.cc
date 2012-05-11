@@ -5,7 +5,7 @@
 #include "mesh_parser.h"
 
 #include <fstream>
-#include <glog/logging.h>
+#include <memory>
 #include <sstream>
 
 #include "scene/mesh.h"
@@ -25,9 +25,13 @@ MeshParser::~MeshParser() {
 }
 
 Mesh* MeshParser::LoadFile(const std::string& path) {
-  Mesh* mesh = new Mesh();
-
+  std::unique_ptr<Mesh> mesh(new Mesh());
   std::ifstream file_stream(path);
+
+  if (!file_stream.is_open()) {
+    return NULL;
+  }
+
   while (!file_stream.eof()) {
     std::string type;
     file_stream >> type;
@@ -54,7 +58,7 @@ Mesh* MeshParser::LoadFile(const std::string& path) {
       mesh->AddTriangle(v1-1, n1-1, v2-1, n2-1, v3-1, n3-1);
     }
   }
-  return mesh;
+  return mesh.release();
 }
 
 // static

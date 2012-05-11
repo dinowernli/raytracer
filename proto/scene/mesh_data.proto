@@ -1,0 +1,10 @@
+package raytracer;
+
+import "proto/util/vector_data.proto";
+
+message MeshData {
+  optional string material_id = 1;
+  optional string obj_file = 2;
+  optional VectorData translation = 3;
+  optional double radius = 4;
+}

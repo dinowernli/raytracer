@@ -2,6 +2,7 @@ package raytracer;
 
 import "proto/scene/camera_data.proto";
 import "proto/scene/light_data.proto";
+import "proto/scene/mesh_data.proto";
 import "proto/scene/plane_data.proto";
 import "proto/scene/triangle_data.proto";
 import "proto/scene/sphere_data.proto";
@@ -18,4 +19,5 @@ message SceneData {
   repeated TriangleData triangles = 6;
   repeated PlaneData planes = 7;
   repeated SphereData spheres = 8;
+  repeated MeshData meshes = 9;
 }

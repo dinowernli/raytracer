@@ -17,7 +17,6 @@
 #include "listener/progress_listener.h"
 #include "proto/configuration.pb.h"
 #include "proto/scene/scene_data.pb.h"
-#include "proto/scene/triangle_data.pb.h"
 #include "renderer/renderer.h"
 #include "scene/scene.h"
 
@@ -36,17 +35,24 @@ DEFINE_string(bmp_file, "image", "If <file> is passed, a BMP image will be "
 DEFINE_string(ppm_file, "", "If <file> is passed, a PPM image will be saved at "
                             "'output/<file>.ppm'");
 
-DEFINE_string(scene_file, "data/scene/quadrics_tori.scene",
+DEFINE_string(scene_data, "data/scene/quadrics_tori.sd",
                           "A file from which to parse the items in the scene");
 
-// Genera TODO(dinow):
-// * Rename proto namespace to "config" or "proto".
-// * Put everything else in namespace "raytracer".
-// * Implement relfection/refraction.
-// * Implement a GUI and/or webserver.
-// * Implement statistics (intersection counting).
-// * Remove the default values from the object constructors. Leave them only in
-//   the protos. Or leave them in both but always pass the arguments.
+/* General Todos:
+
+TODO(dinow): Handle NULL materials with out segfaulting.
+TODO(dinow): Make mesh loader method static (or scene loader non-static)
+TODO(dinow): Change update mechanism to have different kinds of updates.
+TODO(dinow): Add possibility to load renderer config from file.
+TODO(dinow): Rename proto namespace to "config" or "proto".
+TODO(dinow): Put everything else in namespace "raytracer".
+TODO(dinow): Implement relfection/refraction.
+TODO(dinow): Implement a GUI and/or webserver.
+TODO(dinow): Implement statistics (intersection counting).
+TODO(dinow): Remove the default values from the object constructors.
+             Leave them only in the protos. Or leave them in both but always
+             pass the arguments.
+*/
 
 bool LoadSceneData(const std::string& path, raytracer::SceneData* output) {
   std::ifstream stream(path);
@@ -75,22 +81,19 @@ int main(int argc, char **argv) {
   if (FLAGS_use_kd_tree) {
     scene_config.mutable_kd_tree_config();
   }
-  if (FLAGS_scene_file.empty()) {
+  if (FLAGS_scene_data.empty()) {
     LOG(ERROR) << "Failed to load scene data, no file provided";
     return EXIT_FAILURE;
   }
-  if (LoadSceneData(FLAGS_scene_file, scene_config.mutable_scene_data())) {
-    LOG(INFO) << "Loaded scene data from: " << FLAGS_scene_file;
+  if (LoadSceneData(FLAGS_scene_data, scene_config.mutable_scene_data())) {
+    LOG(INFO) << "Loaded scene data from: " << FLAGS_scene_data;
   } else {
-    LOG(ERROR) << "Failed to load scene data from: " << FLAGS_scene_file;
+    LOG(ERROR) << "Failed to load scene data from: " << FLAGS_scene_data;
     return EXIT_FAILURE;
   }
 
   // Build the scene from the config.
-  //std::unique_ptr<Scene> scene(Scene::FromConfig(scene_config));
-  //std::unique_ptr<Scene> scene(Scene::QuadricsScene(s_config));
-  std::unique_ptr<Scene> scene(Scene::HorseScene(scene_config));
-  //std::unique_ptr<Scene> scene(Scene::TestScene(s_config));
+  std::unique_ptr<Scene> scene(Scene::FromConfig(scene_config));
 
   // Load renderer config from flags.
   RendererConfig renderer_config;

@@ -69,18 +69,7 @@ class Scene {
   // over const Light& (without an extra memory allocation).
   const std::vector<std::unique_ptr<Light>>& lights() const { return lights_; }
 
-  // TODO(dinow): Eventually let the config specify which scene and remove the
-  // methods below.
   static Scene* FromConfig(const raytracer::SceneConfig& config);
-
-  // Builds the Quadrics scene. The caller takes ownership of the pointer.
-  static Scene* QuadricsScene(const raytracer::SceneConfig& config);
-
-  // Builds the Horse scene. The caller takes ownership of the pointer.
-  static Scene* HorseScene(const raytracer::SceneConfig& config);
-
-  // Builds a test scene. The caller takes ownership of the pointer.
-  static Scene* TestScene(const raytracer::SceneConfig& config);
 
  private:
   std::vector<std::unique_ptr<Element>> elements_;
