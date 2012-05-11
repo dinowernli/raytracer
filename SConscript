@@ -12,7 +12,7 @@ environment = Environment(
 
 # Configure different build modes.
 if ARGUMENTS.get('debug') == '0' or ARGUMENTS.get('release') == '1':
-	environment.Append(CCFLAGS = ['-O2'])
+	environment.Append(CCFLAGS = ['-O3'])
 	environment.Append(CCFLAGS = ['-DNDEBUG'])
 	environment.Append(CCFLAGS = ['-march=native'])
 else:
@@ -20,6 +20,8 @@ else:
 	if ARGUMENTS.get('profile') == '1':
 		environment.Append(CCFLAGS = ['-pg'])
 		environment.Append(LINKFLAGS = ['-pg'])
+
+#environment.Replace(CXX = "clang")
 
 # Add support for glog.
 environment.ParseConfig('pkg-config --cflags --libs libglog')

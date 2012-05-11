@@ -87,9 +87,9 @@ int main(int argc, char **argv) {
   }
 
   // Build the scene from the config.
-  std::unique_ptr<Scene> scene(Scene::FromConfig(scene_config));
+  //std::unique_ptr<Scene> scene(Scene::FromConfig(scene_config));
   //std::unique_ptr<Scene> scene(Scene::QuadricsScene(s_config));
-  //std::unique_ptr<Scene> scene(Scene::HorseScene(scene_config));
+  std::unique_ptr<Scene> scene(Scene::HorseScene(scene_config));
   //std::unique_ptr<Scene> scene(Scene::TestScene(s_config));
 
   // Load renderer config from flags.
