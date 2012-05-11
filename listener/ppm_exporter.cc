@@ -28,9 +28,13 @@ void PpmExporter::Update(const Sampler& sampler) {
     return;
   }
 
-  LOG(INFO) << "Exporting image " << file_name_;
-
   const Image& image = sampler.image();
+  if (image.SizeX() == 0 && image.SizeY() == 0) {
+    LOG(INFO) << "Empty image, not exporting to file: " << file_name_;
+    return;
+  }
+
+  LOG(INFO) << "Exporting image to file: " << file_name_;
   std::ofstream file_stream(file_name_);
 
   file_stream << kMagicNumber << std::endl;

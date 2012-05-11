@@ -43,13 +43,17 @@ void BmpExporter::Update(const Sampler& sampler) {
     return;
   }
 
-  LOG(INFO) << "Exporting image " << file_name_;
-
-  std::ofstream file_stream(file_name_, std::ofstream::binary);
   const Image& image = sampler.image();
   const size_t width = image.SizeX();
   const size_t height = image.SizeY();
 
+  if (height == 0 && width == 0) {
+    LOG(INFO) << "Empty image, not exporting to file: " << file_name_;
+    return;
+  }
+
+  LOG(INFO) << "Exporting image " << file_name_;
+  std::ofstream file_stream(file_name_, std::ofstream::binary);
   WriteHeader(width, height, &file_stream);
 
   // Due to alignment, we must append the following number of bytes as padding.
