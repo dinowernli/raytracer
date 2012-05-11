@@ -8,17 +8,14 @@ import "proto/scene/sphere_data.proto";
 import "proto/util/color_data.proto";
 import "proto/util/material_data.proto";
 
-message ElementGroup {
-  repeated TriangleData triangles = 1;
-  repeated PlaneData planes = 2;
-  repeated SphereData spheres = 3;
-}
-
 message SceneData {
   optional CameraData camera = 1;
   repeated PointLightData lights = 2;
   repeated MaterialData materials = 3;
-  repeated ElementGroup element_groups = 4;
-  optional ColorData background = 5;
-  optional ColorData ambient = 6;
+  optional ColorData background = 4;
+  optional ColorData ambient = 5;
+
+  repeated TriangleData triangles = 6;
+  repeated PlaneData planes = 7;
+  repeated SphereData spheres = 8;
 }

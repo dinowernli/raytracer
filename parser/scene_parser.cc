@@ -97,55 +97,51 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
                                    Parse(data.lights(i).color())));
   }
 
-  for (int i = 0; i < data.element_groups_size(); ++i) {
-    const auto& group = data.element_groups(i);
+  // Parse triangles if any.
+  for (int j = 0; j < data.triangles_size(); ++j) {
+    const auto& triangle = data.triangles(j);
+    std::unique_ptr<Vector3> n1(triangle.has_n1() ?
+        new Vector3(Parse(triangle.n1())) : NULL);
+    std::unique_ptr<Vector3> n2(triangle.has_n2() ?
+        new Vector3(Parse(triangle.n2())) : NULL);
+    std::unique_ptr<Vector3> n3(triangle.has_n3() ?
+        new Vector3(Parse(triangle.n3())) : NULL);
 
-    // Parse triangles if any.
-    for (int j = 0; j < group.triangles_size(); ++j) {
-      const auto& triangle = group.triangles(j);
-      std::unique_ptr<Vector3> n1(triangle.has_n1() ?
-          new Vector3(Parse(triangle.n1())) : NULL);
-      std::unique_ptr<Vector3> n2(triangle.has_n2() ?
-          new Vector3(Parse(triangle.n2())) : NULL);
-      std::unique_ptr<Vector3> n3(triangle.has_n3() ?
-          new Vector3(Parse(triangle.n3())) : NULL);
-
-      if (triangle.has_p1() && triangle.has_p2() && triangle.has_p3()) {
-        scene->AddElement(
-            new Triangle(Parse(triangle.p1()),
-                         Parse(triangle.p2()),
-                         Parse(triangle.p3()),
-                         GetMaterial(triangle.material_id(), material_map),
-                         n1.get(), n2.get(), n3.get()));
-      } else {
-        LOG(WARNING) << "Skipping incomplete triangle";
-      }
+    if (triangle.has_p1() && triangle.has_p2() && triangle.has_p3()) {
+      scene->AddElement(
+          new Triangle(Parse(triangle.p1()),
+                       Parse(triangle.p2()),
+                       Parse(triangle.p3()),
+                       GetMaterial(triangle.material_id(), material_map),
+                       n1.get(), n2.get(), n3.get()));
+    } else {
+      LOG(WARNING) << "Skipping incomplete triangle";
     }
+  }
 
-    // Parse planes if any.
-    for (int j = 0; j < group.planes_size(); ++j) {
-      const auto& plane = group.planes(j);
-      if (plane.has_point() && plane.has_normal()) {
-        scene->AddElement(
-            new Plane(Parse(plane.point()),
-                      Parse(plane.normal()),
-                      GetMaterial(plane.material_id(), material_map)));
-      } else {
-        LOG(WARNING) << "Skipping incomplete plane";
-      }
+  // Parse planes if any.
+  for (int j = 0; j < data.planes_size(); ++j) {
+    const auto& plane = data.planes(j);
+    if (plane.has_point() && plane.has_normal()) {
+      scene->AddElement(
+          new Plane(Parse(plane.point()),
+                    Parse(plane.normal()),
+                    GetMaterial(plane.material_id(), material_map)));
+    } else {
+      LOG(WARNING) << "Skipping incomplete plane";
     }
+  }
 
-    // Parse spheres if any.
-    for (int j = 0; j < group.spheres_size(); ++j) {
-      const auto& sphere = group.spheres(j);
-      if (sphere.has_center() && sphere.has_radius()) {
-        scene->AddElement(new Sphere(Parse(sphere.center()),
-                                     sphere.radius(),
-                                     GetMaterial(sphere.material_id(),
-                                                 material_map)));
-      } else {
-        LOG(WARNING) << "Skipping incomplete sphere";
-      }
+  // Parse spheres if any.
+  for (int j = 0; j < data.spheres_size(); ++j) {
+    const auto& sphere = data.spheres(j);
+    if (sphere.has_center() && sphere.has_radius()) {
+      scene->AddElement(new Sphere(Parse(sphere.center()),
+                                   sphere.radius(),
+                                   GetMaterial(sphere.material_id(),
+                                               material_map)));
+    } else {
+      LOG(WARNING) << "Skipping incomplete sphere";
     }
   }
 }
