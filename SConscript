@@ -48,20 +48,25 @@ for st in source_target:
     'protoc --cpp_out=' + build_dir + ' ' + st[0]
   )
 
-# Build binaries.
-p = environment.Program(
-  'raytracer',
-   Glob('*.cc') 
-    + Glob('listener/*.cc')
-    + Glob('parser/*.cc')
-    + Glob('renderer/*.cc')
-    + Glob('renderer/sampler/*.cc')
-    + Glob('renderer/shader/*.cc')
-    + Glob('scene/*.cc') 
-    + Glob('scene/geometry/*.cc')
-    + Glob('util/*.cc')
-    + [st[2] for st in source_target],
-)
+# Specify library
+cc_files = [
+  'listener/*.cc',
+  'parser/*.cc',
+  'renderer/*.cc',
+  'renderer/sampler/*.cc',
+  'renderer/shader/*.cc',
+  'scene/*.cc',
+  'scene/geometry/*.cc',
+  'util/*.cc',
+]
+lib_sources = [Glob(cc_file) for cc_file in cc_files] + [st[2] for st in source_target]
+
+p = environment.Library('raytracer', lib_sources)
+environment.Append(LIBS='raytracer')
+environment.Append(LIBPATH='.')
+
+# Specify binaries
+environment.Program('raytracer_cli.cc')
 
 # This is how to force dependencies.
 # environment.Depends(p, pb)
