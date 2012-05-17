@@ -38,12 +38,24 @@ materials {
 }
 
 materials {
-  identifier: "green"
+  identifier: "green_refractive"
   emission: { r:0 g:0 b:0 }
   ambient: { r:0.04 g:0.08 b:0.1 }
   diffuse: { r:0.4 g:0.8 b:0.1 }
   specular: { r:0.6 g:1 b:0.5 }
   shininess: 20
+  refraction_percentage: 0.6
+  refraction_index: 1.01
+}
+
+materials {
+  identifier: "green_reflective"
+  emission: { r:0 g:0 b:0 }
+  ambient: { r:0.04 g:0.08 b:0.1 }
+  diffuse: { r:0.4 g:0.8 b:0.1 }
+  specular: { r:0.6 g:1 b:0.5 }
+  shininess: 20
+  reflection_percentage: 0.6
 }
 
 materials {
@@ -70,13 +82,13 @@ planes {
 spheres {
   center: { x:0.2 y:1.3 z:4 }
   radius: 1.1
-  material_id: "green"
+  material_id: "green_refractive"
 }
 
 spheres {
   center: { x:1.8 y:1.8 z:1.8 }
   radius: 0.5
-  material_id: "green"
+  material_id: "green_reflective"
 }
 
 triangles {

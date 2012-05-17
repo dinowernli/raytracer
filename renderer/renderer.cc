@@ -127,17 +127,49 @@ Color3 Renderer::TraceColor(const Ray& ray, size_t depth,
 
   Color3 refracted;
   Scalar refraction_percentage = max(material.refraction_percentage(), 0.0);
-  if (refraction_percentage > 0) {
-    Scalar index = refraction_stack->back();
-
-    //bool entering =
-  }
-
   Color3 reflected;
   Scalar reflection_percentage = max(material.reflection_percentage(), 0.0);
+
+  if (refraction_percentage > 0) {
+    Scalar old_index = refraction_stack->back();
+    Scalar new_index;
+    if(data.normal.Dot(ray.direction()) < 0) {
+      // Ray enters object.
+      new_index = material.refraction_index();
+    } else {
+      new_index = refraction_stack->at(refraction_stack->back() - 2);
+    }
+
+    // TODO(dinow): Check if normalization is really necessary.
+    Vector3 normal = data.normal.Normalized();
+    Scalar ratio = old_index / new_index;
+    Vector3 omega(-1 * ray.direction());
+    Scalar dot = omega.Dot(normal);
+
+    if (dot < 0) {
+      dot = -dot;
+      normal = (-1) * normal;
+    }
+    Scalar under_root = 1 - (ratio * ratio) * (1 - dot * dot);
+
+    if (under_root < 0) {
+      // Total reflection.
+      reflection_percentage += refraction_percentage;
+      refraction_percentage = 0;
+    } else {
+      Vector3 dir(((omega - dot * normal) * (-ratio))
+                  - sqrt(under_root) * normal);
+      Point3 pos(data.position + EPSILON * dir);
+
+      refraction_stack->push_back(new_index);
+      refracted = TraceColor(Ray(pos, dir), depth + 1, refraction_stack);
+      refraction_stack->pop_back();
+    }
+  }
+
   if (reflection_percentage > 0) {
     Vector3 dir = ray.direction().ReflectedOnPlane(data.normal);
-    Point3 pos = data.position + EPSILON * dir;
+    Point3 pos(data.position + EPSILON * dir);
     reflected = TraceColor(Ray(pos, dir), depth + 1, refraction_stack);
   }
 
