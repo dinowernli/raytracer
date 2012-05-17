@@ -59,7 +59,6 @@ Material* SceneParser::ParseMaterial(const raytracer::MaterialData& data) {
                       data.refraction_percentage(), data.refraction_index());
 }
 
-// static
 void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
   material_map_.clear();
 
