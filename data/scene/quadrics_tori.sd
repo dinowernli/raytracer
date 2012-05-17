@@ -59,12 +59,13 @@ materials {
 }
 
 materials {
-  identifier: "blue"
+  identifier: "blue_reflective"
   emission: { r:0 g:0 b:0 }
   ambient: { r:0 g:0 b:0.1 }
   diffuse: { r:0 g:0 b:1 }
   specular: { r:0 g:0 b:1 }
   shininess: 7
+  reflection_percentage: 0.5
 }
 
 planes {
@@ -95,19 +96,19 @@ triangles {
   p1: { x:1.8 y:1.3 z:1.8 }  n1: { x:1.69 y:0.6 z:-1.82 }
   p2: { x:1.4 y:0 z:1 }      n2: { x:1.69 y:0.6 z:-1.82 }
   p3: { x:2.8 y:0 z:2.3 }    n3: { x:1.69 y:0.6 z:-1.82 }
-  material_id: "blue"
+  material_id: "blue_reflective"
 }
 
 triangles {
   p1: { x:1.8 y:1.3 z:1.8 }  n1: { x:0.91 y:1.6 z:2.34 }
   p2: { x:2.8 y:0 z:2.3 }    n2: { x:0.91 y:1.6 z:2.34 }
   p3: { x:1 y:0 z:3 }        n3: { x:0.91 y:1.6 z:2.34 }
-  material_id: "blue"
+  material_id: "blue_reflective"
 }
 
 triangles {
   p1: { x:1.8 y:1.3 z:1.8 }  n1: { x:-2.6 y:1.12 z:-0.52 }
   p2: { x:1 y:0 z:3 }        n2: { x:-2.6 y:1.12 z:-0.52 }
   p3: { x:1.4 y:0 z:1 }      n3: { x:-2.6 y:1.12 z:-0.52 }
-  material_id: "blue"
+  material_id: "blue_reflective"
 }
