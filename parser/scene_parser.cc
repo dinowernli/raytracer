@@ -5,9 +5,6 @@
 #include "scene_parser.h"
 
 #include <glog/logging.h>
-#include <map>
-#include <memory>
-#include <string>
 
 #include "parser/mesh_parser.h"
 #include "proto/scene/scene_data.pb.h"
@@ -45,16 +42,26 @@ static Point3 Parse(const raytracer::PointData& data) {
 }
 
 // Fetches the material pointer from the map, returns none if it is not found.
-static const Material* GetMaterial(
-    const std::string& id, const std::map<std::string, const Material*>& map) {
-  auto it = map.find(id);
-  return ((it == map.end()) ? NULL : it->second);
+Material* SceneParser::GetMaterial(const std::string& id) const {
+  auto it = material_map_.find(id);
+  return ((it == material_map_.end()) ? NULL : it->second);
+}
+
+Material* SceneParser::ParseMaterial(const raytracer::MaterialData& data) {
+  if (!(data.has_emission() && data.has_ambient()
+      && data.has_diffuse() && data.has_specular())) {
+    return NULL;
+  }
+
+  return new Material(Parse(data.emission()), Parse(data.ambient()),
+                      Parse(data.diffuse()), Parse(data.specular()),
+                      data.shininess(), data.reflection_percentage(),
+                      data.refraction_percentage(), data.refraction_index());
 }
 
 // static
 void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
-  // Maps material identifiers to materials.
-  std::map<std::string, const Material*> material_map;
+  material_map_.clear();
 
   if (data.has_background()) {
     scene->set_background(Parse(data.background()));
@@ -64,25 +71,21 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
     scene->set_ambient(Parse(data.ambient()));
   }
 
+  Material* material = NULL;
   for (int i = 0; i < data.materials_size(); ++i) {
-    const auto& mat_data = data.materials(i);
-    if (!(mat_data.has_emission() && mat_data.has_ambient()
-        && mat_data.has_diffuse() && mat_data.has_specular())) {
+    if (!data.materials(i).has_identifier()) {
+      LOG(WARNING) << "Skipping material without identifier";
+      continue;
+    }
+
+    if (!(material = ParseMaterial(data.materials(i)))) {
       LOG(WARNING) << "Skipping incomplete material";
       continue;
     }
 
-    Material* current = new Material(Parse(mat_data.emission()),
-                                     Parse(mat_data.ambient()),
-                                     Parse(mat_data.diffuse()),
-                                     Parse(mat_data.specular()),
-                                     mat_data.shininess(),
-                                     mat_data.reflection_percentage(),
-                                     mat_data.refraction_percentage(),
-                                     mat_data.refraction_index());
     // Ownership taken by scene.
-    scene->AddMaterial(current);
-    material_map[mat_data.identifier()] = current;
+    scene->AddMaterial(material);
+    material_map_[data.materials(i).identifier()] = material;
   }
 
   if (data.has_camera()) {
@@ -121,8 +124,7 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
         new Vector3(Parse(triangle.n3())) : NULL);
 
     if (triangle.has_p1() && triangle.has_p2() && triangle.has_p3()) {
-      const Material* material;
-      if (!(material = GetMaterial(triangle.material_id(), material_map))) {
+      if (!(material = GetMaterial(triangle.material_id()))) {
         LOG(WARNING) << "Failed to get material, skipping triangle";
         continue;
       }
@@ -139,8 +141,7 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
   for (int i = 0; i < data.planes_size(); ++i) {
     const auto& plane = data.planes(i);
     if (plane.has_point() && plane.has_normal()) {
-      const Material* material;
-      if (!(material = GetMaterial(plane.material_id(), material_map))) {
+      if (!(material = GetMaterial(plane.material_id()))) {
         LOG(WARNING) << "Failed to get material, skipping plane";
         continue;
       }
@@ -162,15 +163,13 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
     }
 
     const Material* main_material;
-    if (!(main_material = GetMaterial(cplane.plane_data().material_id(),
-                                      material_map))) {
+    if (!(main_material = GetMaterial(cplane.plane_data().material_id()))) {
       LOG(WARNING) << "Failed to get main material, skipping circle plane";
       continue;
     }
 
     const Material* ring_material;
-    if (!(ring_material = GetMaterial(cplane.ring_material_id(),
-                                      material_map))) {
+    if (!(ring_material = GetMaterial(cplane.ring_material_id()))) {
       LOG(WARNING) << "Failed to get ring material, skipping circle plane";
       continue;
     }
@@ -183,9 +182,7 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
   // Parse spheres if any.
   for (int i = 0; i < data.spheres_size(); ++i) {
     const auto& sphere = data.spheres(i);
-
-    const Material* material;
-    if (!(material = GetMaterial(sphere.material_id(), material_map))) {
+    if (!(material = GetMaterial(sphere.material_id()))) {
       LOG(WARNING) << "Failed to get material, skipping sphere";
       continue;
     }
@@ -206,8 +203,7 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
       const std::string& path = mesh_data.obj_file();
       Mesh* mesh = parser.LoadFile(path);
       if (mesh != NULL) {
-        const Material* material;
-        if (!(material = GetMaterial(mesh_data.material_id(), material_map))) {
+        if (!(material = GetMaterial(mesh_data.material_id()))) {
           LOG(WARNING) << "Failed to get main material, skipping mesh";
           continue;
         }

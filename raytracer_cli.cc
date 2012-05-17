@@ -46,8 +46,6 @@ DEFINE_string(scene_data, "data/scene/quadrics_tori.sd",
 
 TODO(dinow): Add textures, perlin noise
 TODO(dinow): Add supersampling (as preparation for global illumination)
-TODO(dinow): Handle NULL materials with out segfaulting.
-TODO(dinow): Make mesh loader method static (or scene loader non-static)
 TODO(dinow): Change update mechanism to have different kinds of updates.
 TODO(dinow): Add possibility to load renderer config from file.
 TODO(dinow): Rename proto namespace to "config" or "proto".

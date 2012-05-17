@@ -65,6 +65,7 @@ bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
 Scene* Scene::FromConfig(const raytracer::SceneConfig& config) {
   KdTree* tree = config.has_kd_tree_config() ? new KdTree() : NULL;
   Scene* scene = new Scene(tree);
-  SceneParser::ParseScene(config.scene_data(), scene);
+  SceneParser parser;
+  parser.ParseScene(config.scene_data(), scene);
   return scene;
 }

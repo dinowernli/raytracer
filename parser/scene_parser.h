@@ -6,12 +6,18 @@
 #ifndef SCENE_PARSER_H_
 #define SCENE_PARSER_H_
 
+#include <map>
+#include <memory>
+#include <string>
+
 #include "util/no_copy_assign.h"
 
 namespace raytracer {
+class MaterialData;
 class SceneData;
 }
 
+class Material;
 class Scene;
 
 class SceneParser {
@@ -21,7 +27,19 @@ class SceneParser {
   NO_COPY_ASSIGN(SceneParser);
 
   // Parses data and add everything to scene.
-  static void ParseScene(const raytracer::SceneData& data, Scene* scene);
+  void ParseScene(const raytracer::SceneData& data, Scene* scene);
+
+ private:
+  // Adds a material to the mapping of known materials. The caller takes
+  // ownership of the returned material. Returns NULL if the data could not be
+  // parsed.
+  Material* ParseMaterial(const raytracer::MaterialData& data);
+
+  // Fetches the material from the material map, returns NULL if it is missing.
+  Material* GetMaterial(const std::string& id) const;
+
+  // Maps material identifiers to materials.
+  std::map<std::string, Material*> material_map_;
 };
 
 #endif  /* SCENE_PARSER_H_ */
