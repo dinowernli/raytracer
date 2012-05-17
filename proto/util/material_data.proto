@@ -7,6 +7,11 @@ message MaterialData {
   optional ColorData ambient = 2;
   optional ColorData diffuse = 3;
   optional ColorData specular = 4;
-  optional double shininess = 5;
+  optional double shininess = 5 [default = 10];
+
   optional string identifier = 6;
+
+  optional double reflection_percentage = 7 [default = 0];
+  optional double refraction_percentage = 8 [default = 0];
+  optional double refraction_index = 9 [default = 1];
 }

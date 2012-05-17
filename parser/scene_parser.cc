@@ -76,7 +76,10 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
                                      Parse(mat_data.ambient()),
                                      Parse(mat_data.diffuse()),
                                      Parse(mat_data.specular()),
-                                     mat_data.shininess());
+                                     mat_data.shininess(),
+                                     mat_data.reflection_percentage(),
+                                     mat_data.refraction_percentage(),
+                                     mat_data.refraction_index());
     // Ownership taken by scene.
     scene->AddMaterial(current);
     material_map[mat_data.identifier()] = current;
