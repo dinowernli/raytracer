@@ -149,8 +149,8 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
   for (int i = 0; i < data.circle_planes_size(); ++i) {
     const auto& cplane = data.circle_planes(i);
     if (!(cplane.has_plane_data() && cplane.plane_data().has_point()
-          && cplane.plane_data().has_normal() && cplane.has_radius())) {
-      LOG(WARNING) << "Skipping incomplete plane";
+          && cplane.plane_data().has_normal())) {
+      LOG(WARNING) << "Skipping incomplete circle plane";
       continue;
     }
 

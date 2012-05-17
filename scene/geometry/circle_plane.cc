@@ -19,7 +19,7 @@ CirclePlane::~CirclePlane() {
 bool CirclePlane::Intersect(const Ray& ray, IntersectionData* data) const {
   bool found = Plane::Intersect(ray, data);
   if (data != NULL && data->element == this) {
-    size_t dist = Point3::Distance(data->position, point());
+    size_t dist = Point3::Distance(data->position, point()) / radius_;
     if (dist % 2 == 0) {
       data->material = ring_material_;
     }

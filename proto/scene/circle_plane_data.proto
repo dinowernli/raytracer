@@ -6,6 +6,8 @@ import "proto/util/vector_data.proto";
 
 message CirclePlaneData {
   optional PlaneData plane_data = 1;
-  optional double radius = 2;
+
+  // Specifies the width of each ring.
+  optional double radius = 2 [default = 1];
   optional string ring_material_id = 3;
 }
