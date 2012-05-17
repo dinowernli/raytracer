@@ -121,11 +121,14 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
         new Vector3(Parse(triangle.n3())) : NULL);
 
     if (triangle.has_p1() && triangle.has_p2() && triangle.has_p3()) {
+      const Material* material;
+      if (!(material = GetMaterial(triangle.material_id(), material_map))) {
+        LOG(WARNING) << "Failed to get material, skipping triangle";
+        continue;
+      }
       scene->AddElement(
-          new Triangle(Parse(triangle.p1()),
-                       Parse(triangle.p2()),
-                       Parse(triangle.p3()),
-                       GetMaterial(triangle.material_id(), material_map),
+          new Triangle(Parse(triangle.p1()), Parse(triangle.p2()),
+                       Parse(triangle.p3()), *material,
                        n1.get(), n2.get(), n3.get()));
     } else {
       LOG(WARNING) << "Skipping incomplete triangle";
@@ -136,10 +139,14 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
   for (int i = 0; i < data.planes_size(); ++i) {
     const auto& plane = data.planes(i);
     if (plane.has_point() && plane.has_normal()) {
+      const Material* material;
+      if (!(material = GetMaterial(plane.material_id(), material_map))) {
+        LOG(WARNING) << "Failed to get material, skipping plane";
+        continue;
+      }
+
       scene->AddElement(
-          new Plane(Parse(plane.point()),
-                    Parse(plane.normal()),
-                    GetMaterial(plane.material_id(), material_map)));
+          new Plane(Parse(plane.point()), Parse(plane.normal()), *material));
     } else {
       LOG(WARNING) << "Skipping incomplete plane";
     }
@@ -154,22 +161,38 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
       continue;
     }
 
+    const Material* main_material;
+    if (!(main_material = GetMaterial(cplane.plane_data().material_id(),
+                                      material_map))) {
+      LOG(WARNING) << "Failed to get main material, skipping circle plane";
+      continue;
+    }
+
+    const Material* ring_material;
+    if (!(ring_material = GetMaterial(cplane.ring_material_id(),
+                                      material_map))) {
+      LOG(WARNING) << "Failed to get ring material, skipping circle plane";
+      continue;
+    }
+
     scene->AddElement(new CirclePlane(
-        Parse(cplane.plane_data().point()),
-        Parse(cplane.plane_data().normal()),
-        cplane.radius(),
-        GetMaterial(cplane.plane_data().material_id(), material_map),
-        GetMaterial(cplane.ring_material_id(), material_map)));
+        Parse(cplane.plane_data().point()), Parse(cplane.plane_data().normal()),
+        cplane.radius(), *main_material, *ring_material));
   }
 
   // Parse spheres if any.
   for (int i = 0; i < data.spheres_size(); ++i) {
     const auto& sphere = data.spheres(i);
+
+    const Material* material;
+    if (!(material = GetMaterial(sphere.material_id(), material_map))) {
+      LOG(WARNING) << "Failed to get material, skipping sphere";
+      continue;
+    }
+
     if (sphere.has_center() && sphere.has_radius()) {
-      scene->AddElement(new Sphere(Parse(sphere.center()),
-                                   sphere.radius(),
-                                   GetMaterial(sphere.material_id(),
-                                               material_map)));
+      scene->AddElement(new Sphere(Parse(sphere.center()), sphere.radius(),
+                                   *material));
     } else {
       LOG(WARNING) << "Skipping incomplete sphere";
     }
@@ -183,7 +206,13 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
       const std::string& path = mesh_data.obj_file();
       Mesh* mesh = parser.LoadFile(path);
       if (mesh != NULL) {
-        mesh->set_material(GetMaterial(mesh_data.material_id(), material_map));
+        const Material* material;
+        if (!(material = GetMaterial(mesh_data.material_id(), material_map))) {
+          LOG(WARNING) << "Failed to get main material, skipping mesh";
+          continue;
+        }
+
+        mesh->set_material(material);
         if (mesh_data.has_translation() || mesh_data.has_radius()) {
           Vector3 translation;
           if (mesh_data.has_translation()) {

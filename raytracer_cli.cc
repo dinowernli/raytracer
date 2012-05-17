@@ -44,14 +44,14 @@ DEFINE_string(scene_data, "data/scene/quadrics_tori.sd",
 
 /* General Todos:
 
-TODO(dinow): Add a material to the base element (but no getter).
+TODO(dinow): Add textures, perlin noise
+TODO(dinow): Add supersampling (as preparation for global illumination)
 TODO(dinow): Handle NULL materials with out segfaulting.
 TODO(dinow): Make mesh loader method static (or scene loader non-static)
 TODO(dinow): Change update mechanism to have different kinds of updates.
 TODO(dinow): Add possibility to load renderer config from file.
 TODO(dinow): Rename proto namespace to "config" or "proto".
 TODO(dinow): Put everything else in namespace "raytracer".
-TODO(dinow): Implement relfection/refraction.
 TODO(dinow): Implement a GUI and/or webserver.
 TODO(dinow): Implement statistics (intersection counting).
 TODO(dinow): Remove the default values from the object constructors.

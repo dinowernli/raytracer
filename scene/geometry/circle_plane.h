@@ -11,14 +11,14 @@
 class CirclePlane : public Plane {
  public:
   CirclePlane(const Point3& point, const Vector3& normal, Scalar radius,
-              const Material* ring_material, const Material* main_material);
+              const Material& ring_material, const Material& main_material);
   virtual ~CirclePlane();
 
   virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
 
  private:
   Scalar radius_;
-  const Material* ring_material_;
+  const Material& ring_material_;
 };
 
 #endif  /* CIRCLE_PLANE_H_ */

@@ -14,7 +14,7 @@ class Material;
 class Sphere : public Element {
  public:
   // Does not take ownership of material.
-  Sphere(const Point3& center, Scalar radius, const Material* material = NULL);
+  Sphere(const Point3& center, Scalar radius, const Material& material);
   virtual ~Sphere();
 
   virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
@@ -22,7 +22,6 @@ class Sphere : public Element {
  private:
   Point3 center_;
   Scalar radius_;
-  const Material* material_;
 };
 
 #endif  /* SPHERE_H_ */

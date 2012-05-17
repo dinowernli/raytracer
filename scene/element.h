@@ -12,6 +12,7 @@
 #include "util/bounding_box.h"
 
 class IntersectionData;
+class Material;
 class Ray;
 
 class Element {
@@ -28,13 +29,18 @@ class Element {
 
   const bool IsBounded() const { return bounding_box() != NULL; }
 
+  const Material& material() const { return material_; }
+
  protected:
   // Only to be called by subclasses who wish to initialize the bounding box.
   // Takes ownership of the passed BoundingBox.
-  Element(BoundingBox* box = NULL) : bounding_box_(box) {}
+  Element(const Material& material, BoundingBox* box = NULL)
+      : bounding_box_(box), material_(material) {}
 
  private:
   std::unique_ptr<BoundingBox> bounding_box_;
+
+  const Material& material_;
 };
 
 #endif  /* ELEMENT_H_ */

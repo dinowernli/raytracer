@@ -8,10 +8,9 @@
 #include "util/ray.h"
 
 Triangle::Triangle(const Point3& c1, const Point3& c2, const Point3& c3,
-                   const Material* material, const Vector3* n1,
+                   const Material& material, const Vector3* n1,
                    const Vector3* n2, const Vector3* n3)
-    : Element(&(new BoundingBox(c1))->Include(c2).Include(c3)),
-      material_(material) {
+    : Element(material, &(new BoundingBox(c1))->Include(c2).Include(c3)) {
   Vector3 normal = c1.VectorTo(c2).Cross(c1.VectorTo(c3)).Normalized();
   vertex1_.reset(new Vertex(c1, n1 == NULL ? normal : n1->Normalized()));
   vertex2_.reset(new Vertex(c2, n2 == NULL ? normal : n2->Normalized()));
@@ -20,10 +19,10 @@ Triangle::Triangle(const Point3& c1, const Point3& c2, const Point3& c3,
 
 Triangle::Triangle(const Point3* c1, const Point3* c2, const Point3* c3,
                    const Vector3* n1, const Vector3* n2, const Vector3* n3,
-                   const Material* material)
-    : Element(&(new BoundingBox(*c1))->Include(*c2).Include(*c3)),
-      material_(material), vertex1_(new Vertex(c1, n1)),
-      vertex2_(new Vertex(c2, n2)), vertex3_(new Vertex(c3, n3)) {
+                   const Material& material)
+    : Element(material, &(new BoundingBox(*c1))->Include(*c2).Include(*c3)),
+      vertex1_(new Vertex(c1, n1)), vertex2_(new Vertex(c2, n2)),
+      vertex3_(new Vertex(c3, n3)) {
 }
 
 Triangle::~Triangle() {
@@ -61,7 +60,7 @@ bool Triangle::Intersect(const Ray& ray, IntersectionData* data) const {
     data->position = ray.PointAt(t);
     data->normal = vertex1_->normal() * (1 - u - v) + vertex2_->normal() * u
                    + vertex3_->normal() * v;
-    data->material = material_;
+    data->material = &material();
     data->t = t;
   }
   return found;

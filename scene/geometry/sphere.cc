@@ -13,9 +13,9 @@ static inline BoundingBox* MakeBoundingBox(const Point3& center, Scalar radius){
   return &(new BoundingBox(center + offset))->Include(center - offset);
 }
 
-Sphere::Sphere(const Point3& center, Scalar radius, const Material* material)
-    : Element(MakeBoundingBox(center, radius)), center_(center),
-      radius_(radius), material_(material) {
+Sphere::Sphere(const Point3& center, Scalar radius, const Material& material)
+    : Element(material, MakeBoundingBox(center, radius)), center_(center),
+      radius_(radius) {
 }
 
 Sphere::~Sphere() {
@@ -54,7 +54,7 @@ bool Sphere::Intersect(const Ray& ray, IntersectionData* data) const {
     data->t = t;
     data->position = ray.PointAt(t);
     data->element = this;
-    data->material = material_;
+    data->material = &material();
     data->normal = center_.VectorTo(data->position).Normalized();
   }
   return found;

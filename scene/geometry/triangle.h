@@ -17,13 +17,13 @@ class Triangle : public Element {
   // Copies the points and normals. Does not take ownership of any passed data.
   // Any normal which is NULL is inferred as well as possible.
   Triangle(const Point3& c1, const Point3& c2, const Point3& c3,
-           const Material* material = NULL, const Vector3* n1 = NULL,
+           const Material& material, const Vector3* n1 = NULL,
            const Vector3* n2 = NULL, const Vector3* n3 = NULL);
 
   // Takes no ownership of the passed data, all pointers are simply copied.
   Triangle(const Point3* c1, const Point3* c2, const Point3* c3,
            const Vector3* n1, const Vector3* n2, const Vector3* n3,
-           const Material* material = NULL);
+           const Material& material);
 
   virtual ~Triangle();
   NO_COPY_ASSIGN(Triangle);
@@ -35,7 +35,6 @@ class Triangle : public Element {
   const Vertex& vertex3() const { return *vertex3_; }
 
  private:
-  const Material* material_;
   std::unique_ptr<Vertex> vertex1_;
   std::unique_ptr<Vertex> vertex2_;
   std::unique_ptr<Vertex> vertex3_;

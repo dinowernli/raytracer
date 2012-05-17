@@ -8,8 +8,8 @@
 #include "util/ray.h"
 
 Plane::Plane(const Point3& point, const Vector3& normal,
-             const Material* material)
-    : point_(point), normal_(normal.Normalized()), material_(material) {
+             const Material& material)
+    : Element(material), point_(point), normal_(normal.Normalized()) {
 }
 
 Plane::~Plane() {
@@ -24,7 +24,7 @@ bool Plane::Intersect(const Ray& ray, IntersectionData* data) const {
     data->element = this;
     data->position = ray.PointAt(t);
     data->normal = normal_;
-    data->material = material_;
+    data->material = &material();
     data->t = t;
   }
   return found;

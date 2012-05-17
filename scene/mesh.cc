@@ -44,7 +44,7 @@ void Mesh::CreateElements(std::vector<std::unique_ptr<Element>>* target) const {
     const Vector3* n2 = &normals_[it->n2];
     const Vector3* n3 = &normals_[it->n3];
 
-    Triangle* triangle = new Triangle(p1, p2, p3, n1, n2, n3, material_);
+    Triangle* triangle = new Triangle(p1, p2, p3, n1, n2, n3, *material_);
     DVLOG(3) << "Adding triangle " << *triangle;
     target->push_back(std::unique_ptr<Element>(triangle));
   }
