@@ -60,7 +60,7 @@ class Renderer {
 
   std::unique_ptr<Sampler> sampler_;
   std::unique_ptr<Shader> shader_;
-  std::vector<std::unique_ptr<Updatable> > listeners_;
+  std::vector<std::unique_ptr<Updatable>> listeners_;
 
   // Stores the number of worker threads besided the controller thread.
   size_t num_threads_;
