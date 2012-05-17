@@ -137,7 +137,13 @@ Color3 Renderer::TraceColor(const Ray& ray, size_t depth,
       // Ray enters object.
       new_index = material.refraction_index();
     } else {
-      new_index = (*refraction_stack)[refraction_stack->size() - 2];
+      // TODO(dinow): Somehow, this produces an invalid read on horse scene with
+      // recursion depth 10. Need to investigate.
+      if (refraction_stack->size() >= 2) {
+        new_index = (*refraction_stack)[refraction_stack->size() - 2];
+      } else {
+        new_index = material.refraction_index();
+      }
     }
 
     // TODO(dinow): Check if normalization is really necessary.
