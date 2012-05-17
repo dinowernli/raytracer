@@ -1,0 +1,11 @@
+package raytracer;
+
+import "proto/scene/plane_data.proto";
+import "proto/util/point_data.proto";
+import "proto/util/vector_data.proto";
+
+message CirclePlaneData {
+  optional PlaneData plane_data = 1;
+  optional double radius = 2;
+  optional string ring_material_id = 3;
+}

@@ -22,6 +22,8 @@ class Plane : public Element {
 
   const Material* material() const;
 
+  const Point3 point() const { return point_; }
+
  private:
   Point3 point_;
 

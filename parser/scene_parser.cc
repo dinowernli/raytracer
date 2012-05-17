@@ -14,6 +14,7 @@
 #include "proto/util/color_data.pb.h"
 #include "scene/camera.h"
 #include "scene/element.h"
+#include "scene/geometry/circle_plane.h"
 #include "scene/geometry/plane.h"
 #include "scene/geometry/sphere.h"
 #include "scene/geometry/triangle.h"
@@ -142,6 +143,23 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
     } else {
       LOG(WARNING) << "Skipping incomplete plane";
     }
+  }
+
+  // Parse circle planes if any.
+  for (int i = 0; i < data.circle_planes_size(); ++i) {
+    const auto& cplane = data.circle_planes(i);
+    if (!(cplane.has_plane_data() && cplane.plane_data().has_point()
+          && cplane.plane_data().has_normal() && cplane.has_radius())) {
+      LOG(WARNING) << "Skipping incomplete plane";
+      continue;
+    }
+
+    scene->AddElement(new CirclePlane(
+        Parse(cplane.plane_data().point()),
+        Parse(cplane.plane_data().normal()),
+        cplane.radius(),
+        GetMaterial(cplane.plane_data().material_id(), material_map),
+        GetMaterial(cplane.ring_material_id(), material_map)));
   }
 
   // Parse spheres if any.

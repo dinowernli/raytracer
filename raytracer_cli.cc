@@ -41,6 +41,7 @@ DEFINE_string(scene_data, "data/scene/quadrics_tori.sd",
 
 /* General Todos:
 
+TODO(dinow): Add a material to the base element (but no getter).
 TODO(dinow): Handle NULL materials with out segfaulting.
 TODO(dinow): Make mesh loader method static (or scene loader non-static)
 TODO(dinow): Change update mechanism to have different kinds of updates.
