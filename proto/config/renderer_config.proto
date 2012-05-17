@@ -2,8 +2,12 @@ package raytracer;
 
 message RendererConfig {
   // The number of worker threads used in the renderer.
-  optional uint32 threads = 1;
+  optional uint64 threads = 1;
 
   // Whether or not to ignore lights which are occluded.
   optional bool shadows = 2;
+
+  // How deep to evaluate reflection and refraction. Depth 0 means that no
+  // reflection and refraction rays are shot recursively.
+  optional uint64 recursion_depth = 3 [default = 10];
 }

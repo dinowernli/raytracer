@@ -20,8 +20,10 @@
 #include "scene/scene.h"
 #include "util/ray.h"
 
-Renderer::Renderer(Sampler* sampler, Shader* shader, size_t num_threads)
-    : sampler_(sampler), shader_(shader), num_threads_(num_threads) {
+Renderer::Renderer(Sampler* sampler, Shader* shader, size_t num_threads,
+                   size_t recursion_depth)
+    : sampler_(sampler), shader_(shader), num_threads_(num_threads),
+      recursion_depth_(recursion_depth) {
   if (num_threads == 0) {
     LOG(WARNING) << "Can't render with 0 workers. Using 1 instead.";
     num_threads_ = 1;
@@ -123,5 +125,6 @@ const size_t Renderer::kMicroToMilli = 1000;
 Renderer* Renderer::FromConfig(const raytracer::RendererConfig& config) {
   Sampler* sampler = new ScanlineSampler(config.threads() > 0);
   Shader* shader = new PhongShader(config.shadows());
-  return new Renderer(sampler, shader, config.threads());
+  return new Renderer(sampler, shader, config.threads(),
+                      config.recursion_depth());
 }

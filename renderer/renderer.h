@@ -27,7 +27,8 @@ class Renderer {
   // Takes ownership of all passed pointers. The argument "num_threads"
   // determines the number of worker threads in addition to the monitoring
   // thread.
-  Renderer(Sampler* sampler, Shader* shader, size_t num_threads = 1);
+  Renderer(Sampler* sampler, Shader* shader, size_t num_threads,
+           size_t recursion_depth);
   virtual ~Renderer();
   NO_COPY_ASSIGN(Renderer);
 
@@ -60,6 +61,7 @@ class Renderer {
   std::vector<std::unique_ptr<Updatable> > listeners_;
 
   size_t num_threads_;
+  size_t recursion_depth_;
 
   // The sleep time for the monitor thread.
   static const size_t kSleepTimeMilli;
