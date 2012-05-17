@@ -104,6 +104,7 @@ void Renderer::WorkerMain(size_t worker_id) {
       Sample& sample = samples[i];
       Ray ray = camera->GenerateRay(sample);
       refraction_stack.clear();
+      refraction_stack.push_back(scene_->refraction_index());
       sample.set_color(TraceColor(ray, 0, &refraction_stack));
     }
     sampler_->AcceptJob(samples, n_samples);
@@ -120,20 +121,24 @@ Color3 Renderer::TraceColor(const Ray& ray, size_t depth,
   using std::max;
 
   Color3 shaded = shader_->Shade(data, *scene_);
-  if (depth == recursion_depth_) {
+  if (depth >= recursion_depth_) {
     return shaded;
   }
 
   Color3 refracted;
   Scalar refraction_percentage = max(material.refraction_percentage(), 0.0);
   if (refraction_percentage > 0) {
-    // TODO(dinow): implement refraction.
+    Scalar index = refraction_stack->back();
+
+    //bool entering =
   }
 
   Color3 reflected;
   Scalar reflection_percentage = max(material.reflection_percentage(), 0.0);
   if (reflection_percentage > 0) {
-    // TODO(dinow): implement reflection.
+    Vector3 dir = ray.direction().ReflectedOnPlane(data.normal);
+    Point3 pos = data.position + EPSILON * dir;
+    reflected = TraceColor(Ray(pos, dir), depth + 1, refraction_stack);
   }
 
   return refraction_percentage * refracted + reflection_percentage * reflected

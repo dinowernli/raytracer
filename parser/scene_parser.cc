@@ -66,8 +66,7 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
   for (int i = 0; i < data.materials_size(); ++i) {
     const auto& mat_data = data.materials(i);
     if (!(mat_data.has_emission() && mat_data.has_ambient()
-        && mat_data.has_diffuse() && mat_data.has_specular()
-        && mat_data.has_shininess())) {
+        && mat_data.has_diffuse() && mat_data.has_specular())) {
       LOG(WARNING) << "Skipping incomplete material";
       continue;
     }
