@@ -26,6 +26,9 @@ using raytracer::SceneConfig;
 
 DEFINE_bool(shadows, true, "Whether or not shadows are rendered");
 
+DEFINE_uint64(recursion_depth, 10, "How deep to evaluate reflective and "
+                                   "refractive rays");
+
 DEFINE_bool(use_kd_tree, true, "Whether or not to use a KdTree in the scene");
 
 DEFINE_uint64(worker_threads, 8, "Number of rendering worker threads to use");
@@ -101,6 +104,7 @@ int main(int argc, char **argv) {
   RendererConfig renderer_config;
   renderer_config.set_threads(FLAGS_worker_threads);
   renderer_config.set_shadows(FLAGS_shadows);
+  renderer_config.set_recursion_depth(FLAGS_recursion_depth);
 
   // Build a renderer from the config.
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(renderer_config));
