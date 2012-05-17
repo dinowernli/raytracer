@@ -142,6 +142,9 @@ Color3 Renderer::TraceColor(const Ray& ray, size_t depth,
       if (refraction_stack->size() >= 2) {
         new_index = (*refraction_stack)[refraction_stack->size() - 2];
       } else {
+        DVLOG(2) << "Prevented invalid refraction stack access, size: "
+                 << refraction_stack->size() << ", attempted to access index: "
+                 << refraction_stack->size() - 2 << " at depth " << depth;
         new_index = material.refraction_index();
       }
     }
