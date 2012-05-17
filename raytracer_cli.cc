@@ -118,7 +118,9 @@ int main(int argc, char **argv) {
   // Render the image.
   renderer->Render(scene.get());
 
-  // Free all memory in the protocol buffer library.
+  // Free all memory in the various Google libraries.
   google::protobuf::ShutdownProtobufLibrary();
+  google::ShutdownGoogleLogging();
+  google::ShutDownCommandLineFlags();
   return EXIT_SUCCESS;
 }
