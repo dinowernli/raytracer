@@ -38,6 +38,8 @@ materials {
   diffuse: { r:0.2 g:0.5 b:1 }
   specular: { r:0 g:0 b:0.3 }
   shininess: 20
+  refraction_percentage: 0.3
+  refraction_index: 0.1
 }
 
 planes {
