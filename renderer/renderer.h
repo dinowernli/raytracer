@@ -60,7 +60,10 @@ class Renderer {
   std::unique_ptr<Shader> shader_;
   std::vector<std::unique_ptr<Updatable> > listeners_;
 
+  // Stores the number of worker threads besided the controller thread.
   size_t num_threads_;
+
+  // Stores the depth to which reflection and refraction are evaluated.
   size_t recursion_depth_;
 
   // The sleep time for the monitor thread.
