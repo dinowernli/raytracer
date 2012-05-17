@@ -159,7 +159,7 @@ const size_t Renderer::kMicroToMilli = 1000;
 
 // static
 Renderer* Renderer::FromConfig(const raytracer::RendererConfig& config) {
-  Sampler* sampler = new ScanlineSampler(config.threads() > 0);
+  Sampler* sampler = new ScanlineSampler(config.threads() > 1);
   Shader* shader = new PhongShader(config.shadows());
   return new Renderer(sampler, shader, config.threads(),
                       config.recursion_depth());
