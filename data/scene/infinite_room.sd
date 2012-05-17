@@ -16,13 +16,22 @@ lights {
 }
 
 materials {
-  identifier: "white"
+  identifier: "white_reflective"
   emission: { r:0 g:0 b:0 }
   ambient: { r:0 g:0 b:0 }
   diffuse: { r:1 g:1 b:1 }
   specular: { r:0 g:0 b:0 }
   shininess: 1
   reflection_percentage: 0.6
+}
+
+materials {
+  identifier: "white"
+  emission: { r:0 g:0 b:0 }
+  ambient: { r:0 g:0 b:0 }
+  diffuse: { r:1 g:1 b:1 }
+  specular: { r:0 g:0 b:0 }
+  shininess: 1
 }
 
 materials {
@@ -47,25 +56,43 @@ materials {
 planes {
   point: { x:0 y:0 z:10 }
   normal: { x:0 y:0 z:-1 }
-  material_id: "white"
+  material_id: "white_reflective"
 }
 
 planes {
   point: { x:10 y:0 z:0 }
   normal: { x:-1 y:0 z:0 }
-  material_id: "white"
+  material_id: "white_reflective"
 }
 
 planes {
   point: { x:0 y:0 z:-10 }
   normal: { x:0 y:0 z:1 }
-  material_id: "white"
+  material_id: "white_reflective"
 }
 
 planes {
   point: { x:-10 y:0 z:0 }
   normal: { x:1 y:0 z:0 }
-  material_id: "white"
+  material_id: "white_reflective"
+}
+
+circle_planes {
+  plane_data: {
+    point: { x:0 y:10 z:0 }
+    normal: { x:0 y:-1 z:0 }
+    material_id: "red"
+  }
+  ring_material_id: "white"
+}
+
+circle_planes {
+  plane_data: {
+    point: { x:0 y:-10 z:0 }
+    normal: { x:0 y:1 z:0 }
+    material_id: "red"
+  }
+  ring_material_id: "white"
 }
 
 spheres {
