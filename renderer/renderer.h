@@ -48,8 +48,10 @@ class Renderer {
   // which consists of fetching samples, tracing them, and putting them back.
   void WorkerMain(size_t worker_id);
 
-  // Traces the color of the provided ray in the scene.
-  Color3 TraceColor(const Ray& ray);
+  // Traces the color of the provided ray in the scene. The argument depth
+  // indicates the current depth of the recursion.
+  Color3 TraceColor(const Ray& ray, size_t depth,
+                    std::vector<Scalar>* refraction_stack);
 
   void UpdateListeners() const;
 

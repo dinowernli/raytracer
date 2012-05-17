@@ -25,10 +25,6 @@ static inline bool IsOccluded(const Scene& scene, const Light& light,
 }
 
 Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
-  if (data.element == NULL) {
-    return scene.background();
-  }
-
   const Material& material = *data.material;
   const Color3& background = scene.background();
 

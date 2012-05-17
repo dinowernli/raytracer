@@ -4,6 +4,7 @@
 
 #include "renderer.h"
 
+#include <algorithm>
 #include <glog/logging.h>
 #include <memory>
 #include <thread>
@@ -92,21 +93,51 @@ void Renderer::WorkerMain(size_t worker_id) {
   std::vector<Sample> samples(sampler_->MaxJobSize());
   const Camera* camera = &scene_->camera();
 
+  // Use a single refraction stack since calling "clear" only affects size, not
+  // the capacity. Therefore, the number of allocations will not grow (a lot)
+  // once the first ray is fully traced.
+  std::vector<Scalar> refraction_stack;
+
   size_t n_samples = 0;
   while((n_samples = sampler_->NextJob(&samples)) > 0) {
     for (size_t i = 0; i < n_samples; ++i) {
       Sample& sample = samples[i];
       Ray ray = camera->GenerateRay(sample);
-      sample.set_color(TraceColor(ray));
+      refraction_stack.clear();
+      sample.set_color(TraceColor(ray, 0, &refraction_stack));
     }
     sampler_->AcceptJob(samples, n_samples);
   }
 }
 
-Color3 Renderer::TraceColor(const Ray& ray) {
+Color3 Renderer::TraceColor(const Ray& ray, size_t depth,
+                            std::vector<Scalar>* refraction_stack) {
   IntersectionData data(ray);
-  scene_->Intersect(ray, &data);
-  return shader_->Shade(data, *scene_);
+  if (!scene_->Intersect(ray, &data)) {
+    return scene_->background();
+  }
+  const Material& material = *(data.material);
+  using std::max;
+
+  Color3 shaded = shader_->Shade(data, *scene_);
+  if (depth == recursion_depth_) {
+    return shaded;
+  }
+
+  Color3 refracted;
+  Scalar refraction_percentage = max(material.refraction_percentage(), 0.0);
+  if (refraction_percentage > 0) {
+    // TODO(dinow): implement refraction.
+  }
+
+  Color3 reflected;
+  Scalar reflection_percentage = max(material.reflection_percentage(), 0.0);
+  if (reflection_percentage > 0) {
+    // TODO(dinow): implement reflection.
+  }
+
+  return refraction_percentage * refracted + reflection_percentage * reflected
+      + (1 - refraction_percentage - reflection_percentage) * shaded;
 }
 
 void Renderer::UpdateListeners() const {
