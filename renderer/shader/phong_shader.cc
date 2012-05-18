@@ -26,15 +26,12 @@ static inline bool IsOccluded(const Scene& scene, const Light& light,
 
 Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
   const Material& material = *data.material;
-  const Color3& background = scene.background();
-
   Color3 emission(material.emission().Clamped());
-  Color3 ambient((material.ambient() * background).Clamped());
+  Color3 ambient((material.ambient() * scene.ambient()).Clamped());
   Color3 diffuse(0, 0, 0);
   Color3 specular(0, 0, 0);
 
   const std::vector<std::unique_ptr<Light>>& lights = scene.lights();
-
   for (auto it = lights.begin(); it != lights.end(); ++it) {
     const Light* light = it->get();
     if (shadows_ && IsOccluded(scene, *light, data.position)) {
