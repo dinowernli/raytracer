@@ -62,13 +62,9 @@ Material* SceneParser::ParseMaterial(const raytracer::MaterialData& data) {
 void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
   material_map_.clear();
 
-  if (data.has_background()) {
-    scene->set_background(Parse(data.background()));
-  }
-
-  if (data.has_ambient()) {
-    scene->set_ambient(Parse(data.ambient()));
-  }
+  scene->set_background(Parse(data.background()));
+  scene->set_ambient(Parse(data.ambient()));
+  scene->set_refraction_index(data.refraction_index());
 
   Material* material = NULL;
   for (int i = 0; i < data.materials_size(); ++i) {

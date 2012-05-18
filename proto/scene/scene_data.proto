@@ -14,8 +14,10 @@ message SceneData {
   optional CameraData camera = 1;
   repeated PointLightData lights = 2;
   repeated MaterialData materials = 3;
+
   optional ColorData background = 4;
   optional ColorData ambient = 5;
+  optional double refraction_index = 11 [default = 1.0];
 
   repeated TriangleData triangles = 6;
   repeated PlaneData planes = 7;
