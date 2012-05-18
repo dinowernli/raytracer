@@ -24,6 +24,7 @@
 using raytracer::RendererConfig;
 using raytracer::SceneConfig;
 
+// Renderer config flags.
 DEFINE_bool(shadows, true, "Whether or not shadows are rendered");
 
 DEFINE_uint64(recursion_depth, 10, "How deep to evaluate reflective and "
@@ -36,6 +37,14 @@ DEFINE_bool(use_kd_tree, true, "Whether or not to use a KdTree in the scene");
 
 DEFINE_uint64(worker_threads, 8, "Number of rendering worker threads to use");
 
+// Camera config flags.
+DEFINE_int32(image_resolution_x, -1, "Optional override for the horizontal "
+                                      "resolution of the image");
+
+DEFINE_int32(image_resolution_y, -1, "Optional override for the vertical "
+                                      "resolution of the image");
+
+// Output flags.
 DEFINE_string(bmp_file, "image", "If <file> is passed, a BMP image will be "
                                   "saved at 'output/<file>.bmp'");
 
@@ -96,6 +105,14 @@ int main(int argc, char **argv) {
   } else {
     LOG(ERROR) << "Failed to load scene data from: " << FLAGS_scene_data;
     return EXIT_FAILURE;
+  }
+
+  auto& camera_config = *(scene_config.mutable_scene_data()->mutable_camera());
+  if (FLAGS_image_resolution_x > 0) {
+    camera_config.set_resolution_x(FLAGS_image_resolution_x);
+  }
+  if (FLAGS_image_resolution_y > 0) {
+    camera_config.set_resolution_y(FLAGS_image_resolution_y);
   }
 
   // Build the scene from the config.
