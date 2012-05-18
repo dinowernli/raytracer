@@ -28,7 +28,7 @@ class Renderer {
   // determines the number of worker threads in addition to the monitoring
   // thread.
   Renderer(Sampler* sampler, Shader* shader, size_t num_threads,
-           size_t recursion_depth);
+           size_t recursion_depth, size_t rays_per_pixel);
   virtual ~Renderer();
   NO_COPY_ASSIGN(Renderer);
 
@@ -62,11 +62,14 @@ class Renderer {
   std::unique_ptr<Shader> shader_;
   std::vector<std::unique_ptr<Updatable>> listeners_;
 
-  // Stores the number of worker threads besided the controller thread.
+  // Stores the number of worker threads besides the controller thread.
   size_t num_threads_;
 
   // Stores the depth to which reflection and refraction are evaluated.
   size_t recursion_depth_;
+
+  // Stores the number of randomly jittered rays to shoot per pixel.
+  size_t rays_per_pixel_;
 
   // The sleep time for the monitor thread.
   static const size_t kSleepTimeMilli;

@@ -5,8 +5,10 @@
 #include "renderer.h"
 
 #include <algorithm>
+#include <ctime>
 #include <glog/logging.h>
 #include <memory>
+#include <random>
 #include <thread>
 #include <unistd.h>
 
@@ -22,9 +24,9 @@
 #include "util/ray.h"
 
 Renderer::Renderer(Sampler* sampler, Shader* shader, size_t num_threads,
-                   size_t recursion_depth)
+                   size_t recursion_depth, size_t rays_per_pixel)
     : sampler_(sampler), shader_(shader), num_threads_(num_threads),
-      recursion_depth_(recursion_depth) {
+      recursion_depth_(recursion_depth), rays_per_pixel_(rays_per_pixel) {
   if (num_threads == 0) {
     LOG(WARNING) << "Can't render with 0 workers. Using 1 instead.";
     num_threads_ = 1;
@@ -61,6 +63,9 @@ void Renderer::Render(Scene* scene) {
   scene_->Init();
   sampler_->Init(camera);
 
+  // Initialize the pseudorandom generator used for jittering samples.
+  std::srand(time(0));
+
   UpdateListeners();
 
   std::vector<std::thread> workers;
@@ -87,6 +92,12 @@ void Renderer::Render(Scene* scene) {
   LOG(INFO) << "Ending rendering process";
 }
 
+// Returns a uniformly distributed random sample in [-0.5, 0.5].
+static inline Scalar random_jitter() {
+  Scalar result = std::rand();
+  return (result / RAND_MAX) + 0.5;
+}
+
 void Renderer::WorkerMain(size_t worker_id) {
   DVLOG(1) << "Worker " << worker_id << " allocating buffer of size "
            << sampler_->MaxJobSize();
@@ -101,11 +112,28 @@ void Renderer::WorkerMain(size_t worker_id) {
   size_t n_samples = 0;
   while((n_samples = sampler_->NextJob(&samples)) > 0) {
     for (size_t i = 0; i < n_samples; ++i) {
-      Sample& sample = samples[i];
-      Ray ray = camera->GenerateRay(sample);
-      refraction_stack.clear();
-      refraction_stack.push_back(scene_->refraction_index());
-      sample.set_color(TraceColor(ray, 0, &refraction_stack));
+      Sample& main_sample = samples[i];
+      Color3 accumulated(0, 0, 0);
+
+      // TODO(dinow): Extract inner loop body as own function or as a part of
+      // some sort of sampling pipeline.
+
+      // Shoot multiple ray for each pixel for anti-aliasing.
+      for (size_t j = 0; j < rays_per_pixel_; ++j) {
+        Sample jittered(main_sample);
+        if (j > 0) {
+          // Make sure one ray actually goes through the middle.
+          jittered.set_offset_x(random_jitter());
+          jittered.set_offset_y(random_jitter());
+        }
+
+        Ray ray = camera->GenerateRay(jittered);
+        refraction_stack.clear();
+        refraction_stack.push_back(scene_->refraction_index());
+        Color3 contribution = TraceColor(ray, 0, &refraction_stack);
+        accumulated = accumulated + contribution / rays_per_pixel_;
+      }
+      main_sample.set_color(accumulated);
     }
     sampler_->AcceptJob(samples, n_samples);
   }
@@ -205,5 +233,5 @@ Renderer* Renderer::FromConfig(const raytracer::RendererConfig& config) {
   Sampler* sampler = new ScanlineSampler(config.threads() > 1);
   Shader* shader = new PhongShader(config.shadows());
   return new Renderer(sampler, shader, config.threads(),
-                      config.recursion_depth());
+                      config.recursion_depth(), config.rays_per_pixel());
 }

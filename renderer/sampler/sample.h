@@ -7,35 +7,38 @@
 #define SAMPLE_H_
 
 #include "util/color3.h"
-#include "util/no_copy_assign.h"
 
 class Sample {
  public:
   // Creates a sample of size 1. The color defaults to black.
-  Sample(size_t x, size_t y) : x_(x), y_(y), size_x_(1), size_y_(1) { }
+  Sample(size_t x, size_t y) : x_(x), y_(y), offset_x_(0), offset_y_(0),
+                               size_x_(1), size_y_(1) {}
   Sample(size_t x, size_t y, size_t size_x, size_t size_y)
-      : x_(x), y_(y), size_x_(size_x), size_y_(size_y) { }
+      : x_(x), y_(y), offset_x_(0), offset_y_(0), size_x_(size_x),
+        size_y_(size_y) {}
 
   // Creates a sample of size 1 at (0, 0). The color defaults to black.
-  Sample() : x_(0), y_(0), size_x_(1), size_y_(1) { };
-  ~Sample() { }
+  Sample() : x_(0), y_(0), size_x_(1), size_y_(1) {};
+  ~Sample() {}
 
-  // TODO(dinow): Somehow, WorkerMain() in renderer.cc seems to indicate that
-  // std::vector requires this class to have a copy constructor. Possibly
-  // uncomment after further investigation.
-  // NO_COPY_ASSIGN(Sample);
-
-  const Color3& color() const { return color_; }
   const size_t& x() const { return x_; }
   const size_t& y() const { return y_; }
+  const Scalar& offset_x() const { return offset_x_; }
+  const Scalar& offset_y() const { return offset_y_; }
+  const Color3& color() const { return color_; }
 
-  void set_color(const Color3& color) { color_ = color; }
   void set_x(size_t x) { x_ = x; }
   void set_y(size_t y) { y_ = y; }
+  void set_offset_x(Scalar offset_x) { offset_x_ = offset_x; }
+  void set_offset_y(Scalar offset_y) { offset_y_ = offset_y; }
+  void set_color(const Color3& color) { color_ = color; }
 
  private:
   size_t x_;
   size_t y_;
+
+  Scalar offset_x_;
+  Scalar offset_y_;
 
   size_t size_x_;
   size_t size_y_;

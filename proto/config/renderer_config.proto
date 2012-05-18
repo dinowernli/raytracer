@@ -10,4 +10,7 @@ message RendererConfig {
   // How deep to evaluate reflection and refraction. Depth 0 means that no
   // reflection and refraction rays are shot recursively.
   optional uint64 recursion_depth = 3 [default = 10];
+
+  // The number of randomly jittered rays to shoot through each pixel.
+  optional uint64 rays_per_pixel = 4 [default = 1];
 }
