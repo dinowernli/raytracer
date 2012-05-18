@@ -133,7 +133,8 @@ Color3 Renderer::TraceColor(const Ray& ray, size_t depth,
   if (refraction_percentage > 0) {
     Scalar old_index = refraction_stack->back();
     Scalar new_index;
-    if(data.normal.Dot(ray.direction()) < 0) {
+    Scalar entering_product = data.normal.Dot(ray.direction());
+    if(entering_product < 0) {
       // Ray enters object.
       new_index = material.refraction_index();
     } else {
@@ -144,7 +145,8 @@ Color3 Renderer::TraceColor(const Ray& ray, size_t depth,
       } else {
         DVLOG(2) << "Prevented invalid refraction stack access, size: "
                  << refraction_stack->size() << ", attempted to access index: "
-                 << refraction_stack->size() - 2 << " at depth " << depth;
+                 << refraction_stack->size() - 2 << " at depth " << depth
+                 << " with entering product: " << entering_product;
         new_index = material.refraction_index();
       }
     }
