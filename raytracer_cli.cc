@@ -57,8 +57,7 @@ DEFINE_string(scene_data, "data/scene/quadrics_tori.sd",
 /* General Todos:
 
 TODO(dinow): Add textures, perlin noise
-TODO(dinow): Add supersampling (as preparation for global illumination)
-TODO(dinow): Change update mechanism to have different kinds of updates.
+TODO(dinow): Add supersampling (as preparation for global illumination).
 TODO(dinow): Add possibility to load renderer config from file.
 TODO(dinow): Rename proto namespace to "config" or "proto".
 TODO(dinow): Put everything else in namespace "raytracer".
