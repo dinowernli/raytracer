@@ -17,6 +17,8 @@ struct IntersectionData {
   IntersectionData(const Ray& ray)
       : t(ray.max_t()), element(NULL), material(NULL) {}
 
+  bool Intersected() const { return element != NULL; }
+
   Scalar t;
   Point3 position;
   Vector3 normal;
