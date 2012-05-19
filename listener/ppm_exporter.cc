@@ -22,7 +22,7 @@ PpmExporter::PpmExporter(const std::string& file_name) : file_name_(file_name) {
 PpmExporter::~PpmExporter() {
 }
 
-void PpmExporter::Update(const Sampler& sampler) {
+void PpmExporter::Ended(const Sampler& sampler) {
   // Only export if the image is done.
   if (!sampler.IsDone()) {
     return;

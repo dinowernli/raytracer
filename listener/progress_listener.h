@@ -15,9 +15,13 @@ class ProgressListener : public Updatable {
   ProgressListener();
   virtual ~ProgressListener();
 
-  virtual void Update(const Sampler& sampler);
+  virtual void Started(const Sampler& sampler);
+  virtual void Updated(const Sampler& sampler);
+  virtual void Ended(const Sampler& sampler);
 
  private:
+  void LogProgress(const Sampler& sampler);
+
   double last_dumped_progess_;
 };
 

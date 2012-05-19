@@ -65,31 +65,33 @@ void Renderer::Render(Scene* scene) {
 
   // Initialize the pseudorandom generator used for jittering samples.
   std::srand(time(0));
+  LOG(INFO) << "Creating " << num_threads_ << " workers";
 
-  UpdateListeners();
-
+  for(auto it = listeners_.begin(); it != listeners_.end(); ++it) {
+    it->get()->Started(*sampler_);
+  }
   std::vector<std::thread> workers;
   for (size_t i = 0; i < num_threads_; ++i) {
     workers.push_back(std::thread(&Renderer::WorkerMain, this, i));
   }
 
-  LOG(INFO) << "Creating " << num_threads_ << " workers";
-
   while (!sampler_->IsDone()) {
-    UpdateListeners();
+    for(auto it = listeners_.begin(); it != listeners_.end(); ++it) {
+      it->get()->Updated(*sampler_);
+    }
     usleep(kMicroToMilli * kSleepTimeMilli);
   }
-
   for (auto it = workers.begin(); it != workers.end(); ++it) {
     it->join();
+  }
+  for(auto it = listeners_.begin(); it != listeners_.end(); ++it) {
+    it->get()->Ended(*sampler_);
   }
 
   LOG(INFO) << "All workers terminated";
 
-  UpdateListeners();
-
   scene_ = NULL;
-  LOG(INFO) << "Ending rendering process";
+  LOG(INFO) << "Finished rendering";
 }
 
 // Returns a uniformly distributed random sample in [-0.5, 0.5].
@@ -214,12 +216,6 @@ Color3 Renderer::TraceColor(const Ray& ray, size_t depth,
 
   return refraction_percentage * refracted + reflection_percentage * reflected
       + (1 - refraction_percentage - reflection_percentage) * shaded;
-}
-
-void Renderer::UpdateListeners() const {
-  for(auto it = listeners_.begin(); it != listeners_.end(); ++it) {
-    it->get()->Update(*sampler_);
-  }
 }
 
 // static

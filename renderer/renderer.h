@@ -53,8 +53,6 @@ class Renderer {
   Color3 TraceColor(const Ray& ray, size_t depth,
                     std::vector<Scalar>* refraction_stack);
 
-  void UpdateListeners() const;
-
   // The renderer does not own the scene.
   Scene* scene_;
 

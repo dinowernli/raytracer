@@ -37,7 +37,7 @@ static void WriteHeader(size_t width, size_t height, std::ofstream* stream) {
   stream->write(file_header, 14).write(info_header, 40);
 }
 
-void BmpExporter::Update(const Sampler& sampler) {
+void BmpExporter::Ended(const Sampler& sampler) {
   // Only export if the image is done.
   if (!sampler.IsDone()) {
     return;

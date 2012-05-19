@@ -18,7 +18,7 @@ class PpmExporter : public Updatable{
   virtual ~PpmExporter();
   NO_COPY_ASSIGN(PpmExporter);
 
-  virtual void Update(const Sampler& sampler);
+  virtual void Ended(const Sampler& sampler);
 
   const static size_t kMaxPixelValue;
   const static std::string kMagicNumber;

@@ -128,13 +128,13 @@ int main(int argc, char **argv) {
   // Build a renderer from the config.
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(renderer_config));
 
+  renderer->AddListener(new ProgressListener());
   if (!FLAGS_bmp_file.empty()) {
     renderer->AddListener(new BmpExporter("output/" + FLAGS_bmp_file + ".bmp"));
   }
   if (!FLAGS_ppm_file.empty()) {
     renderer->AddListener(new PpmExporter("output/" + FLAGS_ppm_file + ".ppm"));
   }
-  renderer->AddListener(new ProgressListener());
 
   // Render the image.
   renderer->Render(scene.get());

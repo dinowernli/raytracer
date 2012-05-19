@@ -19,7 +19,7 @@ class BmpExporter : public Updatable {
   virtual ~BmpExporter();
   NO_COPY_ASSIGN(BmpExporter);
 
-  virtual void Update(const Sampler& sampler);
+  virtual void Ended(const Sampler& sampler);
 
  private:
    const std::string file_name_;
