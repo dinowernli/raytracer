@@ -29,9 +29,9 @@ void RaytracerWindow::Started(const Sampler& sampler) {
   glutInitWindowSize(sampler.image().SizeX(), sampler.image().SizeY());
   glutCreateWindow(kWindowTitle);
 
-  // TODO(dinow): Find a cleaner way to handle this. Currently, this
-  // implementation relies on the fact that the Image below stays valid.
-  image_ = NULL;
+  // TODO(dinow): Currently, this implementation relies on the fact that the
+  // Image below stays valid. Possibly find a cleaner way to do this.
+  image_ = &sampler.image();
 
   needs_redraw_ = true;
   glutDisplayFunc(display_callback);
