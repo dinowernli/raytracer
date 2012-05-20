@@ -57,7 +57,6 @@ DEFINE_string(scene_data, "data/scene/quadrics_tori.sd",
 /* General Todos:
 
 TODO(dinow): Add textures, perlin noise
-TODO(dinow): Add supersampling (as preparation for global illumination).
 TODO(dinow): Add possibility to load renderer config from file.
 TODO(dinow): Rename proto namespace to "config" or "proto".
 TODO(dinow): Put everything else in namespace "raytracer".
@@ -80,15 +79,14 @@ bool LoadSceneData(const std::string& path, raytracer::SceneData* output) {
 
 int main(int argc, char **argv) {
   // LOG(INFO): Always logged.
-  // DVLOG(i): Only compiled in if DEBUG flag set, logged if log level is >= i.
+  // DVLOG(i): Only compiled in if DEBUG flag set.
   //
-  // Always run "GLOG_logtostderr=1 ./build/raytracer" (assumed below).
-  // Run "GLOG_v=i ./build/raytracer" for verbose logging up to level i.
+  // Run <binary name> --logtostderr to see log output.
+  // Run <binary name> --logtostderr --v=<i> for DVLOG(j) message for j <= i.
   google::InitGoogleLogging(argv[0]);
-
-  // Initializes the flags libraray. The last argument tells the library to
-  // remove the flags from argc and argv, so that only real arguments remain.
   google::ParseCommandLineFlags(&argc, &argv, true);
+
+  DVLOG(1) << "TEST";
 
   // Load the configuration from the passed arguments.
   SceneConfig scene_config;
