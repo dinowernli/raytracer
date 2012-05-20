@@ -23,7 +23,7 @@ else:
 
 #environment.Replace(CXX = "clang")
 
-# Add support for glog.
+# Add support for the google libs.
 environment.ParseConfig('pkg-config --cflags --libs libglog')
 environment.ParseConfig('pkg-config --cflags --libs libgflags')
 environment.ParseConfig('pkg-config --cflags --libs protobuf')
@@ -63,10 +63,11 @@ lib_sources = [Glob(cc_file) for cc_file in cc_files] + [st[2] for st in source_
 
 p = environment.Library('raytracer', lib_sources)
 environment.Append(LIBS='raytracer')
+environment.Append(LIBS='glut')       # Only the binary needs to link against glut (not included for library).
 environment.Append(LIBPATH='.')
 
 # Specify binaries
-environment.Program('raytracer_cli.cc')
+environment.Program('raytracer.cc')
 
 # This is how to force dependencies.
 # environment.Depends(p, pb)

@@ -15,32 +15,54 @@
 class Image {
  public:
   // Initially, the image is completely black.
-  Image(size_t width, size_t height) : pixels_(width,
-                                               std::vector<Color3>(height)) {
+  Image(size_t width, size_t height)
+      : size_x_(width), size_y_(height),
+        pixels_(kNumberOfChannels * size_x_ * size_y_, 0.0) {
   }
-  ~Image() { };
+  ~Image() {};
 
-  // Sets the color at the specified position in the pixel buffer.
+  // Sets the color at the specified position in the pixel buffer. Does nothing
+  // if the position is invalid.
   void PutPixel(const Color3& color, size_t x, size_t y) {
-    pixels_[x][y] = color;
-  }
-
-  // Returns the color at position (x, y) of the image.
-  const Color3& PixelAt(size_t x, size_t y) const {
-    return pixels_[x][y];
-  }
-
-  const size_t SizeX() const { return pixels_.size(); }
-  const size_t SizeY() const {
-    if (SizeX() == 0) {
-      return 0;
+    if (x >= size_x_ || y >= size_y_) {
+      LOG(WARNING) << "Attempted to set invalid pixel [" << x << ", " << y
+                   << "] in image of size [" << size_x_ << ", " << size_y_
+                   << "]";
+      return;
     }
-    return pixels_[0].size();
+    pixels_[kNumberOfChannels * (y * size_x_ + x) + 0] = color.r();
+    pixels_[kNumberOfChannels * (y * size_x_ + x) + 1] = color.g();
+    pixels_[kNumberOfChannels * (y * size_x_ + x) + 2] = color.b();
   }
+
+  // Returns the color at position (x, y) of the image. The entry (0, 0) is the
+  // top left pixel. Returns a default color if the position is invalid.
+  const Color3 PixelAt(size_t x, size_t y) const {
+    if (x >= size_x_ || y >= size_y_) {
+      LOG(WARNING) << "Attempted access to invalid pixel [" << x << ", " << y
+                   << "] in image of size [" << size_x_ << ", " << size_y_
+                   << "]";
+      return Color3();
+    }
+    size_t pos = kNumberOfChannels * (y * size_x_ + x);
+    return Color3(pixels_[pos], pixels_[pos + 1], pixels_[pos + 2]);
+  }
+
+  // Is guaranteed not to change throughout the lifetime of this object.
+  const Intensity* RawData() const { return &pixels_[0]; }
+
+  const size_t SizeX() const { return size_x_; }
+  const size_t SizeY() const { return size_y_; }
 
  private:
-  // Stores the raw colors of the image. The entry (0, 0) is the top left pixel.
-  std::vector<std::vector<Color3> > pixels_;
+  // We have 3 color channels.
+  static const size_t kNumberOfChannels = 3;
+
+  const size_t size_x_;
+  const size_t size_y_;
+
+  // Stores the raw colors of the image.
+  std::vector<Intensity> pixels_;
 };
 
 #endif  /* IMAGE_H_ */

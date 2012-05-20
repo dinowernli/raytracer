@@ -1,5 +1,5 @@
 /*
- * Entry point for the raytracer binary.
+ * A command line binary for the ray tracer.
  * Autor: Dino Wernli
  */
 
@@ -15,6 +15,7 @@
 #include "listener/bmp_exporter.h"
 #include "listener/ppm_exporter.h"
 #include "listener/progress_listener.h"
+#include "listener/raytracer_window.h"
 #include "proto/config/renderer_config.pb.h"
 #include "proto/config/scene_config.pb.h"
 #include "proto/scene/scene_data.pb.h"
@@ -54,6 +55,8 @@ DEFINE_string(ppm_file, "", "If <file> is passed, a PPM image will be saved at "
 DEFINE_string(scene_data, "data/scene/quadrics_tori.sd",
                           "A file from which to parse the items in the scene");
 
+DEFINE_bool(gui, false, "Whether or not to start the GLUT front end");
+
 /* General Todos:
 
 TODO(dinow): Add textures, perlin noise
@@ -85,8 +88,6 @@ int main(int argc, char **argv) {
   // Run <binary name> --logtostderr --v=<i> for DVLOG(j) message for j <= i.
   google::InitGoogleLogging(argv[0]);
   google::ParseCommandLineFlags(&argc, &argv, true);
-
-  DVLOG(1) << "TEST";
 
   // Load the configuration from the passed arguments.
   SceneConfig scene_config;
@@ -131,6 +132,12 @@ int main(int argc, char **argv) {
   }
   if (!FLAGS_ppm_file.empty()) {
     renderer->AddListener(new PpmExporter("output/" + FLAGS_ppm_file + ".ppm"));
+  }
+
+  if (FLAGS_gui) {
+    RaytracerWindow* window = new RaytracerWindow(&argc, argv);
+    renderer->AddListener(window);
+    window->MainLoop();
   }
 
   // Render the image.
