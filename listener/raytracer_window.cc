@@ -37,7 +37,7 @@ void RaytracerWindow::Started(const Sampler& sampler) {
   glutDisplayFunc(display_callback);
   glutIdleFunc(idle_callback);
 
-  MainLoop();
+  //MainLoop();
 }
 
 void RaytracerWindow::Updated(const Sampler& sampler) {

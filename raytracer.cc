@@ -11,6 +11,7 @@
 #include <memory>
 #include <streambuf>
 #include <string>
+#include <thread>
 
 #include "listener/bmp_exporter.h"
 #include "listener/ppm_exporter.h"
@@ -134,12 +135,24 @@ int main(int argc, char **argv) {
     renderer->AddListener(new PpmExporter("output/" + FLAGS_ppm_file + ".ppm"));
   }
 
+  RaytracerWindow* window = NULL;
   if (FLAGS_gui) {
-    renderer->AddListener(new RaytracerWindow(&argc, argv));
+    window = new RaytracerWindow(&argc, argv);
+    renderer->AddListener(window);
   }
 
-  // Render the image.
-  renderer->Render(scene.get());
+  // Run the rendering itself on an own thread to allow the UI (if any) to be
+  // on the main thread.
+  std::thread thread(&Renderer::Render, renderer.get(), scene.get());
+
+  if (window != NULL) {
+    // This never returns. That's ok since memory freeing is done after this
+    // exits anyway.
+    window->MainLoop();
+  }
+
+  // Only relevant if there is no GUI.
+  thread.join();
 
   // Free all memory in the various Google libraries.
   google::protobuf::ShutdownProtobufLibrary();
