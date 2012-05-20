@@ -135,9 +135,7 @@ int main(int argc, char **argv) {
   }
 
   if (FLAGS_gui) {
-    RaytracerWindow* window = new RaytracerWindow(&argc, argv);
-    renderer->AddListener(window);
-    window->MainLoop();
+    renderer->AddListener(new RaytracerWindow(&argc, argv));
   }
 
   // Render the image.

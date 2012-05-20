@@ -19,7 +19,6 @@ RaytracerWindow::RaytracerWindow(int* argc, char **argv) {
 
   glutInit(argc, argv);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
-  glutMainLoop();
 }
 
 RaytracerWindow::~RaytracerWindow() {
@@ -37,6 +36,8 @@ void RaytracerWindow::Started(const Sampler& sampler) {
   needs_redraw_ = true;
   glutDisplayFunc(display_callback);
   glutIdleFunc(idle_callback);
+
+  MainLoop();
 }
 
 void RaytracerWindow::Updated(const Sampler& sampler) {
@@ -60,11 +61,13 @@ void RaytracerWindow::Idle() {
 
 void RaytracerWindow::Display() {
   needs_redraw_ = false;
+  const size_t width = image_->SizeX();
+  const size_t height = image_->SizeY();
+
   glClear(GL_COLOR_BUFFER_BIT);
-  glViewport(0, 0, image_->SizeX(), image_->SizeY());
+  glViewport(0, 0, width, height);
   //glRasterPos2i(-1,-1);
-  glDrawPixels(image_->SizeX(), image_->SizeY(), GL_RGB, GL_FLOAT,
-               image_->RawData());
+  glDrawPixels(width, height, GL_RGB, GL_FLOAT, image_->RawData());
   glutSwapBuffers();
 }
 
