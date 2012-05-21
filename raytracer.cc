@@ -60,7 +60,9 @@ DEFINE_bool(gui, false, "Whether or not to start the GLUT front end");
 
 /* General Todos:
 
-TODO(dinow): Add textures, perlin noise
+TODO(dinow): Fix supersampling (not all identical, but distribute them in pixel
+TODO(dinow): Implement adaptive supersampling
+TODO(dinow): Add textures, perlin noise, bump maps, skyboxes, path tracing
 TODO(dinow): Add possibility to load renderer config from file.
 TODO(dinow): Rename proto namespace to "config" or "proto".
 TODO(dinow): Put everything else in namespace "raytracer".
