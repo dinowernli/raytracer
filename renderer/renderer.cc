@@ -79,7 +79,7 @@ void Renderer::Render(Scene* scene) {
     for(auto it = listeners_.begin(); it != listeners_.end(); ++it) {
       it->get()->Updated(*sampler_);
     }
-    usleep(kMicroToMilli * kSleepTimeMilli);
+    usleep(kSleepTimeMilli * MILLI_TO_MICRO);
   }
   for (auto it = workers.begin(); it != workers.end(); ++it) {
     it->join();
@@ -220,9 +220,6 @@ Color3 Renderer::TraceColor(const Ray& ray, size_t depth,
 
 // static
 const size_t Renderer::kSleepTimeMilli = 300;
-
-// static
-const size_t Renderer::kMicroToMilli = 1000;
 
 // static
 Renderer* Renderer::FromConfig(const raytracer::RendererConfig& config) {

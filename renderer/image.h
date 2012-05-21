@@ -30,9 +30,13 @@ class Image {
                    << "]";
       return;
     }
-    pixels_[kNumberOfChannels * (y * size_x_ + x) + 0] = color.r();
-    pixels_[kNumberOfChannels * (y * size_x_ + x) + 1] = color.g();
-    pixels_[kNumberOfChannels * (y * size_x_ + x) + 2] = color.b();
+
+    // TODO(dinow): Y-axis flipped here and in exporter. Potentially remove
+    // both.
+    size_t yy = size_y_ - y - 1;
+    pixels_[kNumberOfChannels * (yy * size_x_ + x) + 0] = color.r();
+    pixels_[kNumberOfChannels * (yy * size_x_ + x) + 1] = color.g();
+    pixels_[kNumberOfChannels * (yy * size_x_ + x) + 2] = color.b();
   }
 
   // Returns the color at position (x, y) of the image. The entry (0, 0) is the
@@ -44,7 +48,11 @@ class Image {
                    << "]";
       return Color3();
     }
-    size_t pos = kNumberOfChannels * (y * size_x_ + x);
+
+    // TODO(dinow): Y-axis flipped here and in exporter. Potentially remove
+    // both.
+    size_t yy = size_y_ - y - 1;
+    size_t pos = kNumberOfChannels * (yy * size_x_ + x);
     return Color3(pixels_[pos], pixels_[pos + 1], pixels_[pos + 2]);
   }
 

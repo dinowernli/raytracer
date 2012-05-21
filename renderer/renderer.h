@@ -71,8 +71,6 @@ class Renderer {
 
   // The sleep time for the monitor thread.
   static const size_t kSleepTimeMilli;
-
-  static const size_t kMicroToMilli;
 };
 
 #endif  /* RENDERER_H_ */
