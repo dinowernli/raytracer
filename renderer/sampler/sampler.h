@@ -11,6 +11,7 @@
 
 #include <glog/logging.h>
 #include <memory>
+#include <mutex>
 
 #include "renderer/image.h"
 #include "scene/camera.h"
@@ -19,7 +20,8 @@ class Sample;
 
 class Sampler {
  public:
-  virtual ~Sampler() { };
+  Sampler(bool thread_safe) : thread_safe_(thread_safe) {}
+  virtual ~Sampler() {};
 
   // Prepares for generating samples for the given camera. Must be called
   // before starting to fetch samples. If the passed camera is null, the sampler
@@ -31,6 +33,7 @@ class Sampler {
       LOG(WARNING) << "Initializing sampler with NULL camera.";
       image_.reset(new Image(0, 0));
     }
+    accepted_ = 0;
   }
 
   // Returns the maximum size of a rendering job provided by NextJob.
@@ -46,19 +49,35 @@ class Sampler {
 
   // Returns whether the sampler is prepared to handle multiple threads calling
   // its methods concurrently.
-  virtual bool IsThreadSafe() const = 0;
+  virtual bool IsThreadSafe() const { return thread_safe_; }
 
   const Image& image() const { return *image_; }
+  size_t width() const { return image_.get() == NULL ? 0 : image_->SizeX(); }
+  size_t height() const { return image_.get() == NULL ? 0 : image_->SizeY(); }
 
   // Returns the progress of the rendering as value in [0, 1].
-  virtual double Progress() const = 0;
+  virtual double Progress() const {
+    size_t total_size = image().SizeX() * image_->SizeY();
+    if (total_size == 0) {
+      return 1;
+    }
+    return double(accepted_) / total_size;
+  }
 
   // Returns true iff all pixels have been written to the image.
   bool IsDone() const { return Progress() == 1.0; }
 
  protected:
-  // TODO(dinow): Possibly make this a private attribute of each sampler.
+  // Intended for use by children indicating that samples have been returned.
+  void IncrementAccepted(size_t samples) { accepted_ += samples; }
+
+  // Protected to allow children to modify it.
   std::unique_ptr<Image> image_;
+  std::mutex lock_;
+
+ private:
+  size_t accepted_;
+  bool thread_safe_;
 };
 
 #endif  /* SAMPLER_H_ */

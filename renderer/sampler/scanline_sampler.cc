@@ -7,7 +7,7 @@
 #include "renderer/sampler/sample.h"
 #include "scene/camera.h"
 
-ScanlineSampler::ScanlineSampler(bool thread_safe) : thread_safe_(thread_safe) {
+ScanlineSampler::ScanlineSampler(bool thread_safe) : Sampler(thread_safe) {
 }
 
 ScanlineSampler::~ScanlineSampler() {
@@ -17,20 +17,15 @@ void ScanlineSampler::Init(const Camera* camera) {
   Sampler::Init(camera);
   current_x_ = 0;
   current_y_ = 0;
-  accepted_ = 0;
-
-  // After the init call above, the image is initialized.
-  width_ = image().SizeX();
-  height_ = image().SizeY();
 }
 
 bool ScanlineSampler::InternalNextSample(Sample* sample) {
-  if (current_x_ >= width_) {
+  if (current_x_ >= width()) {
     current_x_ = 0;
     ++current_y_;
   }
 
-  if (current_y_ >= height_) {
+  if (current_y_ >= height()) {
     return false;
   }
 
@@ -42,13 +37,12 @@ bool ScanlineSampler::InternalNextSample(Sample* sample) {
 
 size_t ScanlineSampler::NextJob(std::vector<Sample>* samples) {
   std::unique_lock<std::mutex> guard;
-  if (thread_safe_) {
+  if (IsThreadSafe()) {
     guard = std::move(std::unique_lock<std::mutex>(lock_));
   }
 
   size_t jobs_added = 0;
-  const size_t max_size = MaxJobSize();
-  while(jobs_added < max_size) {
+  while(jobs_added < kJobSize) {
     Sample& sample = samples->at(jobs_added);
     if (InternalNextSample(&sample)) {
       ++jobs_added;
@@ -65,24 +59,16 @@ void ScanlineSampler::AcceptJob(const std::vector<Sample>& samples, size_t n) {
     // image space, (0, 0) represents the top left corner. Therefore, we must flip
     // the y-coordinate when writing the color.
     const Sample& sample = samples[i];
-    const size_t image_y = image_->SizeY() - sample.y() - 1;
+    const size_t image_y = height() - sample.y() - 1;
     image_->PutPixel(sample.color(), sample.x(), image_y);
   }
 
   // Only lock here because the code above is thread-safe.
   std::unique_lock<std::mutex> guard;
-  if (thread_safe_) {
+  if (IsThreadSafe()) {
     guard = std::move(std::unique_lock<std::mutex>(lock_));
   }
-  accepted_ += n;
-}
-
-double ScanlineSampler::Progress() const {
-  size_t total_size = image_->SizeX() * image_->SizeY();
-  if (total_size == 0) {
-    return 1;
-  }
-  return double(accepted_) / (image_->SizeX() * image_->SizeY());
+  IncrementAccepted(n);
 }
 
 // static
