@@ -18,7 +18,8 @@ class Sample {
         size_y_(size_y) {}
 
   // Creates a sample of size 1 at (0, 0). The color defaults to black.
-  Sample() : x_(0), y_(0), size_x_(1), size_y_(1) {};
+  Sample() : x_(0), y_(0), offset_x_(0), offset_y_(0),
+             size_x_(1), size_y_(1) {};
   ~Sample() {}
 
   const size_t& x() const { return x_; }
