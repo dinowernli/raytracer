@@ -50,4 +50,10 @@ class Sample {
   Color3 color_;
 };
 
+template<class OStream>
+OStream& operator<<(OStream& os, const Sample& s) {
+  return os << "location: (" << s.x() << ", " << s.y() << ") size: ("
+            << s.size_x() << ", " << s.size_y() << ")";
+}
+
 #endif  /* SAMPLE_H_ */

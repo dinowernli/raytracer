@@ -23,7 +23,6 @@ class ProgressiveSampler : public Sampler {
   virtual size_t MaxJobSize() const { return kJobSize; }
   virtual size_t NextJob(std::vector<Sample>* samples);
   virtual void AcceptJob(const std::vector<Sample>& samples, size_t n);
-  virtual bool IsThreadSafe() const { return thread_safe_; }
 
  private:
   // Helper method which fetches the next sample. Returns true if the new sample
@@ -34,10 +33,6 @@ class ProgressiveSampler : public Sampler {
   size_t current_x_;
   size_t current_y_;
   size_t current_size_;
-
-  // Indicates whether or not to expect multiple threads to interact with this
-  // sampler.
-  bool thread_safe_;
 
   // Stores a priority for each pixel in order to be able to receive colored
   // samples back out of order.

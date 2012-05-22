@@ -42,6 +42,7 @@ bool ProgressiveSampler::InternalNextSample(Sample* sample) {
   }
 
   if (current_size_ <= 0) {
+    DVLOG(1) << "Sample size hit 0, stopping";
     return false;
   }
 
@@ -55,6 +56,8 @@ bool ProgressiveSampler::InternalNextSample(Sample* sample) {
   sample->set_y(current_y_);
   sample->set_size_x(current_size_);
   sample->set_size_y(current_size_);
+
+  DVLOG(1) << "Handing out sample " << *sample;
   return true;
 }
 
@@ -78,6 +81,11 @@ size_t ProgressiveSampler::NextJob(std::vector<Sample>* samples) {
 
 void ProgressiveSampler::AcceptJob(const std::vector<Sample>& samples,
                                    size_t n) {
+  std::unique_lock<std::mutex> guard;
+  if (IsThreadSafe()) {
+    guard = std::move(std::unique_lock<std::mutex>(lock_));
+  }
+
   for (size_t i = 0; i < n; ++i) {
     const Sample& sample = samples[i];
     for (size_t dx = 0; dx < sample.size_x(); ++dx) {
@@ -100,6 +108,7 @@ void ProgressiveSampler::AcceptJob(const std::vector<Sample>& samples,
       }
     }
   }
+  IncrementAccepted(n);
 }
 
 // static
