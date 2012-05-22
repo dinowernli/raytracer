@@ -26,12 +26,16 @@ class Sample {
   const Scalar& offset_x() const { return offset_x_; }
   const Scalar& offset_y() const { return offset_y_; }
   const Color3& color() const { return color_; }
+  const size_t& size_x() const { return size_x_; }
+  const size_t& size_y() const { return size_y_; }
 
   void set_x(size_t x) { x_ = x; }
   void set_y(size_t y) { y_ = y; }
   void set_offset_x(Scalar offset_x) { offset_x_ = offset_x; }
   void set_offset_y(Scalar offset_y) { offset_y_ = offset_y; }
   void set_color(const Color3& color) { color_ = color; }
+  void set_size_x(size_t size_x) { size_x_ = size_x; }
+  void set_size_y(size_t size_y) { size_y_ = size_y; }
 
  private:
   size_t x_;

@@ -14,6 +14,7 @@
 
 #include "proto/config/renderer_config.pb.h"
 #include "renderer/intersection_data.h"
+#include "renderer/sampler/progressive_sampler.h"
 #include "renderer/sampler/sample.h"
 #include "renderer/sampler/sampler.h"
 #include "renderer/sampler/scanline_sampler.h"
@@ -223,7 +224,10 @@ const size_t Renderer::kSleepTimeMilli = 300;
 
 // static
 Renderer* Renderer::FromConfig(const raytracer::RendererConfig& config) {
-  Sampler* sampler = new ScanlineSampler(config.threads() > 1);
+  // TODO(dinow): Add config options for selecting samplers.
+  //Sampler* sampler = new ScanlineSampler(config.threads() > 1);
+  Sampler* sampler = new ProgressiveSampler(config.threads() > 1);
+
   Shader* shader = new PhongShader(config.shadows());
   return new Renderer(sampler, shader, config.threads(),
                       config.recursion_depth(), config.rays_per_pixel());

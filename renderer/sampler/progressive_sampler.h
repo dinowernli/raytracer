@@ -6,7 +6,7 @@
 #ifndef PROGRESSIVE_SAMPLER_H_
 #define PROGRESSIVE_SAMPLER_H_
 
-#include <algorithm>
+#include <vector>
 
 #include "renderer/sampler/sampler.h"
 #include "util/no_copy_assign.h"
@@ -33,12 +33,15 @@ class ProgressiveSampler : public Sampler {
   // Iteration variables.
   size_t current_x_;
   size_t current_y_;
-  size_t current_size_x_;
-  size_t current_size_y_;
+  size_t current_size_;
 
   // Indicates whether or not to expect multiple threads to interact with this
   // sampler.
   bool thread_safe_;
+
+  // Stores a priority for each pixel in order to be able to receive colored
+  // samples back out of order.
+  std::vector<std::vector<int>> priority_map_;
 
   // Lock used for synchronizing access to the critical methods.
   std::mutex lock_;
