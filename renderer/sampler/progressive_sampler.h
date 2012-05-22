@@ -43,6 +43,9 @@ class ProgressiveSampler : public Sampler {
 
   // TODO(dinow): Increase this over time.
   static const size_t kJobSize;
+
+  // TODO(dinow): Remove this ugly hack.
+  bool first_;
 };
 
 #endif  /* PROGRESSIVE_SAMPLER_H_ */
