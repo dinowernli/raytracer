@@ -23,11 +23,6 @@ PpmExporter::~PpmExporter() {
 }
 
 void PpmExporter::Ended(const Sampler& sampler) {
-  // Only export if the image is done.
-  if (!sampler.IsDone()) {
-    return;
-  }
-
   const Image& image = sampler.image();
   if (image.SizeX() == 0 && image.SizeY() == 0) {
     LOG(INFO) << "Empty image, not exporting to file: " << file_name_;

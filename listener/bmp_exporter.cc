@@ -38,11 +38,6 @@ static void WriteHeader(size_t width, size_t height, std::ofstream* stream) {
 }
 
 void BmpExporter::Ended(const Sampler& sampler) {
-  // Only export if the image is done.
-  if (!sampler.IsDone()) {
-    return;
-  }
-
   const Image& image = sampler.image();
   const size_t width = image.SizeX();
   const size_t height = image.SizeY();
