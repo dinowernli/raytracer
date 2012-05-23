@@ -23,12 +23,14 @@ PpmExporter::~PpmExporter() {
 }
 
 void PpmExporter::Ended(const Sampler& sampler) {
-  const Image& image = sampler.image();
-  if (image.SizeX() == 0 && image.SizeY() == 0) {
+  if (sampler.image().SizeX() == 0 || sampler.image().SizeY() == 0) {
     LOG(INFO) << "Empty image, not exporting to file: " << file_name_;
     return;
   }
+  Export(sampler.image());
+}
 
+void PpmExporter::Export(const Image& image) {
   LOG(INFO) << "Exporting image to file: " << file_name_;
   std::ofstream file_stream(file_name_);
 

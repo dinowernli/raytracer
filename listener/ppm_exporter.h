@@ -1,4 +1,5 @@
 /*
+ * Can dump an image to disk as a valid PPM file.
  * Author: Dino Wernli
  */
 
@@ -10,6 +11,7 @@
 #include "renderer/updatable.h"
 #include "util/no_copy_assign.h"
 
+class Image;
 class Sampler;
 
 class PpmExporter : public Updatable{
@@ -23,7 +25,11 @@ class PpmExporter : public Updatable{
   const static size_t kMaxPixelValue;
   const static std::string kMagicNumber;
 
+  // Writes the image to the file.
+  void Export(const Image& image);
+
  private:
+  // Full path to the resulting file.
   const std::string file_name_;
 };
 

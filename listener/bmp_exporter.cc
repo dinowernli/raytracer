@@ -38,14 +38,16 @@ static void WriteHeader(size_t width, size_t height, std::ofstream* stream) {
 }
 
 void BmpExporter::Ended(const Sampler& sampler) {
-  const Image& image = sampler.image();
-  const size_t width = image.SizeX();
-  const size_t height = image.SizeY();
-
-  if (height == 0 && width == 0) {
+  if (sampler.image().SizeX() == 0 || sampler.image().SizeY() == 0) {
     LOG(INFO) << "Empty image, not exporting to file: " << file_name_;
     return;
   }
+  Export(sampler.image());
+}
+
+void BmpExporter::Export(const Image& image) {
+  const size_t width = image.SizeX();
+  const size_t height = image.SizeY();
 
   LOG(INFO) << "Exporting image " << file_name_;
   std::ofstream file_stream(file_name_, std::ofstream::binary);
