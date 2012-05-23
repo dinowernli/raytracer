@@ -62,7 +62,7 @@ void BmpExporter::Ended(const Sampler& sampler) {
 
   for (size_t y = 0; y < height; ++y) {
     for (size_t x = 0; x < width; ++x) {
-      const Color3& pixel = image.PixelAt(x, height - y - 1);
+      const Color3& pixel = image.PixelAt(x, y);
       char buffer[3] = { (char)(pixel.b() * 255),
                          (char)(pixel.g() * 255),
                          (char)(pixel.r() * 255) };

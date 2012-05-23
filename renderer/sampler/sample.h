@@ -39,6 +39,7 @@ class Sample {
   void set_size_y(size_t size_y) { size_y_ = size_y; }
 
  private:
+  // The sample (0, 0) represents the bottom left pixel.
   size_t x_;
   size_t y_;
 

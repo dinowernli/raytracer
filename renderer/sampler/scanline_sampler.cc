@@ -59,10 +59,7 @@ void ScanlineSampler::AcceptJob(const std::vector<Sample>& samples, size_t n) {
     // image space, (0, 0) represents the top left corner. Therefore, we must flip
     // the y-coordinate when writing the color.
     const Sample& sample = samples[i];
-
-    // TODO(dinow): Remove this double flipping (with the one in image)
-    const size_t image_y = height() - sample.y() - 1;
-    image_->PutPixel(sample.color(), sample.x(), image_y);
+    image_->PutPixel(sample.color(), sample.x(), sample.y());
   }
 
   // Only lock here because the code above is thread-safe.

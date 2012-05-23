@@ -171,6 +171,8 @@ Color3 Renderer::TraceColor(const Ray& ray, size_t depth,
     } else {
       // TODO(dinow): Somehow, this produces an invalid read on horse scene with
       // recursion depth 10. Need to investigate.
+      // Update: Cause is lack of distinction between volumetric and non-vol.
+      // elements. And the fact that the whole refraction thing is a hack.
       if (refraction_stack->size() >= 2) {
         new_index = (*refraction_stack)[refraction_stack->size() - 2];
       } else {

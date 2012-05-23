@@ -69,7 +69,7 @@ TODO(dinow): Add textures, perlin noise, bump maps, skyboxes, path tracing
 TODO(dinow): Add possibility to load renderer config from file.
 TODO(dinow): Rename proto namespace to "config" or "proto".
 TODO(dinow): Put everything else in namespace "raytracer".
-TODO(dinow): Implement a GUI and/or webserver.
+TODO(dinow): Implement a webserver.
 TODO(dinow): Implement statistics (intersection counting).
 TODO(dinow): Remove the default values from the object constructors.
              Leave them only in the protos. Or leave them in both but always

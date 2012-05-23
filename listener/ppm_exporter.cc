@@ -43,7 +43,9 @@ void PpmExporter::Ended(const Sampler& sampler) {
 
   for (size_t y = 0; y < image.SizeY(); ++y) {
     for (size_t x = 0; x < image.SizeX(); ++x) {
-      const Color3& color = image.PixelAt(x, y);
+      // The image stores the bottom left pixel as (0, 0), we need to start with
+      // the top left pixel. So flip the y coordinate.
+      const Color3& color = image.PixelAt(x, image.SizeY() - y - 1);
       file_stream << ScaleIntensity(color.r()) << " "
                   << ScaleIntensity(color.g()) << " "
                   << ScaleIntensity(color.b()) << " ";

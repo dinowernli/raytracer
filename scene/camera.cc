@@ -38,7 +38,8 @@ Vector3 Camera::ToWorld(const Vector3& vector) const {
 }
 
 Ray Camera::GenerateRay(const Sample& sample) const {
-  // Add 0.5 to send ray through the pixel center.
+  // The sample (0, 0) represents the bottom left pixel, add 0.5 to send ray
+  // through the pixel center, consider possible offsets.
   Scalar image_x = sample.x() + 0.5 + sample.offset_x();
   Scalar image_y = sample.y() + 0.5 + sample.offset_y();
 

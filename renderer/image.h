@@ -1,6 +1,5 @@
 /*
- * A container for the raw pixels produced by the render loop. Can export
- * itself in different file formats.
+ * A container for the raw pixels produced by the render loop.
  * Author: Dino Wernli
  */
 
@@ -22,7 +21,7 @@ class Image {
   ~Image() {};
 
   // Sets the color at the specified position in the pixel buffer. Does nothing
-  // if the position is invalid.
+  // if the position is invalid. The entry (0, 0) is the bottom left pixel.
   void PutPixel(const Color3& color, size_t x, size_t y) {
     if (x >= size_x_ || y >= size_y_) {
       LOG(WARNING) << "Attempted to set invalid pixel [" << x << ", " << y
@@ -30,17 +29,13 @@ class Image {
                    << "]";
       return;
     }
-
-    // TODO(dinow): Y-axis flipped here and in exporter. Potentially remove
-    // both.
-    size_t yy = size_y_ - y - 1;
-    pixels_[kNumberOfChannels * (yy * size_x_ + x) + 0] = color.r();
-    pixels_[kNumberOfChannels * (yy * size_x_ + x) + 1] = color.g();
-    pixels_[kNumberOfChannels * (yy * size_x_ + x) + 2] = color.b();
+    pixels_[kNumberOfChannels * (y * size_x_ + x) + 0] = color.r();
+    pixels_[kNumberOfChannels * (y * size_x_ + x) + 1] = color.g();
+    pixels_[kNumberOfChannels * (y * size_x_ + x) + 2] = color.b();
   }
 
   // Returns the color at position (x, y) of the image. The entry (0, 0) is the
-  // top left pixel. Returns a default color if the position is invalid.
+  // bottom left pixel. Returns a default color if the position is invalid.
   const Color3 PixelAt(size_t x, size_t y) const {
     if (x >= size_x_ || y >= size_y_) {
       LOG(WARNING) << "Attempted access to invalid pixel [" << x << ", " << y
@@ -48,11 +43,7 @@ class Image {
                    << "]";
       return Color3();
     }
-
-    // TODO(dinow): Y-axis flipped here and in exporter. Potentially remove
-    // both.
-    size_t yy = size_y_ - y - 1;
-    size_t pos = kNumberOfChannels * (yy * size_x_ + x);
+    size_t pos = kNumberOfChannels * (y * size_x_ + x);
     return Color3(pixels_[pos], pixels_[pos + 1], pixels_[pos + 2]);
   }
 

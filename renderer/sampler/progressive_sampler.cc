@@ -113,8 +113,7 @@ void ProgressiveSampler::AcceptJob(const std::vector<Sample>& samples,
 
         int priority = -1 * (int)(sample.size_x() * sample.size_y());
         if (priority_map_[x][y] < priority) {
-          // TODO(dinow): Remove this double flipping (with the one in image)
-          image_->PutPixel(sample.color(), x, height() - y - 1);
+          image_->PutPixel(sample.color(), x, y);
           priority_map_[x][y] = priority;
         }
       }
