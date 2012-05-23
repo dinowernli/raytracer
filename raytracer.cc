@@ -42,6 +42,10 @@ DEFINE_uint64(worker_threads, 8, "Number of rendering worker threads to use");
 DEFINE_string(sampler_type, "", "The type of sampler to use. Legal values are "
                                 "'scanline' and 'progressive'");
 
+DEFINE_string(splitting_strategy, "", "The strategy to use for splitting in the"
+                                      " KdTree. Only has effect if use_kd_tree "
+                                      "is true. Legal values are 'midpoint'");
+
 // Camera config flags.
 DEFINE_int32(image_resolution_x, -1, "Optional override for the horizontal "
                                       "resolution of the image");
@@ -119,6 +123,16 @@ int main(int argc, char **argv) {
   }
   if (FLAGS_image_resolution_y > 0) {
     camera_config.set_resolution_y(FLAGS_image_resolution_y);
+  }
+
+  if (!FLAGS_splitting_strategy.empty()) {
+    if (FLAGS_splitting_strategy == "midpoint") {
+      scene_config.mutable_kd_tree_config()
+          ->set_splitting_strategy(raytracer::KdTreeConfig::MIDPOINT);
+    } else {
+      LOG(WARNING) << "Skipping unknown splitting strategy: "
+                   << FLAGS_splitting_strategy;
+    }
   }
 
   // Build the scene from the config.

@@ -7,9 +7,9 @@ message KdTreeConfig {
     MIDPOINT = 0;
   }
 
-  optional SplittingStrategyData splitting_startegy = 1;
+  optional SplittingStrategyData splitting_strategy = 1 [default = MIDPOINT];
 
-  optional bool visualization = 2;
+  optional int32 visualization = 2 [default = -1];
 }
 
 message SceneConfig {
