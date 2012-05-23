@@ -27,8 +27,8 @@ void ProgressiveSampler::Init(const Camera* camera) {
   current_size_ = pow(2, ceil(log2(max_size)));
 
   // Initialize the priority map to lower priorities than will ever occur.
-  priority_map_ = std::vector<std::vector<int>>(height(),
-      std::vector<int>(width(), -(current_size_ * current_size_ + 1)));
+  priority_map_ = std::vector<std::vector<int>>(width(),
+      std::vector<int>(height(), -(current_size_ * current_size_ + 1)));
 }
 
 bool ProgressiveSampler::InternalNextSample(Sample* sample) {
