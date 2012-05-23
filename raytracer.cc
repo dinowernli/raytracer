@@ -63,6 +63,8 @@ DEFINE_bool(gui, false, "Whether or not to start the GLUT front end");
 
 /* General Todos:
 
+TODO(dinow): Implement KdTree spliiting plane visualization
+TODO(dinow): Implement surface area heuristics for KdTree splitting
 TODO(dinow): Fix supersampling (not all identical, but distribute them in pixel
 TODO(dinow): Implement adaptive supersampling
 TODO(dinow): Add textures, perlin noise, bump maps, skyboxes, path tracing
