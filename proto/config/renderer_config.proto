@@ -1,6 +1,11 @@
 package raytracer;
 
 message RendererConfig {
+  enum SamplerType {
+    SCANLINE = 0;
+    PROGRESSIVE = 1;
+  }
+
   // The number of worker threads used in the renderer.
   optional uint64 threads = 1;
 
@@ -13,4 +18,6 @@ message RendererConfig {
 
   // The number of randomly jittered rays to shoot through each pixel.
   optional uint64 rays_per_pixel = 4 [default = 1];
+
+  optional SamplerType sampler_type = 5 [default = PROGRESSIVE];
 }

@@ -224,9 +224,13 @@ const size_t Renderer::kSleepTimeMilli = 300;
 
 // static
 Renderer* Renderer::FromConfig(const raytracer::RendererConfig& config) {
-  // TODO(dinow): Add config options for selecting samplers.
-  Sampler* sampler = new ScanlineSampler(config.threads() > 1);
-  //Sampler* sampler = new ProgressiveSampler(config.threads() > 1);
+  Sampler* sampler = NULL;
+  if (config.sampler_type() == raytracer::RendererConfig::SCANLINE) {
+    sampler = new ScanlineSampler(config.threads() > 1);
+  } else if (config.sampler_type() == raytracer::RendererConfig::PROGRESSIVE) {
+    sampler = new ProgressiveSampler(config.threads() > 1);
+  }
+  CHECK(sampler != NULL) << "Could not load sampler";
 
   Shader* shader = new PhongShader(config.shadows());
   return new Renderer(sampler, shader, config.threads(),

@@ -39,6 +39,9 @@ DEFINE_bool(use_kd_tree, true, "Whether or not to use a KdTree in the scene");
 
 DEFINE_uint64(worker_threads, 8, "Number of rendering worker threads to use");
 
+DEFINE_string(sampler_type, "", "The type of sampler to use. Legal values are "
+                                "'scanline' and 'progressive'");
+
 // Camera config flags.
 DEFINE_int32(image_resolution_x, -1, "Optional override for the horizontal "
                                       "resolution of the image");
@@ -125,6 +128,16 @@ int main(int argc, char **argv) {
   renderer_config.set_shadows(FLAGS_shadows);
   renderer_config.set_recursion_depth(FLAGS_recursion_depth);
   renderer_config.set_rays_per_pixel(FLAGS_rays_per_pixel);
+
+  if (!FLAGS_sampler_type.empty()) {
+    if (FLAGS_sampler_type == "progressive") {
+      renderer_config.set_sampler_type(RendererConfig::PROGRESSIVE);
+    } else if (FLAGS_sampler_type == "scanline") {
+      renderer_config.set_sampler_type(RendererConfig::SCANLINE);
+    } else {
+      LOG(WARNING) << "Skipping unknown sampler type: " << FLAGS_sampler_type;
+    }
+  }
 
   // Build a renderer from the config.
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(renderer_config));
