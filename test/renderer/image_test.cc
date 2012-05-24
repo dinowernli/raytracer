@@ -42,4 +42,10 @@ TEST(Image, ColorStoredAndRetrieved) {
   }
 }
 
+TEST(Image, EmptyImage) {
+  Image image(0, 0);
+  EXPECT_EQ(0, image.SizeX());
+  EXPECT_EQ(0, image.SizeY());
+}
+
 }  // namespace
