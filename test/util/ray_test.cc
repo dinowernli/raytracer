@@ -3,7 +3,8 @@
  * Author: Dino Wernli
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
+
 #include "util/ray.h"
 
 static bool IsReasonablyClose(Scalar expected, Scalar actual) {

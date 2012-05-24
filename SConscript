@@ -77,5 +77,9 @@ environment.Program('raytracer.cc')
 
 environment.ParseConfig('pkg-config --cflags --libs libgtest')
 test_environment = environment.Clone()
-test_sources = ['test/util/ray_test.cc']
+test_cc_files = [
+  'test/renderer/*.cc',
+  'test/util/*.cc',
+]
+test_sources = [Glob(cc_file) for cc_file in test_cc_files]
 environment.Program('unit_tests', test_sources)
