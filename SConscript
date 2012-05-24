@@ -61,7 +61,7 @@ cc_files = [
 ]
 lib_sources = [Glob(cc_file) for cc_file in cc_files] + [st[2] for st in source_target]
 
-p = environment.Library('raytracer', lib_sources)
+lib_target = environment.Library('raytracer', lib_sources)
 environment.Append(LIBS='raytracer')
 environment.Append(LIBS='glut')       # Only the binary needs to link against glut (not included for library).
 environment.Append(LIBPATH='.')
@@ -70,4 +70,12 @@ environment.Append(LIBPATH='.')
 environment.Program('raytracer.cc')
 
 # This is how to force dependencies.
-# environment.Depends(p, pb)
+# environment.Depends(lib_target, pb)
+
+
+### Build unit tests.
+
+environment.ParseConfig('pkg-config --cflags --libs libgtest')
+test_environment = environment.Clone()
+test_sources = ['test/util/ray_test.cc']
+environment.Program('unit_tests', test_sources)
