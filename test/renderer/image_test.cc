@@ -7,6 +7,8 @@
 
 #include "renderer/image.h"
 
+namespace {
+
 static bool ColorsEqual(Color3 c1, Color3 c2) {
   return (c1.r() == c2.r() && c1.g() == c2.g() && c1.b() == c2.b());
 }
@@ -39,3 +41,5 @@ TEST(Image, ColorStoredAndRetrieved) {
     }
   }
 }
+
+}  // namespace
