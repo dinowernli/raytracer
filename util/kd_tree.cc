@@ -17,7 +17,7 @@ static bool LinearIntersect(const std::vector<const Element*>& elements,
                             const Ray& ray, IntersectionData* data) {
   bool intersected = false;
   for (size_t i = 0; i < elements.size(); ++i) {
-    intersected = elements[i]->Intersect(ray, data) | intersected;
+    intersected = elements[i]->Intersect(ray, data) || intersected;
     if (intersected && data == NULL) {
       return true;
     }

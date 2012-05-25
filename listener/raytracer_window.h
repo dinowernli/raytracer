@@ -23,7 +23,6 @@ class RaytracerWindow : public Updatable {
 
   virtual void Started(const Sampler& sampler);
   virtual void Updated(const Sampler& sampler);
-  virtual void Ended(const Sampler& sampler);
 
   void MainLoop();
 

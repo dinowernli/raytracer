@@ -47,11 +47,6 @@ void RaytracerWindow::Updated(const Sampler& sampler) {
   needs_redraw_ = true;
 }
 
-void RaytracerWindow::Ended(const Sampler& sampler) {
-  needs_redraw_ = false;
-  image_ = NULL;
-}
-
 void RaytracerWindow::MainLoop() {
   glutMainLoop();
 }

@@ -52,7 +52,7 @@ bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
   } else {
     bool result = false;
     for (auto it = elements_.begin(); it != elements_.end(); ++it) {
-      result = it->get()->Intersect(ray, data) | result;
+      result = it->get()->Intersect(ray, data) || result;
       if (result && data == NULL) {
         return true;
       }
