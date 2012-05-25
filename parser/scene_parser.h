@@ -26,15 +26,14 @@ class SceneParser {
   virtual ~SceneParser();
   NO_COPY_ASSIGN(SceneParser);
 
+  // Parses a material from the proto. The caller takes ownership of the
+  // returned material. Returns NULL if the data could not be parsed.
+  Material* ParseMaterial(const raytracer::MaterialData& data);
+
   // Parses data and add everything to scene.
   void ParseScene(const raytracer::SceneData& data, Scene* scene);
 
  private:
-  // Adds a material to the mapping of known materials. The caller takes
-  // ownership of the returned material. Returns NULL if the data could not be
-  // parsed.
-  Material* ParseMaterial(const raytracer::MaterialData& data);
-
   // Fetches the material from the material map, returns NULL if it is missing.
   Material* GetMaterial(const std::string& id) const;
 

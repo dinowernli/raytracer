@@ -26,7 +26,8 @@ class KdTree {
   // Takes ownership of the passed SplittingStrategy. The KdTree will add
   // visualization planes for all levels <= visualization_depth. For no
   // visualization at all, pass -1 as depth.
-  KdTree(SplittingStrategy* strategy, int visualization_depth);
+  KdTree(SplittingStrategy* strategy, int visualization_depth,
+         const Material* visualization_material = NULL);
   virtual ~KdTree();
 
   // Builds a tree which contains pointers to the passed elements. No ownership
@@ -56,6 +57,7 @@ class KdTree {
   std::unique_ptr<SplittingStrategy> strategy_;
 
   int visualization_depth_;
+  const Material* visualization_material_;
 };
 
 #endif  /* KD_TREE_H_ */

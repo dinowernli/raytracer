@@ -8,6 +8,7 @@
 
 #include "renderer/intersection_data.h"
 #include "scene/element.h"
+#include "scene/geometry/triangle.h"
 #include "util/ray.h"
 
 // Convenience method which takes care of linearly testing all elements for
@@ -138,8 +139,10 @@ bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near,
   }
 }
 
-KdTree::KdTree(SplittingStrategy* strategy, int visualization_depth)
-    : strategy_(strategy), visualization_depth_(visualization_depth) {
+KdTree::KdTree(SplittingStrategy* strategy, int visualization_depth,
+               const Material* vistualization_material)
+    : strategy_(strategy), visualization_depth_(visualization_depth),
+      visualization_material_(vistualization_material) {
 }
 
 KdTree::~KdTree() {

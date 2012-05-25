@@ -17,6 +17,9 @@ RaytracerWindow::RaytracerWindow(int* argc, char **argv) {
   CHECK(callback_instance_ == NULL) << "Detected duplicate glut window";
   callback_instance_ = this;
 
+  image_ = NULL;
+  needs_redraw_ = false;
+
   glutInit(argc, argv);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -41,6 +44,11 @@ void RaytracerWindow::Updated(const Sampler& sampler) {
   needs_redraw_ = true;
 }
 
+void RaytracerWindow::Ended(const Sampler& sampler) {
+  needs_redraw_ = false;
+  image_ = NULL;
+}
+
 void RaytracerWindow::MainLoop() {
   glutMainLoop();
 }
@@ -54,6 +62,13 @@ void RaytracerWindow::Idle() {
 }
 
 void RaytracerWindow::Display() {
+  if (image_ == NULL) {
+    // This call happened before the first call to Started(), so there is no
+    // image. This is possible because glutPostRedisplay() could be called
+    // outside this class.
+    return;
+  }
+
   const size_t width = image_->SizeX();
   const size_t height = image_->SizeY();
 

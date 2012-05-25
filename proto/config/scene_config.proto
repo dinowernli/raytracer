@@ -1,6 +1,7 @@
 package raytracer;
 
 import "proto/scene/scene_data.proto";
+import "proto/util/material_data.proto";
 
 message KdTreeConfig {
   enum SplittingStrategyData {
@@ -8,8 +9,8 @@ message KdTreeConfig {
   }
 
   optional SplittingStrategyData splitting_strategy = 1 [default = MIDPOINT];
-
-  optional int32 visualization = 2 [default = -1];
+  optional int32 visualization_depth = 2 [default = -1];
+  optional MaterialData visualization_material = 3;
 }
 
 message SceneConfig {
