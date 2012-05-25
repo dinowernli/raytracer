@@ -37,6 +37,9 @@ DEFINE_uint64(rays_per_pixel, 1, "The number of randomly jittered rays to "
 
 DEFINE_bool(use_kd_tree, true, "Whether or not to use a KdTree in the scene");
 
+DEFINE_int32(kd_tree_visualization_depth, -1, "How deep in the tree to "
+                                              "visualize splitting planes");
+
 DEFINE_uint64(worker_threads, 8, "Number of rendering worker threads to use");
 
 DEFINE_string(sampler_type, "", "The type of sampler to use. Legal values are "
@@ -135,6 +138,26 @@ int main(int argc, char **argv) {
       LOG(WARNING) << "Skipping unknown splitting strategy: "
                    << FLAGS_splitting_strategy;
     }
+  }
+
+  if (FLAGS_kd_tree_visualization_depth >= 0) {
+    // TODO(dinow): Add support for configuring visualization material.
+    raytracer::ColorData color;
+    color.set_r(0.6);
+    color.set_g(0.25);
+    color.set_b(0.1);
+
+    raytracer::MaterialData data;
+    data.mutable_emission()->CopyFrom(color);
+    data.mutable_ambient();
+    data.mutable_diffuse();
+    data.mutable_specular();
+    data.set_refraction_percentage(0.6);
+    data.set_refraction_index(1);
+
+    raytracer::KdTreeConfig* kdconfig = scene_config.mutable_kd_tree_config();
+    kdconfig->set_visualization_depth(FLAGS_kd_tree_visualization_depth);
+    kdconfig->mutable_visualization_material()->CopyFrom(data);
   }
 
   // Build the scene from the config.

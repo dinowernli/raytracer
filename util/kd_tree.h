@@ -32,7 +32,8 @@ class KdTree {
 
   // Builds a tree which contains pointers to the passed elements. No ownership
   // is taken for any of the elements, none of the elements will be changed.
-  void Init(const std::vector<std::unique_ptr<Element>>& elements);
+  // Any visualization triangles created are added to elements.
+  void Init(std::vector<std::unique_ptr<Element>>* elements);
 
   // Returns whether or not the ray intersects any of the elements. If data is
   // not NULL, data about the first intersection is stored. If init has not

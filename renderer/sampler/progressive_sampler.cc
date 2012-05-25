@@ -36,7 +36,7 @@ bool ProgressiveSampler::InternalNextSample(Sample* sample) {
     sample->set_y(current_y_);
     sample->set_size_x(current_size_);
     sample->set_size_y(current_size_);
-    DVLOG(1) << "Returning sample: " << *sample;
+    DVLOG(3) << "Returning sample: " << *sample;
     result = true;
   }
 

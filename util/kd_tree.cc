@@ -32,7 +32,9 @@ struct KdTree::Node {
   // Only to be called on leaves. Expects depth to be the current depth of the
   // leaf before splitting.
   void Split(size_t depth, const BoundingBox& box,
-             const SplittingStrategy& strategy);
+             const SplittingStrategy& strategy, int visualization_depth,
+             const Material* visualization_material,
+             std::vector<Triangle*>* visualization_elements);
 
   // It is theoretically possible for leaves to have empty element vectors.
   bool IsLeaf() const { return left.get() == NULL && right.get() == NULL; }
@@ -59,7 +61,9 @@ KdTree::Node::Node() : split_axis(Axis::x()) {
 }
 
 void KdTree::Node::Split(size_t depth, const BoundingBox& box,
-                         const SplittingStrategy& strategy) {
+                         const SplittingStrategy& strategy, int v_depth,
+                         const Material* v_material,
+                         std::vector<Triangle*>* v_elements) {
   CHECK(IsLeaf()) << "Split() can only be called on leaf nodes";
   SplitInformation info = strategy.ComputeSplit(depth, box, *elements);
 
@@ -86,14 +90,38 @@ void KdTree::Node::Split(size_t depth, const BoundingBox& box,
   Point3 left_max = box.max();
   left_max[split_axis] = split_position;
   BoundingBox left_box(box.min(), left_max);
-  left->Split(depth + 1, left_box, strategy);
 
   Point3 right_min = box.min();
   right_min[split_axis] = split_position;
   BoundingBox right_box(right_min, box.max());
-  right->Split(depth + 1, right_box, strategy);
 
-  // Clean up elements.
+  // Add some visualization planes to children.
+  if ((int)depth <= v_depth) {
+    Point3 p1(left_max);
+    Point3 p2(right_min);
+
+    Axis next = split_axis.Next();
+    Point3 p3(left_max);
+    p3[next] = right_min[next];
+
+    Axis prev = split_axis.Next().Next();
+    Point3 p4(left_max);
+    p4[prev] = right_min[prev];
+
+    Triangle* t1 = new Triangle(p1, p2, p3, *v_material);
+    Triangle* t2 = new Triangle(p1, p2, p4, *v_material);
+    v_elements->push_back(t1);
+    right->elements->push_back(t1);
+    left->elements->push_back(t1);
+
+    v_elements->push_back(t2);
+    right->elements->push_back(t2);
+    left->elements->push_back(t2);
+  }
+
+  // Split children an clean up.
+  left->Split(depth + 1, left_box, strategy, v_depth, v_material, v_elements);
+  right->Split(depth + 1, right_box, strategy, v_depth, v_material, v_elements);
   elements.reset();
   CHECK(!IsLeaf()) << "KdTree node still leaf after split";
 }
@@ -156,12 +184,12 @@ size_t KdTree::NumElementsInLeaves() const {
   }
 }
 
-void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {
+void KdTree::Init(std::vector<std::unique_ptr<Element>>* elements) {
   root_.reset(new Node());
   bounding_box_.reset(new BoundingBox());
   unbounded_elements_.clear();
 
-  for (auto it = elements.begin(); it != elements.end(); ++it) {
+  for (auto it = elements->begin(); it != elements->end(); ++it) {
     const Element* element = it->get();
     if (element->IsBounded()) {
       bounding_box_->Include(*element->bounding_box());
@@ -171,13 +199,22 @@ void KdTree::Init(const std::vector<std::unique_ptr<Element>>& elements) {
     }
   }
 
+  std::vector<Triangle*> visualization_elements;
   const size_t n_bounded_elements = root_->elements->size();
-  root_->Split(0, *bounding_box_, *strategy_);
+  root_->Split(0, *bounding_box_, *strategy_, visualization_depth_,
+               visualization_material_, &visualization_elements);
   LOG(INFO) << "Built KdTree for " << n_bounded_elements
             << " bounded elements and " << unbounded_elements_.size()
             << " unbounded elements";
   LOG(INFO) << "Number of (bounded) elements in KdTree leaves is "
             << NumElementsInLeaves();
+
+  // Add visualization elements to scene in order for them to get cleaned up
+  // eventually.
+  for (size_t i = 0; i < visualization_elements.size(); ++i) {
+    std::unique_ptr<Element> element(visualization_elements[i]);
+    elements->push_back(std::move(element));
+  }
 }
 
 bool KdTree::Intersect(const Ray& ray, IntersectionData* data) const {

@@ -41,7 +41,7 @@ void Scene::AddMesh(Mesh* mesh) {
 void Scene::Init() {
   DVLOG(1) << "Initializing scene with " << elements_.size() << " elements";
   if(UsesKdTree()) {
-    kd_tree_->Init(elements_);
+    kd_tree_->Init(&elements_);
   }
   LOG(INFO) << "Scene initialized";
 }
@@ -64,6 +64,7 @@ bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
 // static
 Scene* Scene::FromConfig(const raytracer::SceneConfig& config) {
   SceneParser parser;
+
   KdTree* tree = NULL;
   Material* v_mat = NULL;
 
@@ -92,9 +93,10 @@ Scene* Scene::FromConfig(const raytracer::SceneConfig& config) {
   }
 
   Scene* scene = new Scene(tree);
+  parser.ParseScene(config.scene_data(), scene);
   if (v_mat != NULL) {
     scene->AddMaterial(v_mat);
   }
-  parser.ParseScene(config.scene_data(), scene);
+
   return scene;
 }

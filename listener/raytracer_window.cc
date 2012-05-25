@@ -36,6 +36,9 @@ RaytracerWindow::~RaytracerWindow() {
 void RaytracerWindow::Started(const Sampler& sampler) {
   // The image guarantees to always stay valid.
   image_ = &sampler.image();
+  if (image_->SizeX() == 0 || image_->SizeY() == 0) {
+    return;
+  }
   glutReshapeWindow(image_->SizeX(), image_->SizeY());
   needs_redraw_ = true;
 }
@@ -71,6 +74,10 @@ void RaytracerWindow::Display() {
 
   const size_t width = image_->SizeX();
   const size_t height = image_->SizeY();
+
+  if (width == 0 || height == 0) {
+    return;
+  }
 
   glClear(GL_COLOR_BUFFER_BIT);
   glViewport(0, 0, width, height);
