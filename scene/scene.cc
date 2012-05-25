@@ -63,7 +63,16 @@ bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
 
 // static
 Scene* Scene::FromConfig(const raytracer::SceneConfig& config) {
-  KdTree* tree = config.has_kd_tree_config() ? new KdTree() : NULL;
+  KdTree* tree = NULL;
+  if (config.has_kd_tree_config()) {
+    const raytracer::KdTreeConfig kd = config.kd_tree_config();
+    if (kd.splitting_strategy() == raytracer::KdTreeConfig::MIDPOINT) {
+      tree = new KdTree(new MidpointSplit(), kd.visualization());
+    } else {
+      LOG(WARNING) << "Skipping unknown KdTree splitting strategy";
+    }
+  }
+
   Scene* scene = new Scene(tree);
   SceneParser parser;
   parser.ParseScene(config.scene_data(), scene);

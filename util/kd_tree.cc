@@ -138,7 +138,8 @@ bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near,
   }
 }
 
-KdTree::KdTree(SplittingStrategy* strategy) : strategy_(strategy) {
+KdTree::KdTree(SplittingStrategy* strategy, int visualization_depth)
+    : strategy_(strategy), visualization_depth_(visualization_depth) {
 }
 
 KdTree::~KdTree() {

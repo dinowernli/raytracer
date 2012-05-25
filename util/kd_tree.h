@@ -23,8 +23,10 @@ class Ray;
 
 class KdTree {
  public:
-  // Takes ownership of the passed SplittingStrategy.
-  KdTree(SplittingStrategy* strategy = new MidpointSplit());
+  // Takes ownership of the passed SplittingStrategy. The KdTree will add
+  // visualization planes for all levels <= visualization_depth. For no
+  // visualization at all, pass -1 as depth.
+  KdTree(SplittingStrategy* strategy, int visualization_depth);
   virtual ~KdTree();
 
   // Builds a tree which contains pointers to the passed elements. No ownership
@@ -52,6 +54,8 @@ class KdTree {
   std::vector<const Element*> unbounded_elements_;
 
   std::unique_ptr<SplittingStrategy> strategy_;
+
+  int visualization_depth_;
 };
 
 #endif  /* KD_TREE_H_ */
