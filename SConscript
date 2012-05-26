@@ -75,7 +75,9 @@ environment.Program('raytracer.cc')
 
 ### Build unit tests.
 
-environment.ParseConfig('pkg-config --cflags --libs libgtest')
+#environment.ParseConfig('pkg-config --cflags --libs libgtest')
+environment.Append(LIBS='-lgtest')
+environment.Append(LIBS='-lgtest_main')
 test_environment = environment.Clone()
 test_cc_files = [
   'test/renderer/*.cc',
