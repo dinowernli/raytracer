@@ -5,10 +5,8 @@
 #include "renderer.h"
 
 #include <algorithm>
-#include <ctime>
 #include <glog/logging.h>
 #include <memory>
-#include <random>
 #include <thread>
 #include <unistd.h>
 
@@ -18,16 +16,17 @@
 #include "renderer/sampler/sample.h"
 #include "renderer/sampler/sampler.h"
 #include "renderer/sampler/scanline_sampler.h"
+#include "renderer/sampler/supersampler.h"
 #include "renderer/shader/phong_shader.h"
 #include "renderer/shader/shader.h"
 #include "renderer/updatable.h"
 #include "scene/scene.h"
 #include "util/ray.h"
 
-Renderer::Renderer(Sampler* sampler, Shader* shader, size_t num_threads,
-                   size_t recursion_depth, size_t rays_per_pixel)
-    : sampler_(sampler), shader_(shader), num_threads_(num_threads),
-      recursion_depth_(recursion_depth), rays_per_pixel_(rays_per_pixel) {
+Renderer::Renderer(Sampler* sampler, Supersampler* supersampler,
+                     Shader* shader, size_t num_threads, size_t recursion_depth)
+    : sampler_(sampler), supersampler_(supersampler), shader_(shader),
+      num_threads_(num_threads), recursion_depth_(recursion_depth) {
   if (num_threads == 0) {
     LOG(WARNING) << "Can't render with 0 workers. Using 1 instead.";
     num_threads_ = 1;
@@ -64,8 +63,6 @@ void Renderer::Render(Scene* scene) {
   scene_->Init();
   sampler_->Init(camera);
 
-  // Initialize the pseudorandom generator used for jittering samples.
-  std::srand(time(0));
   LOG(INFO) << "Creating " << num_threads_ << " workers";
 
   for(auto it = listeners_.begin(); it != listeners_.end(); ++it) {
@@ -95,16 +92,16 @@ void Renderer::Render(Scene* scene) {
   LOG(INFO) << "Finished rendering";
 }
 
-// Returns a uniformly distributed random sample in [-0.5, 0.5].
-static inline Scalar random_jitter() {
-  Scalar result = std::rand();
-  return (result / RAND_MAX) + 0.5;
-}
-
 void Renderer::WorkerMain(size_t worker_id) {
   DVLOG(1) << "Worker " << worker_id << " allocating buffer of size "
            << sampler_->MaxJobSize();
+  // Buffers a set of samples which represent image pixels.
   std::vector<Sample> samples(sampler_->MaxJobSize());
+
+  // Buffers the samples (for a single pixel) produced by the supersampler.
+  std::vector<Sample> subsamples(supersampler_->rays_per_pixel());
+
+  // Fetch the camera for easier access.
   const Camera* camera = &scene_->camera();
 
   // Use a single refraction stack since calling "clear" only affects size, not
@@ -115,26 +112,17 @@ void Renderer::WorkerMain(size_t worker_id) {
   size_t n_samples = 0;
   while((n_samples = sampler_->NextJob(&samples)) > 0) {
     for (size_t i = 0; i < n_samples; ++i) {
-      Sample& main_sample = samples[i];
       Color3 accumulated(0, 0, 0);
-
-      // TODO(dinow): Extract inner loop body as own function or as a part of
-      // some sort of sampling pipeline.
-
-      // Shoot multiple ray for each pixel for anti-aliasing.
-      for (size_t j = 0; j < rays_per_pixel_; ++j) {
-        Sample jittered(main_sample);
-        if (j > 0) {
-          // Make sure one ray actually goes through the middle.
-          jittered.set_offset_x(random_jitter());
-          jittered.set_offset_y(random_jitter());
-        }
-
-        Ray ray = camera->GenerateRay(jittered);
+      Sample& main_sample = samples[i];
+      DVLOG(3) << "Processing sample " << main_sample;
+      supersampler_->GenerateSubsamples(main_sample, &subsamples);
+      for (size_t j = 0; j < subsamples.size(); ++j) {
+        DVLOG(3) << "Processing subsample " << subsamples[j];
+        Ray ray = camera->GenerateRay(subsamples[j]);
         refraction_stack.clear();
         refraction_stack.push_back(scene_->refraction_index());
         Color3 contribution = TraceColor(ray, 0, &refraction_stack);
-        accumulated = accumulated + contribution / rays_per_pixel_;
+        accumulated = accumulated + contribution / subsamples.size();
       }
       main_sample.set_color(accumulated);
     }
@@ -235,6 +223,7 @@ Renderer* Renderer::FromConfig(const raytracer::RendererConfig& config) {
   CHECK(sampler != NULL) << "Could not load sampler";
 
   Shader* shader = new PhongShader(config.shadows());
-  return new Renderer(sampler, shader, config.threads(),
-                      config.recursion_depth(), config.rays_per_pixel());
+  Supersampler* supersampler = new Supersampler(config.rays_per_pixel());
+  return new Renderer(sampler, supersampler, shader, config.threads(),
+                       config.recursion_depth());
 }

@@ -55,7 +55,8 @@ class Sample {
 template<class OStream>
 OStream& operator<<(OStream& os, const Sample& s) {
   return os << "location: (" << s.x() << ", " << s.y() << ") size: ("
-            << s.size_x() << ", " << s.size_y() << ")";
+            << s.size_x() << ", " << s.size_y() << ") offset: (" << s.offset_x()
+            << ", " << s.offset_y() << ")";
 }
 
 #endif  /* SAMPLE_H_ */

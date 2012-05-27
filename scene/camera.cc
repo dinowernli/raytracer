@@ -38,10 +38,10 @@ Vector3 Camera::ToWorld(const Vector3& vector) const {
 }
 
 Ray Camera::GenerateRay(const Sample& sample) const {
-  // The sample (0, 0) represents the bottom left pixel, add 0.5 to send ray
-  // through the pixel center, consider possible offsets.
-  Scalar image_x = sample.x() + 0.5 + sample.offset_x();
-  Scalar image_y = sample.y() + 0.5 + sample.offset_y();
+  // The sample (0, 0) represents the bottom left pixel. Note that we do not add
+  // 0.5 here because we expect the offset to already contian this adjustment.
+  Scalar image_x = sample.x() + sample.offset_x();
+  Scalar image_y = sample.y() + sample.offset_y();
 
   // Convert image coordinates to camera coordinates.
   Scalar tangent = 2 * tan(opening_angle_ * PI / 180.0);
