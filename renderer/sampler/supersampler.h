@@ -30,7 +30,15 @@ class Supersampler {
 
   size_t rays_per_pixel() const { return rays_per_pixel_; }
 
+  // Returns whether or not the subsamples get jittered. Jittering is
+  // deativated for low sample number in order to avoid excessive variance.
+  bool WillJitter() const { return rays_per_pixel_ >= kJitterThreshold; }
+
  private:
+  // A threshold for rays_per_pixel_ below which jittering is disabled in order
+  // to prevent large variance.
+  static const size_t kJitterThreshold;
+
   size_t rays_per_pixel_;
 
   // Stores the largest x such that x*x <= rays_per_pixel_. This represents the

@@ -22,9 +22,6 @@ Supersampler::Supersampler(size_t rays_per_pixel)
     : rays_per_pixel_(rays_per_pixel) {
   root_num_subpixels_ = sqrt(rays_per_pixel_);
   subpixel_size_ = Scalar(1) / root_num_subpixels_;
-
-  // Initialize the pseudorandom generator used for jittering samples.
-  // TODO(dinow): Replace this by an object (as opposed to global).
   std::srand(time(0));
 }
 
@@ -46,11 +43,13 @@ void Supersampler::GenerateSubsamples(const Sample& base,
     for (size_t j = 0; j < root_num_subpixels_; ++j) {
       Scalar base_y_offset = half_pixel + j * subpixel_size_;
 
+      // Disable jittering if there are only few rays.
+      Scalar jitter_x = WillJitter() ? RandomJitter(half_pixel) : 0;
+      Scalar jitter_y = WillJitter() ? RandomJitter(half_pixel) : 0;
+
       // Set the offset to go through the jittered center of the subpixel.
       Sample* current = &target->at(linear_index++);
       *current = base;
-      Scalar jitter_x = rays_per_pixel_ == 1 ? 0 : RandomJitter(half_pixel);
-      Scalar jitter_y = rays_per_pixel_ == 1 ? 0 : RandomJitter(half_pixel);
       current->set_offset_x(base_x_offset + jitter_x);
       current->set_offset_y(base_y_offset + jitter_y);
 
@@ -72,3 +71,5 @@ void Supersampler::GenerateSubsamples(const Sample& base,
              << i;
   }
 }
+
+const size_t Supersampler::kJitterThreshold = 4;
