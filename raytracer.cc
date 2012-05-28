@@ -138,8 +138,9 @@ int main(int argc, char **argv) {
     }
   }
 
-  if (FLAGS_kd_tree_visualization_depth >= 0) {
+  if (FLAGS_use_kd_tree && FLAGS_kd_tree_visualization_depth >= 0) {
     // TODO(dinow): Add support for configuring visualization material.
+    // TODO(dinow): Make it a color instead of material.
     raytracer::ColorData color;
     color.set_r(0.6);
     color.set_g(0.25);
