@@ -7,29 +7,22 @@
 #include <cmath>
 #include <ctime>
 #include <glog/logging.h>
-#include <random>
 
 #include "renderer/sampler/sample.h"
 
-// Returns a uniformly distributed random sample in [-boundary, boundary].
-static inline Scalar RandomJitter(Scalar boundary) {
-  Scalar result = std::rand();
-  result = ((result / RAND_MAX) - 0.5) * 2 * boundary;
-  return result;
-}
-
 Supersampler::Supersampler(size_t rays_per_pixel)
-    : rays_per_pixel_(rays_per_pixel) {
+    : rays_per_pixel_(rays_per_pixel), distribution_(-1, 1) {
   root_num_subpixels_ = sqrt(rays_per_pixel_);
   subpixel_size_ = Scalar(1) / root_num_subpixels_;
-  std::srand(time(0));
+  std::random_device device;
+  random_engine_.seed(device());
 }
 
 Supersampler::~Supersampler() {
 }
 
 void Supersampler::GenerateSubsamples(const Sample& base,
-    std::vector<Sample>* target) const {
+    std::vector<Sample>* target) {
   if (target->size() != rays_per_pixel()) {
     target->resize(rays_per_pixel());
   }
@@ -44,8 +37,8 @@ void Supersampler::GenerateSubsamples(const Sample& base,
       Scalar base_y_offset = half_pixel + j * subpixel_size_;
 
       // Disable jittering if there are only few rays.
-      Scalar jitter_x = WillJitter() ? RandomJitter(half_pixel) : 0;
-      Scalar jitter_y = WillJitter() ? RandomJitter(half_pixel) : 0;
+      Scalar jitter_x = WillJitter() ? Random(half_pixel) : 0;
+      Scalar jitter_y = WillJitter() ? Random(half_pixel) : 0;
 
       // Set the offset to go through the jittered center of the subpixel.
       Sample* current = &target->at(linear_index++);
@@ -64,8 +57,8 @@ void Supersampler::GenerateSubsamples(const Sample& base,
   for(size_t i = linear_index; i < rays_per_pixel(); ++i) {
     Sample* current = &target->at(i);
     *current = base;
-    current->set_offset_x(RandomJitter(0.5) + 0.5);
-    current->set_offset_y(RandomJitter(0.5) + 0.5);
+    current->set_offset_x(Random(0.5) + 0.5);
+    current->set_offset_y(Random(0.5) + 0.5);
 
     DVLOG(4) << "Generating subsample " << *current << " at index "
              << i;
