@@ -57,11 +57,11 @@ Ray Camera::GenerateRay(const Sample& sample) const {
     // Compute the point along the ray which is at focal distance.
     Point3 point_in_focus = position_ + focal_depth_ * direction;
 
-    // Displacement vector simulating the lens. Is in the camera plane, i.e. the
-    // z-coordinate is 0.
-    Vector3 displacement(random_.Get(lens_size_), random_.Get(lens_size_), 0);
-
-    Point3 position = position_ + ToWorld(displacement);
+    // Displacement vector simulating the lens (as cube instead of ellipse).
+    Vector3 displacement(random_.Get(lens_size_),
+                         random_.Get(lens_size_),
+                         random_.Get(lens_size_));
+    Point3 position = position_ + displacement;
     return Ray(position, position.VectorTo(point_in_focus));
   } else {
     return Ray(position_, direction);

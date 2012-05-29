@@ -56,6 +56,12 @@ DEFINE_int32(image_resolution_x, -1, "Optional override for the horizontal "
 DEFINE_int32(image_resolution_y, -1, "Optional override for the vertical "
                                       "resolution of the image");
 
+DEFINE_double(dof_lens_size, -1, "The size of the depth-of-field camera lens."
+                                 " A good value is about 0.1.");
+
+DEFINE_double(dof_focal_depth, -1, "The depth-of-field focal depth of the "
+                                  "camera lens.");
+
 // Output flags.
 DEFINE_string(bmp_file, "image", "If <file> is passed, a BMP image will be "
                                   "saved at 'output/<file>.bmp'");
@@ -138,6 +144,12 @@ int main(int argc, char **argv) {
     }
   }
 
+  if (FLAGS_dof_lens_size >= 0 && FLAGS_dof_focal_depth >= 0) {
+    auto* camera = scene_config.mutable_scene_data()->mutable_camera();
+    camera->mutable_depth_of_field()->set_lens_size(FLAGS_dof_lens_size);
+    camera->mutable_depth_of_field()->set_focal_depth(FLAGS_dof_focal_depth);
+  }
+
   if (FLAGS_use_kd_tree && FLAGS_kd_tree_visualization_depth >= 0) {
     // TODO(dinow): Add support for configuring visualization material.
     // TODO(dinow): Make it a color instead of material.
@@ -154,9 +166,9 @@ int main(int argc, char **argv) {
     data.set_refraction_percentage(0.6);
     data.set_refraction_index(1);
 
-    raytracer::KdTreeConfig* kdconfig = scene_config.mutable_kd_tree_config();
-    kdconfig->set_visualization_depth(FLAGS_kd_tree_visualization_depth);
-    kdconfig->mutable_visualization_material()->CopyFrom(data);
+    raytracer::KdTreeConfig* kd_config = scene_config.mutable_kd_tree_config();
+    kd_config->set_visualization_depth(FLAGS_kd_tree_visualization_depth);
+    kd_config->mutable_visualization_material()->CopyFrom(data);
   }
 
   // Build the scene from the config.

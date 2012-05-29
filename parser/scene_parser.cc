@@ -90,12 +90,14 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
         && camera.resolution_y())) {
       LOG(WARNING) << "Skipping incomplete camera";
     } else {
+      auto& dof = data.camera().depth_of_field();
       scene->set_camera(new Camera(Parse(data.camera().position()),
                                    Parse(data.camera().view()),
                                    Parse(data.camera().up()),
                                    data.camera().opening_angle(),
                                    data.camera().resolution_x(),
-                                   data.camera().resolution_y()));
+                                   data.camera().resolution_y(),
+                                   dof.focal_depth(), dof.lens_size()));
     }
   }
 

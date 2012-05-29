@@ -3,6 +3,14 @@ package raytracer;
 import "proto/util/point_data.proto";
 import "proto/util/vector_data.proto";
 
+message DepthOfFieldData {
+  // The distance from the camera at which the scene is in focus.
+  optional double focal_depth = 1 [default = -1];
+
+  // The size of the camera lens.
+  optional double lens_size = 2 [default = 0];
+}
+
 message CameraData {
   optional PointData position = 1;
   optional VectorData view = 2;
@@ -13,4 +21,6 @@ message CameraData {
 
   optional uint64 resolution_x = 5;
   optional uint64 resolution_y = 6;
+
+  optional DepthOfFieldData depth_of_field = 7;
 }
