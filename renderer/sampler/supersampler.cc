@@ -5,17 +5,14 @@
 #include "supersampler.h"
 
 #include <cmath>
-#include <ctime>
 #include <glog/logging.h>
 
 #include "renderer/sampler/sample.h"
 
 Supersampler::Supersampler(size_t rays_per_pixel)
-    : rays_per_pixel_(rays_per_pixel), distribution_(-1, 1) {
+    : rays_per_pixel_(rays_per_pixel) {
   root_num_subpixels_ = sqrt(rays_per_pixel_);
   subpixel_size_ = Scalar(1) / root_num_subpixels_;
-  std::random_device device;
-  random_engine_.seed(device());
 }
 
 Supersampler::~Supersampler() {
@@ -37,8 +34,8 @@ void Supersampler::GenerateSubsamples(const Sample& base,
       Scalar base_y_offset = half_pixel + j * subpixel_size_;
 
       // Disable jittering if there are only few rays.
-      Scalar jitter_x = WillJitter() ? Random(half_pixel) : 0;
-      Scalar jitter_y = WillJitter() ? Random(half_pixel) : 0;
+      Scalar jitter_x = WillJitter() ? random_.Get(half_pixel) : 0;
+      Scalar jitter_y = WillJitter() ? random_.Get(half_pixel) : 0;
 
       // Set the offset to go through the jittered center of the subpixel.
       Sample* sample = &target->at(index++);
@@ -55,8 +52,8 @@ void Supersampler::GenerateSubsamples(const Sample& base,
   for(size_t i = index; i < rays_per_pixel(); ++i) {
     Sample* sample = &target->at(i);
     *sample = base;
-    sample->set_offset_x(Random(0.5) + 0.5);
-    sample->set_offset_y(Random(0.5) + 0.5);
+    sample->set_offset_x(random_.Get(0, 1));
+    sample->set_offset_y(random_.Get(0, 1));
     DVLOG(4) << "Generating subsample " << *sample << " at index " << i;
   }
 }

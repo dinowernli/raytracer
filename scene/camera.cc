@@ -33,8 +33,7 @@ Vector3 Camera::ToWorld(const Vector3& vector) const {
   //   0,        0,     0,       1 ].
   // Note that we use [vector; 1] because we are transforming a direction and
   // not a point.
-  Vector3 result = vector.x() * right_ + vector.y() * up_ + vector.z() * view_;
-  return result.Normalize();
+  return vector.x() * right_ + vector.y() * up_ + vector.z() * view_;
 }
 
 Ray Camera::GenerateRay(const Sample& sample) const {

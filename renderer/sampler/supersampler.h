@@ -10,11 +10,11 @@
 #define SUPERSAMPLER_H_
 
 #include <cstddef>
-#include <random>
 #include <vector>
 
 #include "util/no_copy_assign.h"
 #include "util/numeric.h"
+#include "util/random.h"
 
 class Sample;
 
@@ -40,11 +40,6 @@ class Supersampler {
   // to prevent large variance.
   static const size_t kJitterThreshold;
 
-  // Returns a uniformly distributed random scalar in [-boundary, boundary].
-  Scalar Random(Scalar boundary) {
-    return distribution_(random_engine_) * boundary;
-  }
-
   size_t rays_per_pixel_;
 
   // Stores the largest x such that x*x <= rays_per_pixel_. This represents the
@@ -54,8 +49,7 @@ class Supersampler {
   // Stores the size of each of the root_num_subpixels_^2 subpixels.
   Scalar subpixel_size_;
 
-  std::mt19937 random_engine_;
-  std::uniform_real_distribution<Scalar> distribution_;
+  Random random_;
 };
 
 #endif  /* SUPERSAMPLER_H_ */
