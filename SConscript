@@ -3,8 +3,11 @@ import os
 build_dir = 'build'
 proto_dir = 'proto'
 
+# A set of paths from which to ignore warnings
+ignore_warnings = ['/home/dino/include']
+
 environment = Environment(
-  CCFLAGS = ['-Wall', '-pipe', '-std=c++0x', '-pthread'],
+  CCFLAGS = ['-Wall', '-pipe', '-std=c++0x', '-pthread'] + ['-isystem' + path for path in ignore_warnings],
   LIBS = ['-lpthread'],
   ENV = os.environ,
   CPPPATH = ['.'],
