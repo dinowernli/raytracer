@@ -8,6 +8,8 @@
 
 #include <random>
 
+#include "util/numeric.h"
+
 class Random {
  public:
   Random() {
