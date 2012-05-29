@@ -15,8 +15,8 @@ ProgressiveSampler::ProgressiveSampler(bool thread_safe)
 ProgressiveSampler::~ProgressiveSampler() {
 }
 
-void ProgressiveSampler::Init(const Camera* camera) {
-  Sampler::Init(camera);
+void ProgressiveSampler::Init(size_t resolution_x, size_t resolution_y) {
+  Sampler::Init(resolution_x, resolution_y);
   current_x_ = 0;
   current_y_ = 0;
 

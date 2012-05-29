@@ -22,9 +22,14 @@ class Camera {
   // The "right" vector is inferred from "view" and "up". The arguments
   // focal_depth and lens_size are only used for depth-of-field. If any of those
   // is negative, no depth-of-field effect is simulated.
+  /*
   Camera(const Point3& position, const Vector3& view, const Vector3& up,
          Scalar opening_angle, size_t resolution_x, size_t resolution_y,
          Scalar focal_depth = -1, Scalar lens_size = -1);
+         */
+  Camera(const Point3& position, const Vector3& view, const Vector3& up,
+           Scalar opening_angle, size_t resolution_x, size_t resolution_y,
+           Scalar focal_depth = 0.5, Scalar lens_size = 0.005);
   virtual ~Camera();
   NO_COPY_ASSIGN(Camera);
 

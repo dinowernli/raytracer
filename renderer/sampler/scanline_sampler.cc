@@ -13,8 +13,8 @@ ScanlineSampler::ScanlineSampler(bool thread_safe) : Sampler(thread_safe) {
 ScanlineSampler::~ScanlineSampler() {
 }
 
-void ScanlineSampler::Init(const Camera* camera) {
-  Sampler::Init(camera);
+void ScanlineSampler::Init(size_t resolution_x, size_t resolution_y) {
+  Sampler::Init(resolution_x, resolution_y);
   current_x_ = 0;
   current_y_ = 0;
 }

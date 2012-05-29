@@ -14,8 +14,8 @@
 #include <mutex>
 
 #include "renderer/image.h"
-#include "scene/camera.h"
 
+class Image;
 class Sample;
 
 class Sampler {
@@ -23,16 +23,12 @@ class Sampler {
   Sampler(bool thread_safe) : thread_safe_(thread_safe) {}
   virtual ~Sampler() {};
 
-  // Prepares for generating samples for the given camera. Must be called
-  // before starting to fetch samples. If the passed camera is null, the sampler
-  // will not generate any samples.
-  virtual void Init(const Camera* camera) {
-    if (camera != NULL) {
-      image_.reset(new Image(camera->resolution_x(), camera->resolution_y()));
-    } else {
-      LOG(WARNING) << "Initializing sampler with NULL camera.";
-      image_.reset(new Image(0, 0));
+  // Prepares for generating samples for a given resolution.
+  virtual void Init(size_t resolution_x, size_t resolution_y) {
+    if (resolution_x == 0 || resolution_y == 0) {
+      LOG(WARNING) << "Initializing sampler with 0 resolution.";
     }
+    image_.reset(new Image(resolution_x, resolution_y));
     accepted_ = 0;
   }
 

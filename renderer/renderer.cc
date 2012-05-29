@@ -59,9 +59,14 @@ void Renderer::Render(Scene* scene) {
   // We can skip the NULL-check for camera because we may assume that the
   // sampler can handle this. If camera is NULL, the loop below will terminate
   // instantly.
-  const Camera* camera = &scene_->camera();
   scene_->Init();
-  sampler_->Init(camera);
+
+  const Camera* camera = &scene_->camera();
+  if (camera == NULL) {
+    sampler_->Init(0, 0);
+  } else {
+    sampler_->Init(camera->resolution_x(), camera->resolution_y());
+  }
 
   LOG(INFO) << "Creating " << num_threads_ << " workers";
 

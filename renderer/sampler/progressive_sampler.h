@@ -18,7 +18,7 @@ class ProgressiveSampler : public Sampler {
   NO_COPY_ASSIGN(ProgressiveSampler);
 
   // Not made thread safe, expected to be called only once.
-  virtual void Init(const Camera* camera);
+  virtual void Init(size_t resolution_x, size_t resolution_y);
 
   virtual size_t MaxJobSize() const { return kJobSize; }
   virtual size_t NextJob(std::vector<Sample>* samples);
