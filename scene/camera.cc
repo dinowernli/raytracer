@@ -10,9 +10,11 @@
 #include "renderer/sampler/sample.h"
 
 Camera::Camera(const Point3& position, const Vector3& view, const Vector3& up,
-               Scalar opening_angle, size_t resolution_x, size_t resolution_y)
+               Scalar opening_angle, size_t resolution_x, size_t resolution_y,
+               Scalar focal_depth, Scalar lens_size)
     : position_(position), opening_angle_(opening_angle),
-      resolution_x_(resolution_x), resolution_y_(resolution_y) {
+      resolution_x_(resolution_x), resolution_y_(resolution_y),
+      focal_depth_(focal_depth), lens_size_(lens_size) {
   ComputeOrientation(view, up);
 }
 
@@ -49,6 +51,22 @@ Ray Camera::GenerateRay(const Sample& sample) const {
   Scalar dy = (image_y - resolution_y_ / 2.0) * factor;
 
   // Convert image coordinates to world coordinates.
-  Vector3 camera_coords(dx, dy, 1);
-  return Ray(position_, ToWorld(camera_coords));
+  Vector3 direction = ToWorld(Vector3(dx, dy, 1)).Normalize();
+
+  if (DepthOfField()) {
+    // Compute the point along the ray which is at focal distance.
+    Point3 point_in_focus = position_ + focal_depth_ * direction;
+
+    // Displacement vector simulating the lens. Is in the camera plane, i.e. the
+    // z-coordinate is 0.
+    Vector3 displacement(random_.Get(lens_size_), random_.Get(lens_size_), 0);
+
+    Point3 position = position_ + ToWorld(displacement);
+    return Ray(position, position.VectorTo(point_in_focus));
+  } else {
+    return Ray(position_, direction);
+  }
 }
+
+// static
+Random Camera::random_;
