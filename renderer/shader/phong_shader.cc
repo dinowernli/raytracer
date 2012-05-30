@@ -49,7 +49,7 @@ Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
 
     // Add diffuse contribution.
     Color3 diff = material.diffuse() * light->color();
-    diffuse += (diff * prod).Clamped();
+    diffuse += diff * prod;
 
     // Add specular contribution.
     Color3 spec = material.specular() * light->color();
@@ -66,8 +66,7 @@ Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
     cosine = cosine < 0 ? 0 : cosine;
     cosine = cosine > 1 ? 1 : cosine;
 
-    specular += (spec * pow(cosine, material.shininess())).Clamped();
+    specular += spec * pow(cosine, material.shininess());
   }
-
   return (emission + ambient + diffuse + specular).Clamped();
 }
