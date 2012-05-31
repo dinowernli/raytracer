@@ -20,6 +20,7 @@
 #include "renderer/shader/phong_shader.h"
 #include "renderer/shader/shader.h"
 #include "renderer/updatable.h"
+#include "scene/light/light.h"
 #include "scene/material.h"
 #include "scene/scene.h"
 #include "util/ray.h"
@@ -142,6 +143,11 @@ Color3 Renderer::TraceColor(const Ray& ray, size_t depth,
   if (!scene_->Intersect(ray, &data)) {
     return scene_->background();
   }
+  if(data.IntersectedLight()) {
+    // Direct hit of some light source.
+    return data.light()->color();
+  }
+
   const Material& material = *(data.material);
   using std::max;
 

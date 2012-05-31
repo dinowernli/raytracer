@@ -9,8 +9,8 @@
 #include <memory>
 
 #include "renderer/intersection_data.h"
+#include "scene/light/point_light.h"
 #include "scene/material.h"
-#include "scene/point_light.h"
 #include "scene/scene.h"
 
 PhongShader::PhongShader(bool shadows) : shadows_(shadows) {
@@ -32,6 +32,8 @@ Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
     Ray light_ray = light->GenerateRay(data.position);
 
     // Ignore the contribution from this light if it is occluded.
+    // TODO(dinow): The scene will return true if a(nother) light source is hit
+    // directly. Need to catch this somehow.
     if (shadows_ && scene.Intersect(light_ray)) {
       continue;
     }

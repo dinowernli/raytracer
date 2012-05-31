@@ -60,6 +60,7 @@ cc_files = [
   'renderer/shader/*.cc',
   'scene/*.cc',
   'scene/geometry/*.cc',
+  'scene/light/*.cc',
   'util/*.cc',
 ]
 lib_sources = [Glob(cc_file) for cc_file in cc_files] + [st[2] for st in source_target]

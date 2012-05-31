@@ -9,7 +9,7 @@
 #include "parser/scene_parser.h"
 #include "proto/config/scene_config.pb.h"
 #include "scene/element.h"
-#include "scene/light.h"
+#include "scene/light/light.h"
 #include "scene/material.h"
 #include "scene/mesh.h"
 
@@ -47,18 +47,27 @@ void Scene::Init() {
 }
 
 bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
+  bool result = false;
+  for (size_t i = 0; i < lights_.size(); ++i) {
+    result = lights_[i]->Intersect(ray, data) || result;
+    if (result && (data == NULL)) {
+      // TODO(dinow): Check if this works with shadow rays, a shadow ray which
+      // hits a light source should not be counted as occluded.
+      return true;
+    }
+  }
+
   if(UsesKdTree()) {
-    return kd_tree_->Intersect(ray, data);
+    result = kd_tree_->Intersect(ray, data) || result;
   } else {
-    bool result = false;
     for (auto it = elements_.begin(); it != elements_.end(); ++it) {
       result = it->get()->Intersect(ray, data) || result;
-      if (result && data == NULL) {
+      if (result && (data == NULL)) {
         return true;
       }
     }
-    return result;
   }
+  return result;
 }
 
 // static
