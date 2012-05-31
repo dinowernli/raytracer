@@ -10,7 +10,6 @@
 #define SPHERE_LIGHT_H_
 
 #include "scene/geometry/sphere.h"
-#include "util/random.h"
 
 class SphereLight : public Light {
  public:
@@ -20,9 +19,9 @@ class SphereLight : public Light {
   virtual ~SphereLight() {};
 
   virtual Ray GenerateRay(const Point3& target) const {
-    // TODO(dinow): Generate a ray from a random point on the proper half of the
-    // sphere to target.
-    return Ray;
+    Point3 origin = sphere_->Sample(target);
+    Vector3 direction = origin.VectorTo(target);
+    return Ray(origin, direction, 0, direction.Length() - EPSILON);
   }
 
   virtual bool Intersect(const Ray& ray, IntersectionData* data) const {
@@ -36,7 +35,6 @@ class SphereLight : public Light {
 
  private:
   std::unique_ptr<Sphere> sphere_;
-  Random random_;
 };
 
 #endif  /* SPHERE_LIGHT_H_ */

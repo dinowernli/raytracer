@@ -8,6 +8,7 @@
 
 #include "scene/element.h"
 #include "util/point3.h"
+#include "util/random.h"
 
 class Material;
 
@@ -19,9 +20,15 @@ class Sphere : public Element {
 
   virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
 
+  // Returns a uniformly distributed random point on the surface of the sphere.
+  // This guarantees that "point" is visible from the returned point.
+  Point3 Sample(const Point3& point) const;
+
  private:
   Point3 center_;
   Scalar radius_;
+
+  Random random_;
 };
 
 #endif  /* SPHERE_H_ */

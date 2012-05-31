@@ -59,3 +59,21 @@ bool Sphere::Intersect(const Ray& ray, IntersectionData* data) const {
   }
   return found;
 }
+
+Point3 Sphere::Sample(const Point3& point) const {
+  // First, sample a unit vector in a random direction.
+  Scalar z = random_.Get(-1, 1);
+  Scalar phi = random_.Get(0, 2 * PI);
+
+  // We know that z = sin(theta), so sqrt(1 - z^2) = cos(theta).
+  Scalar cos_theta = sqrt(1 - z * z);
+  Scalar x = cos_theta * cos(phi);
+  Scalar y = cos_theta * sin(phi);
+
+  Vector3 dir (x, y, z);
+  Vector3 normal = center_.VectorTo(point);
+  if (dir.Dot(normal) < 0) {
+    dir = -1 * dir;
+  }
+  return center_ + radius_ * dir;
+}
