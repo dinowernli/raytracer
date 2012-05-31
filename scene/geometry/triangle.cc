@@ -56,7 +56,7 @@ bool Triangle::Intersect(const Ray& ray, IntersectionData* data) const {
   Scalar t = edge13.Dot(plane_normal) * invdet;
   bool found = ray.InRange(t) && (data == NULL || t < data->t);
   if (found && data != NULL) {
-    data->element = this;
+    data->set_element(this);
     data->position = ray.PointAt(t);
     data->normal = vertex1_->normal() * (1 - u - v) + vertex2_->normal() * u
                    + vertex3_->normal() * v;
