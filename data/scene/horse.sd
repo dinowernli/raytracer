@@ -11,7 +11,7 @@ camera: {
   resolution_y: 500
 }
 
-lights {
+point_lights {
   position: { x:10 y:8 z:1 }
   color: { r:1 g:1 b:1 }
 }

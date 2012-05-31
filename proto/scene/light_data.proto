@@ -7,3 +7,9 @@ message PointLightData {
   optional PointData position = 1;
   optional ColorData color = 2;
 }
+
+message SphereLightData {
+  optional ColorData color = 1;
+  optional PointData center = 2;
+  optional double radius = 3;
+}

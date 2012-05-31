@@ -16,6 +16,7 @@
 #include "scene/geometry/sphere.h"
 #include "scene/geometry/triangle.h"
 #include "scene/light/point_light.h"
+#include "scene/light/sphere_light.h"
 #include "scene/material.h"
 #include "scene/mesh.h"
 #include "scene/scene.h"
@@ -101,13 +102,23 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
     }
   }
 
-  for (int i = 0; i < data.lights_size(); ++i) {
-    if (!(data.lights(i).has_position() && data.lights(i).has_color())) {
-      LOG(WARNING) << "Skipping incomplete light";
+  for (int i = 0; i < data.point_lights_size(); ++i) {
+    auto& l = data.point_lights(i);
+    if (!(l.has_position() && l.has_color())) {
+      LOG(WARNING) << "Skipping incomplete point light";
       continue;
     }
-    scene->AddLight(new PointLight(Parse(data.lights(i).position()),
-                                   Parse(data.lights(i).color())));
+    scene->AddLight(new PointLight(Parse(l.position()), Parse(l.color())));
+  }
+
+  for (int i = 0; i < data.sphere_lights_size(); ++i) {
+    auto& l = data.sphere_lights(i);
+    if (!(l.has_center() && l.has_color() && l.has_radius())) {
+      LOG(WARNING) << "Skipping incomplete sphere light";
+      continue;
+    }
+    scene->AddLight(new SphereLight(Parse(l.center()), l.radius(),
+                                    Parse(l.color())));
   }
 
   // Parse triangles if any.

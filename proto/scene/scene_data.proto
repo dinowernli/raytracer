@@ -12,7 +12,7 @@ import "proto/util/material_data.proto";
 
 message SceneData {
   optional CameraData camera = 1;
-  repeated PointLightData lights = 2;
+  repeated PointLightData point_lights = 2;
   repeated MaterialData materials = 3;
 
   optional ColorData background = 4;
@@ -24,4 +24,6 @@ message SceneData {
   repeated SphereData spheres = 8;
   repeated MeshData meshes = 9;
   repeated CirclePlaneData circle_planes = 10;
+  
+  repeated SphereLightData sphere_lights = 12;
 }
