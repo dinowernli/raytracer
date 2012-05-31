@@ -85,6 +85,8 @@ environment.Append(LIBS='-lgtest_main')
 test_environment = environment.Clone()
 test_cc_files = [
   'test/renderer/*.cc',
+  'test/scene/geometry/*.cc',
+  'test/scene/light/*.cc',
   'test/util/*.cc',
 ]
 test_sources = [Glob(cc_file) for cc_file in test_cc_files]

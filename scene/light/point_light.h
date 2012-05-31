@@ -23,7 +23,7 @@ class PointLight : public Light {
     Vector3 direction = position_.VectorTo(target);
 
     // Subtract epsilon to prevent the ray from intersecting with at "position".
-    return Ray(position_, direction, 0, direction.Length() - EPSILON);
+    return Ray(position_, direction, EPSILON, direction.Length() - EPSILON);
   }
 
   // No ray ever intersects a dimensionless point light.

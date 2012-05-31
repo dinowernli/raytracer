@@ -77,3 +77,5 @@ Point3 Sphere::Sample(const Point3& point) const {
   }
   return center_ + radius_ * dir;
 }
+// static
+Random Sphere::random_;
