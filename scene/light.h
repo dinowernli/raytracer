@@ -23,6 +23,11 @@ class Light {
   // Returns the color of light coming from this source.
   const Color3& color() const { return color_; }
 
+  // Returns whether the ray intersects this light source. If this returns true
+  // and data != NULL, information about the first intersection is stored.
+  virtual bool Intersect(const Ray& ray,
+                         IntersectionData* data = NULL) const = 0;
+
  private:
   Color3 color_;
 };

@@ -20,6 +20,7 @@
 #include "renderer/shader/phong_shader.h"
 #include "renderer/shader/shader.h"
 #include "renderer/updatable.h"
+#include "scene/material.h"
 #include "scene/scene.h"
 #include "util/ray.h"
 

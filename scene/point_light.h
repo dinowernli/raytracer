@@ -26,6 +26,11 @@ class PointLight : public Light {
     return Ray(position_, direction, 0, direction.Length() - EPSILON);
   }
 
+  // No ray ever intersects a dimensionless point light.
+  virtual bool Intersect(const Ray& ray, IntersectionData* data) const {
+    return false;
+  }
+
  private:
   Point3 position_;
 };
