@@ -31,9 +31,11 @@ Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
     const Light* light = it->get();
     Ray light_ray = light->GenerateRay(data.position);
 
-    // Ignore the contribution from this light if it is occluded.
-    // TODO(dinow): The scene will return true if a(nother) light source is hit
-    // directly. Need to catch this somehow.
+    // Ignore the contribution from this light if it is occluded. Note that even
+    // occlusion by another light counts as occlusion because all lights are
+    // considered, therefore the other light will get its turn as well.
+    // TODO(dinow): Make sure the scene does not report intersections with the
+    // light in question. This is a bit more problematic than with point lights.
     if (shadows_ && scene.Intersect(light_ray)) {
       continue;
     }

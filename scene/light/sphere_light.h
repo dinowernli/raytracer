@@ -25,7 +25,6 @@ class SphereLight : public Light {
     return Ray;
   }
 
-  // No ray ever intersects a dimensionless point light.
   virtual bool Intersect(const Ray& ray, IntersectionData* data) const {
     bool result = sphere_->Intersect(ray, data);
     if (result) {
