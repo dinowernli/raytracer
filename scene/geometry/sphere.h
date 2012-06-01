@@ -22,6 +22,7 @@ class Sphere : public Element {
 
   // Returns a uniformly distributed random point on the surface of the sphere.
   // This guarantees that "point" is visible from the returned point.
+  // TODO(dinow): This is not true, replace this my a method taking a normal.
   Point3 Sample(const Point3& point) const;
 
  private:
