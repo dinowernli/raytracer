@@ -1,5 +1,6 @@
 package raytracer;
 
+import "proto/util/color_data.proto";
 import "proto/util/point_data.proto";
 import "proto/util/vector_data.proto";
 
@@ -9,6 +10,9 @@ message DepthOfFieldData {
 
   // The size of the camera lens.
   optional double lens_size = 2 [default = 0];
+
+  // If this is set, an additional visualization sphere is added to the scene.
+  optional ColorData visualization_color = 3;
 }
 
 message CameraData {

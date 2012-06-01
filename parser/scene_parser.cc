@@ -87,13 +87,21 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
       LOG(WARNING) << "Skipping incomplete camera";
     } else {
       auto& dof = data.camera().depth_of_field();
-      scene->set_camera(new Camera(Parse(data.camera().position()),
-                                   Parse(data.camera().view()),
-                                   Parse(data.camera().up()),
-                                   data.camera().opening_angle(),
-                                   data.camera().resolution_x(),
-                                   data.camera().resolution_y(),
-                                   dof.focal_depth(), dof.lens_size()));
+      Camera* camera = new Camera(Parse(data.camera().position()),
+                                  Parse(data.camera().view()),
+                                  Parse(data.camera().up()),
+                                  data.camera().opening_angle(),
+                                  data.camera().resolution_x(),
+                                  data.camera().resolution_y(),
+                                  dof.focal_depth(), dof.lens_size());
+      scene->set_camera(camera);
+      if (camera->DepthOfField() && dof.has_visualization_color()) {
+        Color3 v_color = Parse(dof.visualization_color());
+        Material* material = Material::VisualizationMaterial(v_color);
+        scene->AddMaterial(material);
+        scene->AddElement(new Sphere(camera->position(), dof.focal_depth(),
+                          *material));
+      }
     }
   }
 

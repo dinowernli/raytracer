@@ -40,6 +40,10 @@ DEFINE_bool(use_kd_tree, true, "Whether or not to use a KdTree in the scene");
 DEFINE_int32(kd_tree_visualization_depth, -1, "How deep in the tree to "
                                               "visualize splitting planes");
 
+DEFINE_bool(dof_visualization, false, "If true and the camera has a depth of"
+                                       " field, adds a sphere to scene which "
+                                       "shown the focal depth.");
+
 DEFINE_uint64(worker_threads, 8, "Number of rendering worker threads to use");
 
 DEFINE_string(sampler_type, "", "The type of sampler to use. Legal values are "
@@ -144,20 +148,24 @@ int main(int argc, char **argv) {
     }
   }
 
+  // TODO(dinow): Add support for color from flags.
+  raytracer::ColorData vis_color;
+  vis_color.set_r(0.6); vis_color.set_g(0.25); vis_color.set_b(0.1);
+
   if (FLAGS_dof_lens_size >= 0 && FLAGS_dof_focal_depth >= 0) {
     auto* camera = scene_config.mutable_scene_data()->mutable_camera();
-    camera->mutable_depth_of_field()->set_lens_size(FLAGS_dof_lens_size);
-    camera->mutable_depth_of_field()->set_focal_depth(FLAGS_dof_focal_depth);
+    auto* dof = camera->mutable_depth_of_field();
+    dof->set_lens_size(FLAGS_dof_lens_size);
+    dof->set_focal_depth(FLAGS_dof_focal_depth);
+    if(FLAGS_dof_visualization) {
+      dof->mutable_visualization_color()->CopyFrom(vis_color);
+    }
   }
 
   if (FLAGS_use_kd_tree && FLAGS_kd_tree_visualization_depth >= 0) {
-    // TODO(dinow): Add support for color from flags.
-    raytracer::ColorData color;
-    color.set_r(0.6); color.set_g(0.25); color.set_b(0.1);
-
     raytracer::KdTreeConfig* kd_config = scene_config.mutable_kd_tree_config();
     kd_config->set_visualization_depth(FLAGS_kd_tree_visualization_depth);
-    kd_config->mutable_visualization_color()->Swap(&color);
+    kd_config->mutable_visualization_color()->CopyFrom(vis_color);
   }
 
   // Build the scene from the config.

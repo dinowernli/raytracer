@@ -25,6 +25,13 @@ class Material {
   }
   NO_COPY_ASSIGN(Material);
 
+  // Returns a material suitable for visualization. The caller takes ownership
+  // of the returned material.
+  static Material* VisualizationMaterial(const Color3& color) {
+    Color3 black(0, 0, 0);
+    return new Material(color, black, black, black, 20, 0, 0.6, 1);
+  }
+
   const Color3& emission() const { return emission_; }
   const Color3& ambient() const { return ambient_; }
   const Color3& diffuse() const { return diffuse_; }

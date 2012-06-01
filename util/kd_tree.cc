@@ -250,8 +250,7 @@ KdTree* KdTree::FromConfig(const raytracer::KdTreeConfig& config) {
         tree = new KdTree(new MidpointSplit(), -1, NULL);
       } else {
         Color3 color = SceneParser::Parse(config.visualization_color());
-        Color3 b(0, 0, 0);
-        Material* v_material = new Material(color, b, b, b, 20, 0, 0.6, 1);
+        Material* v_material = Material::VisualizationMaterial(color);
         tree = new KdTree(new MidpointSplit(), v_depth, v_material);
       }
     }

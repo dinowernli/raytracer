@@ -41,6 +41,8 @@ class Camera {
     return focal_depth_ >= 0 && lens_size_ >= 0;
   }
 
+  inline Scalar focal_depth() const { return focal_depth_; }
+
  private:
   // This is static so that getting a random number does not mutate the object.
   static Random random_;
