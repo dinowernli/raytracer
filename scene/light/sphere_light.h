@@ -28,15 +28,22 @@ class SphereLight : public Light {
 
   virtual Ray GenerateRay(const Point3& target) const {
     // TODO(dinow): Somehow handle the target being inside the sphere.
-
     Point3 origin = sphere_->Sample(target);
     Vector3 direction = origin.VectorTo(target);
-    Ray result(origin, direction, EPSILON, direction.Length() - EPSILON);
-    if (Intersect(result)) {
-      // TODO(dinow): Replace this rejection sampling with a better method.
-      return GenerateRay(target);
+    Ray ray(origin, direction, EPSILON, direction.Length() - EPSILON);
+
+    IntersectionData data(ray);
+    if (Intersect(ray, &data)) {
+      // Ray started on the back side of the sphere, take the intersection
+      // point as new origin.
+      // TODO(dinow): Note that this is a hack because the distribution is no
+      // longer completely uniform. However, the difference is so minimal that
+      // rejection sampling is just not worth it.
+      origin = ray.PointAt(data.t);
+      direction = origin.VectorTo(target);
+      ray = Ray(origin, direction, EPSILON, direction.Length() - EPSILON);
     }
-    return result;
+    return ray;
   }
 
   virtual bool Intersect(const Ray& ray, IntersectionData* data = NULL) const {
