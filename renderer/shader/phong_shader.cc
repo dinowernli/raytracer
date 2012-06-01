@@ -51,9 +51,9 @@ Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
       normal = -normal;
     }
 
-    // Add diffuse contribution.
+    // Clamping seems to be necessary, otherwise some images get dark.
     Color3 diff = material.diffuse() * light->color();
-    diffuse += diff * prod;
+    diffuse += (diff * prod).Clamped();
 
     // Add specular contribution.
     Color3 spec = material.specular() * light->color();
@@ -70,7 +70,8 @@ Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
     cosine = cosine < 0 ? 0 : cosine;
     cosine = cosine > 1 ? 1 : cosine;
 
-    specular += spec * pow(cosine, material.shininess());
+    // Again, clamping seems to be necessary, otherwise some images get dark.
+    specular += (spec * pow(cosine, material.shininess())).Clamped();
   }
   return (emission + ambient + diffuse + specular).Clamped();
 }
