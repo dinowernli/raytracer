@@ -21,13 +21,17 @@ class Element;
 class IntersectionData;
 class Ray;
 
+namespace raytracer {
+class KdTreeConfig;
+}
+
 class KdTree {
  public:
-  // Takes ownership of the passed SplittingStrategy. The KdTree will add
-  // visualization planes for all levels <= visualization_depth. For no
+  // Takes ownership of the passed SplittingStrategy and material. The KdTree
+  // will add visualization planes for all levels <= visualization_depth. For no
   // visualization at all, pass -1 as depth.
   KdTree(SplittingStrategy* strategy, int visualization_depth,
-         const Material* visualization_material = NULL);
+          Material* visualization_material = NULL);
   virtual ~KdTree();
 
   // Builds a tree which contains pointers to the passed elements. No ownership
@@ -39,6 +43,8 @@ class KdTree {
   // not NULL, data about the first intersection is stored. If init has not
   // been called, this returns false.
   bool Intersect(const Ray& ray, IntersectionData* data = NULL) const;
+
+  static KdTree* FromConfig(const raytracer::KdTreeConfig& config);
 
  private:
   struct Node;
@@ -58,7 +64,7 @@ class KdTree {
   std::unique_ptr<SplittingStrategy> strategy_;
 
   int visualization_depth_;
-  const Material* visualization_material_;
+  std::unique_ptr<Material> visualization_material_;
 };
 
 #endif  /* KD_TREE_H_ */

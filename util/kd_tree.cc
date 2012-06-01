@@ -6,9 +6,12 @@
 
 #include <glog/logging.h>
 
+#include "parser/scene_parser.h"
+#include "proto/config/scene_config.pb.h"
 #include "renderer/intersection_data.h"
 #include "scene/element.h"
 #include "scene/geometry/triangle.h"
+#include "scene/material.h"
 #include "util/ray.h"
 
 // Convenience method which takes care of linearly testing all elements for
@@ -168,7 +171,7 @@ bool KdTree::Node::Intersect(const Ray& ray, Scalar t_near,
 }
 
 KdTree::KdTree(SplittingStrategy* strategy, int visualization_depth,
-               const Material* vistualization_material)
+                 Material* vistualization_material)
     : strategy_(strategy), visualization_depth_(visualization_depth),
       visualization_material_(vistualization_material) {
 }
@@ -202,7 +205,7 @@ void KdTree::Init(std::vector<std::unique_ptr<Element>>* elements) {
   std::vector<Triangle*> visualization_elements;
   const size_t n_bounded_elements = root_->elements->size();
   root_->Split(0, *bounding_box_, *strategy_, visualization_depth_,
-               visualization_material_, &visualization_elements);
+               visualization_material_.get(), &visualization_elements);
   LOG(INFO) << "Built KdTree for " << n_bounded_elements
             << " bounded elements and " << unbounded_elements_.size()
             << " unbounded elements";
@@ -230,3 +233,31 @@ bool KdTree::Intersect(const Ray& ray, IntersectionData* data) const {
   }
   return intersected;
 }
+
+// static
+KdTree* KdTree::FromConfig(const raytracer::KdTreeConfig& config) {
+  KdTree* tree = NULL;
+  if (config.splitting_strategy() == raytracer::KdTreeConfig::MIDPOINT) {
+    int v_depth = config.visualization_depth();
+    if (v_depth < 0) {
+      // Passing NULL as material is ok since it will never be used.
+      tree = new KdTree(new MidpointSplit(), v_depth, NULL);
+    } else {
+      // Attempt to fetch the material.
+      if (!config.has_visualization_color()) {
+        LOG(WARNING) << "Could not load KdTree visualization material, "
+                     << "deactivating visualization";
+        tree = new KdTree(new MidpointSplit(), -1, NULL);
+      } else {
+        Color3 color = SceneParser::Parse(config.visualization_color());
+        Color3 b(0, 0, 0);
+        Material* v_material = new Material(color, b, b, b, 20, 0, 0.6, 1);
+        tree = new KdTree(new MidpointSplit(), v_depth, v_material);
+      }
+    }
+  } else {
+    LOG(WARNING) << "Unknown KdTree splitting strategy, skipping KdTree";
+  }
+  return tree;
+}
+

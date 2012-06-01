@@ -10,7 +10,10 @@
 #include <memory>
 #include <string>
 
+#include "util/color3.h"
 #include "util/no_copy_assign.h"
+#include "util/point3.h"
+#include "util/vector3.h"
 
 namespace raytracer {
 class MaterialData;
@@ -26,9 +29,13 @@ class SceneParser {
   virtual ~SceneParser();
   NO_COPY_ASSIGN(SceneParser);
 
-  // Parses a material from the proto. The caller takes ownership of the
-  // returned material. Returns NULL if the data could not be parsed.
-  Material* ParseMaterial(const raytracer::MaterialData& data);
+  // Methods used for parsing entities from protos. The caller takes ownership
+  // of the returned pointer. If parsing failed, returns NULL for pointers and
+  // the default value for value types.
+  static Material* Parse(const raytracer::MaterialData& data);
+  static Color3 Parse(const raytracer::ColorData& data);
+  static Vector3 Parse(const raytracer::VectorData& data);
+  static Point3 Parse(const raytracer::PointData& data);
 
   // Parses data and add everything to scene.
   void ParseScene(const raytracer::SceneData& data, Scene* scene);

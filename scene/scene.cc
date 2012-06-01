@@ -72,40 +72,13 @@ bool Scene::Intersect(const Ray& ray, IntersectionData* data) const {
 
 // static
 Scene* Scene::FromConfig(const raytracer::SceneConfig& config) {
-  SceneParser parser;
-
   KdTree* tree = NULL;
-  Material* v_mat = NULL;
-
   if (config.has_kd_tree_config()) {
-    const raytracer::KdTreeConfig kd = config.kd_tree_config();
-    if (kd.splitting_strategy() == raytracer::KdTreeConfig::MIDPOINT) {
-      int v_depth = kd.visualization_depth();
-      if (v_depth < 0) {
-        // Passing NULL as material is ok since it will never be used.
-        tree = new KdTree(new MidpointSplit(), v_depth, NULL);
-      } else {
-        // Attempt to fetch the material.
-        if (!kd.has_visualization_material() ||
-            !(v_mat = parser.ParseMaterial(kd.visualization_material()))) {
-          LOG(WARNING) << "Could not load KdTree visualization material, "
-                       << "deactivating visualization";
-          tree = new KdTree(new MidpointSplit(), -1, NULL);
-        } else {
-          // Visualization parsed successfully.
-          tree = new KdTree(new MidpointSplit(), v_depth, v_mat);
-        }
-      }
-    } else {
-      LOG(WARNING) << "Unknown KdTree splitting strategy, skipping KdTree";
-    }
+    tree = KdTree::FromConfig(config.kd_tree_config());
   }
 
   Scene* scene = new Scene(tree);
+  SceneParser parser;
   parser.ParseScene(config.scene_data(), scene);
-  if (v_mat != NULL) {
-    scene->AddMaterial(v_mat);
-  }
-
   return scene;
 }

@@ -20,9 +20,6 @@
 #include "scene/material.h"
 #include "scene/mesh.h"
 #include "scene/scene.h"
-#include "util/color3.h"
-#include "util/point3.h"
-#include "util/vector3.h"
 
 SceneParser::SceneParser() {
 }
@@ -30,25 +27,23 @@ SceneParser::SceneParser() {
 SceneParser::~SceneParser() {
 }
 
-static Color3 Parse(const raytracer::ColorData& data) {
+// static
+Color3 SceneParser::Parse(const raytracer::ColorData& data) {
   return Color3(data.r(), data.g(), data.b());
 }
 
-static Vector3 Parse(const raytracer::VectorData& data) {
+// static
+Vector3 SceneParser::Parse(const raytracer::VectorData& data) {
   return Vector3(data.x(), data.y(), data.z());
 }
 
-static Point3 Parse(const raytracer::PointData& data) {
+// static
+Point3 SceneParser::Parse(const raytracer::PointData& data) {
   return Point3(data.x(), data.y(), data.z());
 }
 
-// Fetches the material pointer from the map, returns none if it is not found.
-Material* SceneParser::GetMaterial(const std::string& id) const {
-  auto it = material_map_.find(id);
-  return ((it == material_map_.end()) ? NULL : it->second);
-}
-
-Material* SceneParser::ParseMaterial(const raytracer::MaterialData& data) {
+// static
+Material* SceneParser::Parse(const raytracer::MaterialData& data) {
   if (!(data.has_emission() && data.has_ambient()
       && data.has_diffuse() && data.has_specular())) {
     return NULL;
@@ -74,7 +69,7 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
       continue;
     }
 
-    if (!(material = ParseMaterial(data.materials(i)))) {
+    if (!(material = Parse(data.materials(i)))) {
       LOG(WARNING) << "Skipping incomplete material";
       continue;
     }
@@ -234,4 +229,10 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
       LOG(WARNING) << "Skipping incomplete mesh";
     }
   }
+}
+
+// Fetches the material pointer from the map, returns none if it is not found.
+Material* SceneParser::GetMaterial(const std::string& id) const {
+  auto it = material_map_.find(id);
+  return ((it == material_map_.end()) ? NULL : it->second);
 }

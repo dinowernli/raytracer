@@ -151,24 +151,13 @@ int main(int argc, char **argv) {
   }
 
   if (FLAGS_use_kd_tree && FLAGS_kd_tree_visualization_depth >= 0) {
-    // TODO(dinow): Add support for configuring visualization material.
-    // TODO(dinow): Make it a color instead of material.
+    // TODO(dinow): Add support for color from flags.
     raytracer::ColorData color;
-    color.set_r(0.6);
-    color.set_g(0.25);
-    color.set_b(0.1);
-
-    raytracer::MaterialData data;
-    data.mutable_emission()->CopyFrom(color);
-    data.mutable_ambient();
-    data.mutable_diffuse();
-    data.mutable_specular();
-    data.set_refraction_percentage(0.6);
-    data.set_refraction_index(1);
+    color.set_r(0.6); color.set_g(0.25); color.set_b(0.1);
 
     raytracer::KdTreeConfig* kd_config = scene_config.mutable_kd_tree_config();
     kd_config->set_visualization_depth(FLAGS_kd_tree_visualization_depth);
-    kd_config->mutable_visualization_material()->CopyFrom(data);
+    kd_config->mutable_visualization_color()->Swap(&color);
   }
 
   // Build the scene from the config.
