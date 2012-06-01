@@ -32,8 +32,8 @@ DEFINE_bool(shadows, true, "Whether or not shadows are rendered");
 DEFINE_uint64(recursion_depth, 10, "How deep to evaluate reflective and "
                                    "refractive rays");
 
-DEFINE_uint64(rays_per_pixel, 1, "The number of randomly jittered rays to "
-                                 "shoot through each pixel");
+DEFINE_int32(root_rays_per_pixel, 1, "The side length of the supersampling "
+                                      " square.");
 
 DEFINE_bool(use_kd_tree, true, "Whether or not to use a KdTree in the scene");
 
@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
   renderer_config.set_threads(FLAGS_worker_threads);
   renderer_config.set_shadows(FLAGS_shadows);
   renderer_config.set_recursion_depth(FLAGS_recursion_depth);
-  renderer_config.set_rays_per_pixel(FLAGS_rays_per_pixel);
+  renderer_config.set_root_rays_per_pixel(FLAGS_root_rays_per_pixel);
 
   if (!FLAGS_sampler_type.empty()) {
     if (FLAGS_sampler_type == "progressive") {

@@ -16,8 +16,8 @@ message RendererConfig {
   // reflection and refraction rays are shot recursively.
   optional uint64 recursion_depth = 3 [default = 10];
 
-  // The number of randomly jittered rays to shoot through each pixel.
-  optional uint64 rays_per_pixel = 4 [default = 1];
+  // The root of the number of jittered rays to shoot through each pixel.
+  optional int32 root_rays_per_pixel = 4 [default = 1];
 
   optional SamplerType sampler_type = 5 [default = PROGRESSIVE];
 }

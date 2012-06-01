@@ -20,12 +20,12 @@ class Sample;
 
 class Supersampler {
  public:
-  Supersampler(size_t rays_per_pixel);
+  Supersampler(size_t root_rays_per_pixel);
   virtual ~Supersampler();
   NO_COPY_ASSIGN(Supersampler);
 
   // Populates the samples in target with subsamples for the pixel at base.
-  // If the size of target is not rays_per_pixel(), target is resized.
+  // If the size of target is not rays_per_pixel()^2, target is resized.
   void GenerateSubsamples(const Sample& base,
                              std::vector<Sample>* target);
 
@@ -43,13 +43,12 @@ class Supersampler {
   // to prevent large variance.
   static const size_t kJitterThreshold;
 
-  size_t rays_per_pixel_;
-
   // Stores the largest x such that x*x <= rays_per_pixel_. This represents the
   // x*x sampling square within the pixel.
-  size_t root_num_subpixels_;
+  size_t root_rays_per_pixel_;
 
-  // Stores the size of each of the root_num_subpixels_^2 subpixels.
+  // Cached values in order to avoid repeating computations.
+  size_t rays_per_pixel_;
   Scalar subpixel_size_;
 };
 

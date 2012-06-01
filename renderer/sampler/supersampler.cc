@@ -9,10 +9,10 @@
 
 #include "renderer/sampler/sample.h"
 
-Supersampler::Supersampler(size_t rays_per_pixel)
-    : rays_per_pixel_(rays_per_pixel) {
-  root_num_subpixels_ = sqrt(rays_per_pixel_);
-  subpixel_size_ = Scalar(1) / root_num_subpixels_;
+Supersampler::Supersampler(size_t root_rays_per_pixel)
+    : root_rays_per_pixel_(root_rays_per_pixel) {
+  rays_per_pixel_ = root_rays_per_pixel_ * root_rays_per_pixel_;
+  subpixel_size_ = Scalar(1) / root_rays_per_pixel_;
 }
 
 Supersampler::~Supersampler() {
@@ -28,9 +28,9 @@ void Supersampler::GenerateSubsamples(const Sample& base,
   Scalar half_pixel = subpixel_size_ / 2;
   size_t index = 0;
 
-  for (size_t i = 0; i < root_num_subpixels_; ++i) {
+  for (size_t i = 0; i < root_rays_per_pixel_; ++i) {
     Scalar base_x_offset = half_pixel + i * subpixel_size_;
-    for (size_t j = 0; j < root_num_subpixels_; ++j) {
+    for (size_t j = 0; j < root_rays_per_pixel_; ++j) {
       Scalar base_y_offset = half_pixel + j * subpixel_size_;
 
       // Disable jittering if there are only few rays.
@@ -44,17 +44,6 @@ void Supersampler::GenerateSubsamples(const Sample& base,
       sample->set_offset_y(base_y_offset + jitter_y);
       DVLOG(4) << "Generating subsample " << *sample << " at index " << index-1;
     }
-  }
-
-  DVLOG(4) << "Filling rest with random samples";
-
-  // Fill the rest with completely random samples in the original pixel.
-  for(size_t i = index; i < rays_per_pixel(); ++i) {
-    Sample* sample = &target->at(i);
-    *sample = base;
-    sample->set_offset_x(random_.Get(0, 1));
-    sample->set_offset_y(random_.Get(0, 1));
-    DVLOG(4) << "Generating subsample " << *sample << " at index " << i;
   }
 }
 
