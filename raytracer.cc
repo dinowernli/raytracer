@@ -9,6 +9,7 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/text_format.h>
 #include <memory>
+#include <sstream>
 #include <streambuf>
 #include <string>
 #include <thread>
@@ -25,6 +26,7 @@
 
 using raytracer::RendererConfig;
 using raytracer::SceneConfig;
+using std::string;
 
 // Renderer config flags.
 DEFINE_bool(shadows, true, "Whether or not shadows are rendered");
@@ -67,8 +69,9 @@ DEFINE_double(dof_focal_depth, -1, "The depth-of-field focal depth of the "
                                   "camera lens.");
 
 // Output flags.
-DEFINE_string(bmp_file, "image", "If <file> is passed, a BMP image will be "
-                                  "saved at 'output/<file>.bmp'");
+DEFINE_string(bmp_file, "", "If <file> is passed, a BMP image will be saved at "
+                            "'output/<file>.bmp'. Otherwise, a default name "
+                            "is inferred from the config.");
 
 DEFINE_string(ppm_file, "", "If <file> is passed, a PPM image will be saved at "
                             "'output/<file>.ppm'");
@@ -95,12 +98,19 @@ TODO(dinow): Remove the default values from the object constructors.
              pass the arguments.
 */
 
-bool LoadSceneData(const std::string& path, raytracer::SceneData* output) {
+string DefaultFilename() {
+  std::stringstream stream;
+  stream << FLAGS_scene_data.substr(FLAGS_scene_data.find_last_of('/') + 1)
+         << "_rrpp" << FLAGS_root_rays_per_pixel;
+  return stream.str();
+}
+
+bool LoadSceneData(const string& path, raytracer::SceneData* output) {
   std::ifstream stream(path);
   if (!stream.is_open()) {
     return false;
   }
-  std::string string((std::istreambuf_iterator<char>(stream)),
+  string string((std::istreambuf_iterator<char>(stream)),
                       std::istreambuf_iterator<char>());
   return google::protobuf::TextFormat::ParseFromString(string, output);
 }
@@ -192,9 +202,13 @@ int main(int argc, char **argv) {
   std::unique_ptr<Renderer> renderer(Renderer::FromConfig(renderer_config));
 
   renderer->AddListener(new ProgressListener());
+  const string dir = "output/";
   if (!FLAGS_bmp_file.empty()) {
-    renderer->AddListener(new BmpExporter("output/" + FLAGS_bmp_file + ".bmp"));
+    renderer->AddListener(new BmpExporter(dir + FLAGS_bmp_file + ".bmp"));
+  } else {
+    renderer->AddListener(new BmpExporter(dir + DefaultFilename() + ".bmp"));
   }
+
   if (!FLAGS_ppm_file.empty()) {
     renderer->AddListener(new PpmExporter("output/" + FLAGS_ppm_file + ".ppm"));
   }
