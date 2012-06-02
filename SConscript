@@ -13,16 +13,20 @@ environment = Environment(
   CPPPATH = ['.'],
 )
 
-# Configure different build modes.
-if ARGUMENTS.get('debug') == '0' or ARGUMENTS.get('release') == '1':
-	environment.Append(CCFLAGS = ['-O3'])
-	environment.Append(CCFLAGS = ['-DNDEBUG'])
-	environment.Append(CCFLAGS = ['-march=native'])
+def IsActive(arg):
+  return ARGUMENTS.get(arg) == '1'
+
+if IsActive('debug'):
+  environment.Append(CCFLAGS = ['-g'])
 else:
-	environment.Append(CCFLAGS = ['-g'])
-	if ARGUMENTS.get('profile') == '1':
-		environment.Append(CCFLAGS = ['-pg'])
-		environment.Append(LINKFLAGS = ['-pg'])
+  # Build optimizes binaries by default.
+  environment.Append(CCFLAGS = ['-O3'])
+  environment.Append(CCFLAGS = ['-DNDEBUG'])
+  environment.Append(CCFLAGS = ['-march=native'])
+
+if IsActive('profile'):
+  environment.Append(CCFLAGS = ['-pg'])
+  environment.Append(LINKFLAGS = ['-pg'])
 
 #environment.Replace(CXX = "clang")
 
@@ -71,7 +75,8 @@ environment.Append(LIBS='glut')       # Only the binary needs to link against gl
 environment.Append(LIBPATH='.')
 
 # Specify binaries
-environment.Program('raytracer.cc')
+raytracer = environment.Program('raytracer.cc')
+Default(raytracer)
 
 # This is how to force dependencies.
 # environment.Depends(lib_target, pb)
