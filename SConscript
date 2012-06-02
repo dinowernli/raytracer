@@ -96,3 +96,4 @@ test_cc_files = [
 ]
 test_sources = [Glob(cc_file) for cc_file in test_cc_files]
 environment.Program('unit_tests', test_sources)
+environment.Alias('test', ['unit_tests'])
