@@ -1,5 +1,7 @@
 /*
  * Author: "Dino Wernli"
+ * TODO(dinow): Add a managed pointer to an own image and when the renderer
+ * finishes rendering, copy the last image.
  */
 
 #include "raytracer_window.h"

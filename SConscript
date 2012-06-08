@@ -28,7 +28,8 @@ if IsActive('profile'):
   environment.Append(CCFLAGS = ['-pg'])
   environment.Append(LINKFLAGS = ['-pg'])
 
-#environment.Replace(CXX = "clang")
+environment.Replace(CXX = "clang")
+environment.Append(CCFLAGS = ['-stdlib=libc++'])
 
 # Add support for the google libs.
 environment.ParseConfig('pkg-config --cflags --libs libglog')
