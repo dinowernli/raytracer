@@ -7,6 +7,7 @@
 #define RAYTRACER_WINDOW_H_
 
 #include <cstddef>
+#include <memory>
 
 #include "renderer/updatable.h"
 #include "util/no_copy_assign.h"
@@ -23,6 +24,7 @@ class RaytracerWindow : public Updatable {
 
   virtual void Started(const Sampler& sampler);
   virtual void Updated(const Sampler& sampler);
+  virtual void Ended(const Sampler& sampler);
 
   void MainLoop();
 
@@ -37,8 +39,13 @@ class RaytracerWindow : public Updatable {
   void Display();
   void Idle();
 
-  // No ownership of image.
-  const Image* image_;
+  // Determines where to take the pixels from when drawing. Could either be an
+  // own image or one which lives in the rederer.
+  const Image* pixel_source_;
+
+  // When the renderer finishes, this stores a copy of the image.
+  std::unique_ptr<Image> image_;
+
   bool needs_redraw_;
 };
 

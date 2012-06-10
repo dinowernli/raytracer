@@ -1,7 +1,5 @@
 /*
  * Author: "Dino Wernli"
- * TODO(dinow): Add a managed pointer to an own image and when the renderer
- * finishes rendering, copy the last image.
  */
 
 #include "raytracer_window.h"
@@ -19,7 +17,8 @@ RaytracerWindow::RaytracerWindow(int* argc, char **argv) {
   CHECK(callback_instance_ == NULL) << "Detected duplicate glut window";
   callback_instance_ = this;
 
-  image_ = NULL;
+  pixel_source_ = NULL;
+  image_.reset(NULL);
   needs_redraw_ = false;
 
   glutInit(argc, argv);
@@ -37,15 +36,23 @@ RaytracerWindow::~RaytracerWindow() {
 
 void RaytracerWindow::Started(const Sampler& sampler) {
   // The image guarantees to always stay valid.
-  image_ = &sampler.image();
-  if (image_->SizeX() == 0 || image_->SizeY() == 0) {
+  pixel_source_ = &sampler.image();
+  image_.reset(NULL);
+
+  if (pixel_source_->SizeX() == 0 || pixel_source_->SizeY() == 0) {
     return;
   }
-  glutReshapeWindow(image_->SizeX(), image_->SizeY());
+  glutReshapeWindow(pixel_source_->SizeX(), pixel_source_->SizeY());
   needs_redraw_ = true;
 }
 
 void RaytracerWindow::Updated(const Sampler& sampler) {
+  needs_redraw_ = true;
+}
+
+void RaytracerWindow::Ended(const Sampler& sampler) {
+  image_.reset(new Image(sampler.image()));
+  pixel_source_ = image_.get();
   needs_redraw_ = true;
 }
 
@@ -62,15 +69,15 @@ void RaytracerWindow::Idle() {
 }
 
 void RaytracerWindow::Display() {
-  if (image_ == NULL) {
+  if (pixel_source_ == NULL) {
     // This call happened before the first call to Started(), so there is no
     // image. This is possible because glutPostRedisplay() could be called
     // outside this class.
     return;
   }
 
-  const size_t width = image_->SizeX();
-  const size_t height = image_->SizeY();
+  const size_t width = pixel_source_->SizeX();
+  const size_t height = pixel_source_->SizeY();
 
   if (width == 0 || height == 0) {
     return;
@@ -79,7 +86,7 @@ void RaytracerWindow::Display() {
   glClear(GL_COLOR_BUFFER_BIT);
   glViewport(0, 0, width, height);
   glRasterPos2i(-1,-1);
-  glDrawPixels(width, height, GL_RGB, GL_FLOAT, image_->RawData());
+  glDrawPixels(width, height, GL_RGB, GL_FLOAT, pixel_source_->RawData());
   glutSwapBuffers();
 }
 
