@@ -12,33 +12,77 @@
 #include <cstddef>
 #include <vector>
 
-#include "util/no_copy_assign.h"
+#include "util/color3.h"
 #include "util/numeric.h"
 #include "util/random.h"
 
 class Sample;
 
+// Utility class used to track the variance of a couple of colors.
+// TODO(dinow): Extract to own file and make generic (here: color).
+struct VarianceTracker {
+  size_t num_samples;
+  Color3 mean;
+  Color3 squared_deviations;
+
+  VarianceTracker(): num_samples(0) {}
+
+  void Process(const Color3& x) {
+    ++num_samples;
+    Color3 delta = x - mean;
+    mean += delta / num_samples;
+    squared_deviations += delta * (x - mean);
+  }
+
+  Color3 Mean() const { return mean; }
+  Color3 BiasedVariance() const { return squared_deviations / num_samples; }
+  Color3 UnbiasedVariance() const {
+    return squared_deviations / (num_samples - 1);
+  }
+};
+
 class Supersampler {
  public:
-  Supersampler(size_t root_rays_per_pixel);
+  // Sets an initial root of rays per pixel. If the adaptive threshold greater
+  // than 0, the supersampler will keep increasing the number of samples until
+  // the variance goes below the threshold.
+  Supersampler(size_t root_rays_per_pixel = 1, Scalar threshold = -1);
   virtual ~Supersampler();
-  NO_COPY_ASSIGN(Supersampler);
 
   // Populates the samples in target with subsamples for the pixel at base.
-  // If the size of target is not rays_per_pixel()^2, target is resized.
-  void GenerateSubsamples(const Sample& base,
-                             std::vector<Sample>* target);
+  // Stores the new samples at the beginning of target and returns how many
+  // samples were generated. If target is too small, target is resized.
+  size_t GenerateSubsamples(const Sample& base, std::vector<Sample>* target);
 
-  size_t rays_per_pixel() const { return rays_per_pixel_; }
+  // In adaptive mode this helps the supersampler figure out if more samples are
+  // necessary. Will only consider the first n_samples samples in samples.
+  void ReportResults(const std::vector<Sample>& samples, size_t n_samples);
+
+  Color3 MeanResults() const { return tracker_.Mean(); }
 
   // Returns whether or not the subsamples get jittered. Jittering is
-  // deativated for low sample number in order to avoid excessive variance.
+  // deactivated for low sample number in order to avoid excessive variance.
   bool WillJitter() const { return rays_per_pixel_ >= kJitterThreshold; }
 
+  bool IsAdaptive() const { return threshold_ > 0; }
+
  private:
+  void ComputeCachedValues();
+
   // A threshold for rays_per_pixel_ below which jittering is disabled in order
   // to prevent large variance.
   static const size_t kJitterThreshold;
+
+  // A threshold for adaptive supersampling. If positive, the supersampler will
+  // produce more samples until the variance goes below this threshold.
+  Scalar threshold_;
+
+  VarianceTracker tracker_;
+
+  // Needed to distinguish the first round from subsequent rounds. In the first
+  // round, the supersampler does not skip any samples. Also, if adaptive is
+  // off, only the first round is generated.
+  bool first_round_;
 
   // Stores the largest x such that x*x <= rays_per_pixel_. This represents the
   // x*x sampling square within the pixel.
@@ -47,6 +91,7 @@ class Supersampler {
   // Cached values in order to avoid repeating computations.
   size_t rays_per_pixel_;
   Scalar subpixel_size_;
+  Scalar half_subpixel_;
 
   mutable Random random_;
 };

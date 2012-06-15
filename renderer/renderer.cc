@@ -106,7 +106,7 @@ void Renderer::WorkerMain(size_t worker_id) {
   std::vector<Sample> samples(sampler_->MaxJobSize());
 
   // Buffers the samples (for a single pixel) produced by the supersampler.
-  std::vector<Sample> subsamples(supersampler_->rays_per_pixel());
+  std::vector<Sample> subsamples;
 
   // Fetch the camera for easier access.
   const Camera* camera = &scene_->camera();
@@ -119,19 +119,23 @@ void Renderer::WorkerMain(size_t worker_id) {
   size_t n_samples = 0;
   while((n_samples = sampler_->NextJob(&samples)) > 0) {
     for (size_t i = 0; i < n_samples; ++i) {
-      Color3 accumulated(0, 0, 0);
       Sample& main_sample = samples[i];
+      Supersampler supersampler(*supersampler_);
       DVLOG(3) << "Processing sample " << main_sample;
-      supersampler_->GenerateSubsamples(main_sample, &subsamples);
-      for (size_t j = 0; j < subsamples.size(); ++j) {
-        DVLOG(3) << "Processing subsample " << subsamples[j];
-        Ray ray = camera->GenerateRay(subsamples[j]);
-        refraction_stack.clear();
-        refraction_stack.push_back(scene_->refraction_index());
-        Color3 contribution = TraceColor(ray, 0, &refraction_stack);
-        accumulated = accumulated + contribution / subsamples.size();
+
+      size_t current_subsamples = 0;
+      while((current_subsamples = supersampler.GenerateSubsamples(
+                                              main_sample, &subsamples)) > 0) {
+        for (size_t j = 0; j < current_subsamples; ++j) {
+          DVLOG(3) << "Processing subsample " << subsamples[j];
+          Ray ray = camera->GenerateRay(subsamples[j]);
+          refraction_stack.clear();
+          refraction_stack.push_back(scene_->refraction_index());
+          subsamples[j].set_color(TraceColor(ray, 0, &refraction_stack));
+        }
+        supersampler.ReportResults(subsamples, current_subsamples);
       }
-      main_sample.set_color(accumulated);
+      main_sample.set_color(supersampler.MeanResults());
     }
     sampler_->AcceptJob(samples, n_samples);
   }

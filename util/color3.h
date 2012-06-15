@@ -54,6 +54,11 @@ class Color3 {
   Intensity r_, g_, b_;
 };
 
+inline Color3 operator-(const Color3& lhs, const Color3& rhs)
+{
+  return Color3(lhs.r() - rhs.r(), lhs.g() - rhs.g(), lhs.b() - rhs.b());
+}
+
 inline Color3 operator+(const Color3& lhs, const Color3& rhs)
 {
   return Color3(lhs.r() + rhs.r(), lhs.g() + rhs.g(), lhs.b() + rhs.b());
