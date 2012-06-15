@@ -13,6 +13,16 @@ Supersampler::Supersampler(size_t root_rays_per_pixel, Scalar threshold) {
   root_rays_per_pixel_ = root_rays_per_pixel;
   threshold_ = threshold;
   first_round_ = true;
+
+  if (IsAdaptive()) {
+    DVLOG(1) << "Initialized with threshold: " << threshold;
+    if (root_rays_per_pixel <= 1) {
+      LOG(WARNING) << "Can't do adaptive supersampling with only 1 sample."
+                   << " Setting root_rays_per_pixel to 2.";
+      root_rays_per_pixel_ = 2;
+    }
+  }
+
   ComputeCachedValues();
 }
 
@@ -29,17 +39,23 @@ void Supersampler::ReportResults(const std::vector<Sample>& samples,
 size_t Supersampler::GenerateSubsamples(const Sample& base,
                                         std::vector<Sample>* target) {
   if (IsAdaptive()) {
-    Color3 var = tracker_.UnbiasedVariance();
-    Scalar max_variance = std::max(var.r(), std::max(var.g(), var.b()));
-    if (max_variance <= threshold_) {
-      // Pixel value computed closely enough. Abort.
-      return 0;
-    } else {
-      // Move on to next level, multiply by 2 to reuse old samples.
-      // TODO(dinow): This is not entirely correct because jittering size
-      // and half_pixel changes... Somehow fix this.
-      root_rays_per_pixel_ = 2*root_rays_per_pixel_ + 1;
-      ComputeCachedValues();
+    if (!first_round_) {
+      // TODO(dinow): Adaptivity is till not quite working. Fix.
+      DVLOG(1) << "Current unbiased variance: " << tracker_.UnbiasedVariance();
+      Color3 var = tracker_.UnbiasedVariance();
+      Scalar max_variance = std::max(var.r(), std::max(var.g(), var.b()));
+      if(max_variance <= threshold_) {
+        // Pixel value computed closely enough. Abort.
+        DVLOG(1) << "Generated " << rays_per_pixel_ << " samples for pixel ["
+                 << base.x() << ", " << base.y() << "]";
+        return 0;
+      } else {
+        // Move on to next level, multiply by 2 to reuse old samples.
+        // TODO(dinow): This is not entirely correct because jittering size
+        // and half_pixel changes... Somehow fix this.
+        root_rays_per_pixel_ = 2*root_rays_per_pixel_ + 1;
+        ComputeCachedValues();
+      }
     }
   } else {
     if (!first_round_) {

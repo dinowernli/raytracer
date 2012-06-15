@@ -37,6 +37,7 @@ struct VarianceTracker {
   Color3 Mean() const { return mean; }
   Color3 BiasedVariance() const { return squared_deviations / num_samples; }
   Color3 UnbiasedVariance() const {
+    if (num_samples <= 1) return Color3(0, 0, 0);
     return squared_deviations / (num_samples - 1);
   }
 };

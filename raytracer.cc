@@ -55,6 +55,10 @@ DEFINE_string(splitting_strategy, "", "The strategy to use for splitting in the"
                                       " KdTree. Only has effect if use_kd_tree "
                                       "is true. Legal values are 'midpoint'");
 
+DEFINE_double(adaptive_supersampling_threshold, -1, "A threshold for the "
+                                                    "variance in adaptive "
+                                                    "supersampling.");
+
 // Camera config flags.
 DEFINE_int32(image_resolution_x, -1, "Optional override for the horizontal "
                                       "resolution of the image");
@@ -187,6 +191,8 @@ int main(int argc, char **argv) {
   renderer_config.set_shadows(FLAGS_shadows);
   renderer_config.set_recursion_depth(FLAGS_recursion_depth);
   renderer_config.set_root_rays_per_pixel(FLAGS_root_rays_per_pixel);
+  renderer_config.set_adaptive_supersampling_threshold(
+      FLAGS_adaptive_supersampling_threshold);
 
   if (!FLAGS_sampler_type.empty()) {
     if (FLAGS_sampler_type == "progressive") {

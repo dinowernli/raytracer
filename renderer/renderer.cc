@@ -239,7 +239,10 @@ Renderer* Renderer::FromConfig(const raytracer::RendererConfig& config) {
   CHECK(sampler != NULL) << "Could not load sampler";
 
   Shader* shader = new PhongShader(config.shadows());
-  Supersampler* supersampler = new Supersampler(config.root_rays_per_pixel());
+  Supersampler* supersampler = new Supersampler(
+      config.root_rays_per_pixel(),
+      config.adaptive_supersampling_threshold());
+
   return new Renderer(sampler, supersampler, shader, config.threads(),
-                       config.recursion_depth());
+                      config.recursion_depth());
 }
