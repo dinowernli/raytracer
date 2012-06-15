@@ -44,9 +44,6 @@ class Camera {
   inline Scalar focal_depth() const { return focal_depth_; }
 
  private:
-  // This is static so that getting a random number does not mutate the object.
-  static Random random_;
-
   // Computes a new "up" and a "right" vector such that "view", "up" and "right"
   // are orthogonal. This guarantees that the direction of "view" is maintained.
   void ComputeOrientation(const Vector3& view, const Vector3& up);
@@ -71,6 +68,8 @@ class Camera {
 
   // The size of the lens for DOF.
   Scalar lens_size_;
+
+  mutable Random random_;
 };
 
 #endif  /* CAMERA_H_ */

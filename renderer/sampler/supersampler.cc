@@ -49,6 +49,3 @@ void Supersampler::GenerateSubsamples(const Sample& base,
 
 // static
 const size_t Supersampler::kJitterThreshold = 4;
-
-// static
-Random Supersampler::random_;

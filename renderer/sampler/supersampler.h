@@ -36,9 +36,6 @@ class Supersampler {
   bool WillJitter() const { return rays_per_pixel_ >= kJitterThreshold; }
 
  private:
-  // This is static so that getting a random number does not mutate the object.
-  static Random random_;
-
   // A threshold for rays_per_pixel_ below which jittering is disabled in order
   // to prevent large variance.
   static const size_t kJitterThreshold;
@@ -50,6 +47,8 @@ class Supersampler {
   // Cached values in order to avoid repeating computations.
   size_t rays_per_pixel_;
   Scalar subpixel_size_;
+
+  mutable Random random_;
 };
 
 #endif  /* SUPERSAMPLER_H_ */

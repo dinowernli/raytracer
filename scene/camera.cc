@@ -67,6 +67,3 @@ Ray Camera::GenerateRay(const Sample& sample) const {
     return Ray(position_, direction);
   }
 }
-
-// static
-Random Camera::random_;

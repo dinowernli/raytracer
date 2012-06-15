@@ -29,7 +29,7 @@ class Sphere : public Element {
   Point3 center_;
   Scalar radius_;
 
-  static Random random_;
+  mutable Random random_;
 };
 
 #endif  /* SPHERE_H_ */
