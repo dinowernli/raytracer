@@ -3,6 +3,8 @@
  * TODO(dinow): Unify the "sampler" interface such that this class can also
  * implement it. Buils some sort of sampling pipeline.
  *
+ * TODO(dinow): Add some way of visualizing how many samples where used where.
+ *
  * Author: "Dino Wernli"
  */
 
@@ -77,7 +79,7 @@ class Supersampler {
   // A threshold for adaptive supersampling. If positive, the supersampler will
   // produce more samples until the variance goes below this threshold.
   Scalar threshold_;
-
+  bool update_below_threshold_;
   VarianceTracker tracker_;
 
   // Needed to distinguish the first round from subsequent rounds. In the first

@@ -13,16 +13,7 @@ Supersampler::Supersampler(size_t root_rays_per_pixel, Scalar threshold) {
   root_rays_per_pixel_ = root_rays_per_pixel;
   threshold_ = threshold;
   first_round_ = true;
-
-  if (IsAdaptive()) {
-    DVLOG(1) << "Initialized with threshold: " << threshold;
-    if (root_rays_per_pixel <= 1) {
-      LOG(WARNING) << "Can't do adaptive supersampling with only 1 sample."
-                   << " Setting root_rays_per_pixel to 2.";
-      root_rays_per_pixel_ = 2;
-    }
-  }
-
+  update_below_threshold_ = false;
   ComputeCachedValues();
 }
 
@@ -31,8 +22,17 @@ Supersampler::~Supersampler() {
 
 void Supersampler::ReportResults(const std::vector<Sample>& samples,
                                  size_t n_samples) {
+  Color3 old_mean = tracker_.Mean();
   for (size_t i = 0; i < n_samples; ++i) {
     tracker_.Process(samples[i].color());
+  }
+
+  Color3 diff = tracker_.Mean() - old_mean;
+  Scalar avg_update = std::abs((diff.r() + diff.g() + diff.b()) / 3.0);
+  DVLOG(1) << "Average update: " << avg_update;
+  if (avg_update < threshold_) {
+    DVLOG(1) << "Flipping supersampling flag.";
+    update_below_threshold_ = true;
   }
 }
 
@@ -40,11 +40,7 @@ size_t Supersampler::GenerateSubsamples(const Sample& base,
                                         std::vector<Sample>* target) {
   if (IsAdaptive()) {
     if (!first_round_) {
-      // TODO(dinow): Adaptivity is till not quite working. Fix.
-      DVLOG(1) << "Current unbiased variance: " << tracker_.UnbiasedVariance();
-      Color3 var = tracker_.UnbiasedVariance();
-      Scalar max_variance = std::max(var.r(), std::max(var.g(), var.b()));
-      if(max_variance <= threshold_) {
+      if(update_below_threshold_) {
         // Pixel value computed closely enough. Abort.
         DVLOG(1) << "Generated " << rays_per_pixel_ << " samples for pixel ["
                  << base.x() << ", " << base.y() << "]";
@@ -53,7 +49,10 @@ size_t Supersampler::GenerateSubsamples(const Sample& base,
         // Move on to next level, multiply by 2 to reuse old samples.
         // TODO(dinow): This is not entirely correct because jittering size
         // and half_pixel changes... Somehow fix this.
-        root_rays_per_pixel_ = 2*root_rays_per_pixel_ + 1;
+
+        //root_rays_per_pixel_ = 2*root_rays_per_pixel_ + 1;
+        ++root_rays_per_pixel_;
+        DVLOG(1) << "Increasing sample root to " << root_rays_per_pixel_;
         ComputeCachedValues();
       }
     }
