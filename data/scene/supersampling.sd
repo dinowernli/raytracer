@@ -2,7 +2,7 @@ background: { r:1 g:0.9 b:0.9 }
 ambient: { r:0.02 g:0.02 b:0.02 }
 
 camera: {
-  position: { x:-5 y:0 z:0 }
+  position: { x:-5 y:1 z:0 }
   view: { x:1 y:0 z:0 }
   up: { x:0 y:1 z:0 }
   opening_angle: 17
@@ -53,7 +53,7 @@ circle_planes {
 }
 
 spheres {
-  center: { x:10 y:5 z:0 }
-  radius: 4
+  center: { x:10 y:3.5 z:0 }
+  radius: 2.5
   material_id: "red_reflective"
 }
