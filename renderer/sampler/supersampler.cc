@@ -14,6 +14,13 @@ Supersampler::Supersampler(size_t root_rays_per_pixel, Scalar threshold) {
   threshold_ = threshold;
   first_round_ = true;
   update_below_threshold_ = false;
+
+  if (IsAdaptive() && root_rays_per_pixel <= 3) {
+    LOG(WARNING) << "Too few samples per pixel. Setting root_rays to 4 to avoid"
+                 << "artifacts from adaptive supersampling";
+    root_rays_per_pixel_ = 4;
+  }
+
   ComputeCachedValues();
 }
 
@@ -42,14 +49,11 @@ size_t Supersampler::GenerateSubsamples(const Sample& base,
     if (!first_round_) {
       if(update_below_threshold_) {
         // Pixel value computed closely enough. Abort.
-        DVLOG(1) << "Generated " << rays_per_pixel_ << " samples for pixel ["
-                 << base.x() << ", " << base.y() << "]";
+        DVLOG(1) << "Generated " << tracker_.NumSamples() << " samples for "
+                 << "pixel [" << base.x() << ", " << base.y() << "]";
         return 0;
       } else {
-        // Move on to next level, multiply by 2 to reuse old samples.
-        // TODO(dinow): This is not entirely correct because jittering size
-        // and half_pixel changes... Somehow fix this.
-
+        // TODO(dinow): This comes closer to actual reuse, but grows too fast.
         //root_rays_per_pixel_ = 2*root_rays_per_pixel_ + 1;
         ++root_rays_per_pixel_;
         DVLOG(1) << "Increasing sample root to " << root_rays_per_pixel_;
@@ -74,7 +78,8 @@ size_t Supersampler::GenerateSubsamples(const Sample& base,
     Scalar base_x_offset = half_subpixel_ + i * subpixel_size_;
     for (size_t j = 0; j < root_rays_per_pixel_; ++j) {
       if (!first_round_ && IsAdaptive() && (i % 2 == 1) && (j % 2 == 1)) {
-        // Computed in previous round of adaptive sampling. Skip.
+        // Sample very close to a previously computed one, Skip.
+        // TODO(dinow): Somehow skip more cleverly.
         continue;
       }
 

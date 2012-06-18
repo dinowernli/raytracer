@@ -22,11 +22,9 @@ class Sample;
 
 // Utility class used to track the variance of a couple of colors.
 // TODO(dinow): Extract to own file and make generic (here: color).
-struct VarianceTracker {
-  size_t num_samples;
-  Color3 mean;
-  Color3 squared_deviations;
-
+// TODO(dinow): Add way to accept multiple samples at ounce.
+class VarianceTracker {
+ public:
   VarianceTracker(): num_samples(0) {}
 
   void Process(const Color3& x) {
@@ -36,12 +34,24 @@ struct VarianceTracker {
     squared_deviations += delta * (x - mean);
   }
 
+  void Clear() {
+    num_samples = 0;
+    mean = Color3(0, 0, 0);
+    squared_deviations = Color3(0, 0 ,0);
+  }
+
+  size_t NumSamples() const { return num_samples; }
   Color3 Mean() const { return mean; }
   Color3 BiasedVariance() const { return squared_deviations / num_samples; }
   Color3 UnbiasedVariance() const {
     if (num_samples <= 1) return Color3(0, 0, 0);
     return squared_deviations / (num_samples - 1);
   }
+
+ private:
+  size_t num_samples;
+  Color3 mean;
+  Color3 squared_deviations;
 };
 
 class Supersampler {
