@@ -25,17 +25,22 @@ Sphere::~Sphere() {
 bool Sphere::Intersect(const Ray& ray, IntersectionData* data) const {
   Vector3 center_to_origin = center_.VectorTo(ray.origin());
 
-  Scalar aa = 2 * ray.direction().SquaredLength();
+  Scalar a = ray.direction().SquaredLength();
   Scalar b = 2 * (ray.direction().Dot(center_to_origin));
   Scalar c = center_to_origin.SquaredLength() - radius_ * radius_;
 
-  Scalar under_root = b*b - 2 * aa * c;
-  if (under_root < 0) {
+  Scalar discrim = b * b - 4 * a * c;
+  if(discrim < 0.) {
     return false;
   }
+  Scalar root_discrim = sqrt(discrim);
 
-  Scalar t1 = (-b - sqrt(under_root)) / aa;
-  Scalar t2 = (-b + sqrt(under_root)) / aa;
+  Scalar q = b < 0 ? -0.5 * (b - root_discrim) : -0.5 * (b + root_discrim);
+  Scalar t1 = q / a;
+  Scalar t2 = c / q;
+  if (t1 > t2) {
+    std::swap(t1, t2);
+  }
 
   bool found = false;
   Scalar t = 0;
