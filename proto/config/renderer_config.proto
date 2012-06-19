@@ -22,4 +22,7 @@ message RendererConfig {
   optional SamplerType sampler_type = 5 [default = PROGRESSIVE];
 
   optional double adaptive_supersampling_threshold = 6 [default = -1];
+
+  // Path to at which to store a heatmap image of num samples per pixel.
+  optional string sampling_heatmap_path = 7;
 }

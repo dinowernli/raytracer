@@ -16,6 +16,7 @@ class Ray;
 class Sampler;
 class Scene;
 class Shader;
+class Statistics;
 class Supersampler;
 class Updatable;
 
@@ -29,7 +30,7 @@ class Renderer {
   // determines the number of worker threads in addition to the monitoring
   // thread.
   Renderer(Sampler* sampler, Supersampler* supersampler, Shader* shader,
-            size_t num_threads, size_t recursion_depth);
+           size_t num_threads, size_t recursion_depth, Statistics* stats);
   virtual ~Renderer();
   NO_COPY_ASSIGN(Renderer);
 
@@ -43,6 +44,9 @@ class Renderer {
   // Builds a new Renderer from configuration. The caller takes ownership of
   // the returned object.
   static Renderer* FromConfig(const raytracer::RendererConfig& config);
+
+  bool HasStatistics() const { return statistics_.get() != NULL; }
+  const Statistics& statistics() const { return *statistics_; }
 
  private:
   // Serves as the method passed to threads. It contains the rendering loop
@@ -67,6 +71,8 @@ class Renderer {
 
   // Stores the depth to which reflection and refraction are evaluated.
   size_t recursion_depth_;
+
+  std::unique_ptr<Statistics> statistics_;
 
   // The sleep time for the monitor thread.
   static const size_t kSleepTimeMilli;

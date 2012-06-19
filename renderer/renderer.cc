@@ -10,6 +10,7 @@
 #include <thread>
 #include <unistd.h>
 
+#include "listener/bmp_exporter.h"
 #include "proto/config/renderer_config.pb.h"
 #include "renderer/intersection_data.h"
 #include "renderer/sampler/progressive_sampler.h"
@@ -19,6 +20,7 @@
 #include "renderer/sampler/supersampler.h"
 #include "renderer/shader/phong_shader.h"
 #include "renderer/shader/shader.h"
+#include "renderer/statistics.h"
 #include "renderer/updatable.h"
 #include "scene/light/light.h"
 #include "scene/material.h"
@@ -26,9 +28,11 @@
 #include "util/ray.h"
 
 Renderer::Renderer(Sampler* sampler, Supersampler* supersampler,
-                     Shader* shader, size_t num_threads, size_t recursion_depth)
+                   Shader* shader, size_t num_threads, size_t recursion_depth,
+                   Statistics* stats)
     : sampler_(sampler), supersampler_(supersampler), shader_(shader),
-      num_threads_(num_threads), recursion_depth_(recursion_depth) {
+      num_threads_(num_threads), recursion_depth_(recursion_depth),
+      statistics_(stats) {
   if (num_threads == 0) {
     LOG(WARNING) << "Can't render with 0 workers. Using 1 instead.";
     num_threads_ = 1;
@@ -70,6 +74,10 @@ void Renderer::Render(Scene* scene) {
     sampler_->Init(camera->resolution_x(), camera->resolution_y());
   }
 
+  if (HasStatistics()) {
+    statistics_->Init(camera->resolution_x(), camera->resolution_y());
+  }
+
   LOG(INFO) << "Creating " << num_threads_ << " workers";
 
   for(auto it = listeners_.begin(); it != listeners_.end(); ++it) {
@@ -94,6 +102,11 @@ void Renderer::Render(Scene* scene) {
   }
 
   LOG(INFO) << "All workers terminated";
+
+  if (HasStatistics()) {
+    LOG(INFO) << "Exporting statistics";
+    statistics_->Export();
+  }
 
   scene_ = NULL;
   LOG(INFO) << "Finished rendering";
@@ -230,6 +243,11 @@ const size_t Renderer::kSleepTimeMilli = 300;
 
 // static
 Renderer* Renderer::FromConfig(const raytracer::RendererConfig& config) {
+  Statistics* stats = NULL;
+  if (config.has_sampling_heatmap_path()) {
+    stats = new Statistics(new BmpExporter(config.sampling_heatmap_path()));
+  }
+
   Sampler* sampler = NULL;
   if (config.sampler_type() == raytracer::RendererConfig::SCANLINE) {
     sampler = new ScanlineSampler(config.threads() > 1);
@@ -241,8 +259,9 @@ Renderer* Renderer::FromConfig(const raytracer::RendererConfig& config) {
   Shader* shader = new PhongShader(config.shadows());
   Supersampler* supersampler = new Supersampler(
       config.root_rays_per_pixel(),
-      config.adaptive_supersampling_threshold());
+      config.adaptive_supersampling_threshold(),
+      stats);
 
   return new Renderer(sampler, supersampler, shader, config.threads(),
-                      config.recursion_depth());
+                      config.recursion_depth(), stats);
 }

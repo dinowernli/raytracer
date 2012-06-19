@@ -8,12 +8,15 @@
 #include <glog/logging.h>
 
 #include "renderer/sampler/sample.h"
+#include "renderer/statistics.h"
 
-Supersampler::Supersampler(size_t root_rays_per_pixel, Scalar threshold) {
+Supersampler::Supersampler(size_t root_rays_per_pixel, Scalar threshold,
+                           Statistics* statistics) {
   root_rays_per_pixel_ = root_rays_per_pixel;
   threshold_ = threshold;
   first_round_ = true;
   update_below_threshold_ = false;
+  statistics_ = statistics;
 
   if (IsAdaptive() && root_rays_per_pixel <= 3) {
     LOG(WARNING) << "Too few samples per pixel. Setting root_rays to 4 to avoid"
@@ -36,21 +39,30 @@ void Supersampler::ReportResults(const std::vector<Sample>& samples,
 
   Color3 diff = tracker_.Mean() - old_mean;
   Scalar avg_update = std::abs((diff.r() + diff.g() + diff.b()) / 3.0);
-  DVLOG(1) << "Average update: " << avg_update;
+  DVLOG(3) << "Average update: " << avg_update;
   if (avg_update < threshold_) {
-    DVLOG(1) << "Flipping supersampling flag.";
+    DVLOG(3) << "Flipping supersampling flag.";
     update_below_threshold_ = true;
+  }
+}
+
+void Supersampler::UpdateStatistics(size_t num_samples, size_t x, size_t y) {
+  if (statistics_ != NULL && statistics_->sampling_heatmap() != NULL) {
+    Color3 heat(num_samples, num_samples, num_samples);
+    statistics_->sampling_heatmap()->PutPixel(heat, x, y);
   }
 }
 
 size_t Supersampler::GenerateSubsamples(const Sample& base,
                                         std::vector<Sample>* target) {
+  size_t samples = tracker_.NumSamples();
   if (IsAdaptive()) {
     if (!first_round_) {
       if(update_below_threshold_) {
         // Pixel value computed closely enough. Abort.
-        DVLOG(1) << "Generated " << tracker_.NumSamples() << " samples for "
-                 << "pixel [" << base.x() << ", " << base.y() << "]";
+        DVLOG(3) << "Generated " << samples << " samples for pixel ["
+                 << base.x() << ", " << base.y() << "]";
+        UpdateStatistics(samples, base.x(), base.y());
         return 0;
       } else {
         // TODO(dinow): This comes closer to actual reuse, but grows too fast.
@@ -63,6 +75,7 @@ size_t Supersampler::GenerateSubsamples(const Sample& base,
   } else {
     if (!first_round_) {
       // In the non-adaptive case, just generate the grid once.
+      UpdateStatistics(samples, base.x(), base.y());
       return 0;
     }
   }

@@ -19,6 +19,7 @@
 #include "util/random.h"
 
 class Sample;
+class Statistics;
 
 // Utility class used to track the variance of a couple of colors.
 // TODO(dinow): Extract to own file and make generic (here: color).
@@ -58,8 +59,9 @@ class Supersampler {
  public:
   // Sets an initial root of rays per pixel. If the adaptive threshold greater
   // than 0, the supersampler will keep increasing the number of samples until
-  // the variance goes below the threshold.
-  Supersampler(size_t root_rays_per_pixel = 1, Scalar threshold = -1);
+  // the variance goes below the threshold. Takes no ownership of statistics.
+  Supersampler(size_t root_rays_per_pixel = 1, Scalar threshold = -1,
+               Statistics* statistics = NULL);
   virtual ~Supersampler();
 
   // Populates the samples in target with subsamples for the pixel at base.
@@ -81,6 +83,7 @@ class Supersampler {
 
  private:
   void ComputeCachedValues();
+  void UpdateStatistics(size_t num_samples, size_t x, size_t y);
 
   // A threshold for rays_per_pixel_ below which jittering is disabled in order
   // to prevent large variance.
@@ -105,6 +108,9 @@ class Supersampler {
   size_t rays_per_pixel_;
   Scalar subpixel_size_;
   Scalar half_subpixel_;
+
+  // Used to keep track of the number of rays casted for each pixel.
+  Statistics* statistics_;
 
   mutable Random random_;
 };

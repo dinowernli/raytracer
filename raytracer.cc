@@ -59,6 +59,8 @@ DEFINE_double(adaptive_supersampling_threshold, -1, "A threshold for the "
                                                     "variance in adaptive "
                                                     "supersampling.");
 
+DEFINE_string(sampling_heatmap, "", "Path to store sampling heatmap image");
+
 // Camera config flags.
 DEFINE_int32(image_resolution_x, -1, "Optional override for the horizontal "
                                       "resolution of the image");
@@ -90,7 +92,6 @@ DEFINE_bool(gui, false, "Whether or not to start the GLUT front end");
 TODO(dinow): Add support for building and running binaries and single tests in
              scons. Add multiple targets.
 TODO(dinow): Implement surface area heuristics for KdTree splitting
-TODO(dinow): Implement adaptive supersampling
 TODO(dinow): Add textures, perlin noise, bump maps, skyboxes, path tracing
 TODO(dinow): Add possibility to load renderer config from file.
 TODO(dinow): Rename proto namespace to "config" or "proto".
@@ -193,6 +194,10 @@ int main(int argc, char **argv) {
   renderer_config.set_root_rays_per_pixel(FLAGS_root_rays_per_pixel);
   renderer_config.set_adaptive_supersampling_threshold(
       FLAGS_adaptive_supersampling_threshold);
+
+  if(!FLAGS_sampling_heatmap.empty()) {
+    renderer_config.set_sampling_heatmap_path(FLAGS_sampling_heatmap);
+  }
 
   if (!FLAGS_sampler_type.empty()) {
     if (FLAGS_sampler_type == "progressive") {

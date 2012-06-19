@@ -7,6 +7,7 @@
 #define IMAGE_H_
 
 #include <glog/logging.h>
+#include <limits>
 #include <memory>
 #include <vector>
 
@@ -46,6 +47,29 @@ class Image {
     }
     size_t pos = kNumberOfChannels * (y * size_x_ + x);
     return Color3(pixels_[pos], pixels_[pos + 1], pixels_[pos + 2]);
+  }
+
+  Intensity MaxIntensity() const {
+    Intensity result = -std::numeric_limits<Intensity>::infinity();
+    for (size_t x = 0; x < SizeX(); ++x) {
+      for (size_t y = 0; y < SizeY(); ++y) {
+        const Color3& color = PixelAt(x, y);
+        result = std::max(result, color.r());
+        result = std::max(result, color.g());
+        result = std::max(result, color.b());
+      }
+    }
+    DVLOG(1) << "Computed maximum as: " << result;
+    return result;
+  }
+
+  // Multiplies all the intensities by factor.
+  void Scale(const Intensity& factor) {
+    for (size_t x = 0; x < SizeX(); ++x) {
+      for (size_t y = 0; y < SizeY(); ++y) {
+        PutPixel(factor * PixelAt(x, y), x, y);
+      }
+    }
   }
 
   // Is guaranteed not to change throughout the lifetime of this object.
