@@ -88,6 +88,10 @@ DEFINE_string(scene_data, "data/scene/quadrics_tori.sd",
 DEFINE_bool(gui, false, "Whether or not to start the GLUT front end");
 
 /* General Todos:
+TODO(dinow): Don't manage free listeneres in renderer
+TODO(dinow): Make materials optional (or add primitive and shape abstraction)
+TODO(dinow): Make scene initialization etc use the listener mechanism
+
 TODO(dinow): Implement surface area heuristics for KdTree splitting
 TODO(dinow): Add textures, perlin noise, bump maps, skyboxes, path tracing
 TODO(dinow): Add possibility to load renderer config from file.

@@ -20,7 +20,7 @@ class Statistics {
   }
 
   void Init(size_t width, size_t height) {
-    LOG(INFO) << "Initlializing statistics";
+    LOG(INFO) << "Initializing statistics";
     sampling_heatmap_.reset(new Image(width, height));
   }
 
