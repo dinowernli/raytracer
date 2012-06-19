@@ -32,12 +32,12 @@ Supersampler::~Supersampler() {
 
 void Supersampler::ReportResults(const std::vector<Sample>& samples,
                                  size_t n_samples) {
-  Color3 old_mean = tracker_.Mean();
+  Color3 old_mean = accum_.Mean();
   for (size_t i = 0; i < n_samples; ++i) {
-    tracker_.Process(samples[i].color());
+    accum_.Process(samples[i].color());
   }
 
-  Color3 diff = tracker_.Mean() - old_mean;
+  Color3 diff = accum_.Mean() - old_mean;
   Scalar avg_update = std::abs((diff.r() + diff.g() + diff.b()) / 3.0);
   DVLOG(3) << "Average update: " << avg_update;
   if (avg_update < threshold_) {
@@ -55,7 +55,7 @@ void Supersampler::UpdateStatistics(size_t num_samples, size_t x, size_t y) {
 
 size_t Supersampler::GenerateSubsamples(const Sample& base,
                                         std::vector<Sample>* target) {
-  size_t samples = tracker_.NumSamples();
+  size_t samples = accum_.num_samples;
   if (IsAdaptive()) {
     if (!first_round_) {
       if(update_below_threshold_) {
