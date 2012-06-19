@@ -3,8 +3,6 @@
  * TODO(dinow): Unify the "sampler" interface such that this class can also
  * implement it. Buils some sort of sampling pipeline.
  *
- * TODO(dinow): Add some way of visualizing how many samples where used where.
- *
  * Author: "Dino Wernli"
  */
 

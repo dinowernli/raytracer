@@ -69,6 +69,9 @@ size_t Supersampler::GenerateSubsamples(const Sample& base,
         //root_rays_per_pixel_ = 2*root_rays_per_pixel_ + 1;
         ++root_rays_per_pixel_;
         DVLOG(1) << "Increasing sample root to " << root_rays_per_pixel_;
+        if (root_rays_per_pixel_ > 100) {
+          LOG(WARNING) << "Root rays per pixel exceeding 100 (10'000 rays)";
+        }
         ComputeCachedValues();
       }
     }
