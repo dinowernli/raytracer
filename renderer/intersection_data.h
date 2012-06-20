@@ -13,6 +13,16 @@ class Element;
 class Light;
 class Material;
 
+struct TextureCoordinates {
+  // After initialization, Valid() will be false.
+  TextureCoordinates() { Invalidate(); }
+  bool Valid() const { return s >= 0 && t >= 0; }
+  void Set(Scalar ss, Scalar tt) { s = ss; t = tt; }
+  void Invalidate() { Set(-1, -1); }
+
+  Scalar s, t;
+};
+
 class IntersectionData {
  public:
   // Builds a new struct for this specific ray. The ray is necessary in order to
@@ -33,13 +43,21 @@ class IntersectionData {
     light_ = light;
   }
 
+  // Returns whether or not the intersection has valid 2D texture coordinates.
+  // Note that 3D texture coordinates are just given by position.
+  bool HasTextureCoordinates() const { return texture_coordinates.Valid(); }
+
+  // Returns the intersected element or NULL if it is not an element.
   const Element* element() const { return element_; }
+
+  // Returns the intersected light or NULL if it is not a light.
   const Light* light() const { return light_; }
 
   Scalar t;
   Point3 position;
   Vector3 normal;
   const Material* material;
+  TextureCoordinates texture_coordinates;
 
  private:
   const Element* element_;
