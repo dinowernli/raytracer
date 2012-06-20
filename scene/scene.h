@@ -20,6 +20,7 @@ class Light;
 class Material;
 class Mesh;
 class Ray;
+class Texture;
 
 namespace raytracer {
 class SceneConfig;
@@ -41,6 +42,9 @@ class Scene {
 
   // Takes ownership of the passed material.
   void AddMaterial(Material* material);
+
+  // Takes ownership of the passed texture.
+  void AddTexture(Texture* texture);
 
   // Takes ownership of the passed mesh. Extracts all elements of the mesh and
   // adds them to the list of elements.
@@ -77,6 +81,7 @@ class Scene {
   std::unique_ptr<Camera> camera_;
   std::vector<std::unique_ptr<Material>> materials_;
   std::vector<std::unique_ptr<Mesh>> meshes_;
+  std::vector<std::unique_ptr<Texture>> textures_;
   std::unique_ptr<KdTree> kd_tree_;
 
   Color3 background_;

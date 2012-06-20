@@ -20,6 +20,7 @@
 #include "scene/material.h"
 #include "scene/mesh.h"
 #include "scene/scene.h"
+#include "scene/texture/constant_texture.h"
 
 SceneParser::SceneParser() {
 }
@@ -43,15 +44,25 @@ Point3 SceneParser::Parse(const raytracer::PointData& data) {
 }
 
 // static
-Material* SceneParser::Parse(const raytracer::MaterialData& data) {
+Material* SceneParser::Parse(const raytracer::MaterialData& data,
+                             Scene* scene) {
   if (!(data.has_emission() && data.has_ambient()
       && data.has_diffuse() && data.has_specular())) {
     return NULL;
   }
 
-  return new Material(Parse(data.emission()), Parse(data.ambient()),
-                      Parse(data.diffuse()), Parse(data.specular()),
-                      data.shininess(), data.reflection_percentage(),
+  Texture* emission = new ConstantTexture(Parse(data.emission()));
+  Texture* ambient = new ConstantTexture(Parse(data.ambient()));
+  Texture* diffuse = new ConstantTexture(Parse(data.diffuse()));
+  Texture* specular = new ConstantTexture(Parse(data.specular()));
+
+  scene->AddTexture(emission);
+  scene->AddTexture(ambient);
+  scene->AddTexture(diffuse);
+  scene->AddTexture(specular);
+
+  return new Material(emission, ambient, diffuse, specular, data.shininess(),
+                      data.reflection_percentage(),
                       data.refraction_percentage(), data.refraction_index());
 }
 
@@ -69,7 +80,7 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
       continue;
     }
 
-    if (!(material = Parse(data.materials(i)))) {
+    if (!(material = Parse(data.materials(i), scene))) {
       LOG(WARNING) << "Skipping incomplete material";
       continue;
     }

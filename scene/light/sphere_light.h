@@ -18,9 +18,7 @@
 class SphereLight : public Light {
  public:
   SphereLight(const Point3& center, Scalar radius, const Color3& color)
-      : Light(color), dummy_material_(Color3(0, 0, 0), Color3(0, 0, 0),
-                                      Color3(0, 0, 0), Color3(0, 0, 0),
-                                      0, 0, 0, 0) {
+      : Light(color), dummy_material_(NULL, NULL, NULL, NULL, 0, 0, 0, 0) {
     // TODO(dinow): Remove this dummy material as soon as sphere is patched.
     sphere_.reset(new Sphere(center, radius, dummy_material_));
   }

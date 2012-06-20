@@ -21,8 +21,8 @@ PhongShader::~PhongShader() {
 
 Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
   const Material& material = *data.material;
-  Color3 emission(material.emission().Clamped());
-  Color3 ambient((material.ambient() * scene.ambient()).Clamped());
+  Color3 emission(material.emission(data).Clamped());
+  Color3 ambient((material.ambient(data) * scene.ambient()).Clamped());
   Color3 diffuse(0, 0, 0);
   Color3 specular(0, 0, 0);
 
@@ -50,11 +50,11 @@ Color3 PhongShader::Shade(const IntersectionData& data, const Scene& scene) {
     }
 
     // Clamping seems to be necessary, otherwise some images get dark.
-    Color3 diff = material.diffuse() * light->color();
+    Color3 diff = material.diffuse(data) * light->color();
     diffuse += (diff * prod).Clamped();
 
     // Add specular contribution.
-    Color3 spec = material.specular() * light->color();
+    Color3 spec = material.specular(data) * light->color();
     Vector3 reflection = (-point_to_light).ReflectedOnPlane(normal);
 
     // Flip reflection if the camera is not on the same side of the element as

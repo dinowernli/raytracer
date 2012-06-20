@@ -31,8 +31,9 @@ class SceneParser {
 
   // Methods used for parsing entities from protos. The caller takes ownership
   // of the returned pointer. If parsing failed, returns NULL for pointers and
-  // the default value for value types.
-  static Material* Parse(const raytracer::MaterialData& data);
+  // the default value for value types. If any textures need to be created,
+  // they are added to scene.
+  static Material* Parse(const raytracer::MaterialData& data, Scene* scene);
   static Color3 Parse(const raytracer::ColorData& data);
   static Vector3 Parse(const raytracer::VectorData& data);
   static Point3 Parse(const raytracer::PointData& data);

@@ -12,6 +12,7 @@
 #include "scene/light/light.h"
 #include "scene/material.h"
 #include "scene/mesh.h"
+#include "scene/texture/texture.h"
 
 Scene::Scene(KdTree* kd_tree)
     : kd_tree_(kd_tree), background_(Color3(1, 1, 1)),
@@ -36,6 +37,10 @@ void Scene::AddMaterial(Material* material) {
 void Scene::AddMesh(Mesh* mesh) {
   meshes_.push_back(std::unique_ptr<Mesh>(mesh));
   mesh->CreateElements(&elements_);
+}
+
+void Scene::AddTexture(Texture* texture) {
+  textures_.push_back(std::unique_ptr<Texture>(texture));
 }
 
 void Scene::Init() {
