@@ -60,7 +60,21 @@ bool Sphere::Intersect(const Ray& ray, IntersectionData* data) const {
     data->position = ray.PointAt(t);
     data->set_element(this);
     data->material = &material();
-    data->normal = center_.VectorTo(data->position).Normalized();
+
+    Vector3 center_to_hit = center_.VectorTo(data->position);
+    center_to_hit.Normalize();
+    data->normal = center_to_hit.Normalized();
+
+    Scalar x = center_to_hit.x() != 0 ? center_to_hit.x() : EPSILON;
+    Scalar y = center_to_hit.y() != 0 ? center_to_hit.y() : EPSILON;
+    Scalar phi = atan2(y, x);
+    if (phi < 0) phi += 2 * PI;
+    data->texture_coordinate.s = phi / (2 * PI);
+
+    Scalar zr = center_to_hit.z();
+    zr = zr < -1 ? -1 : zr;
+    zr = zr > 1 ? 1 : zr;
+    data->texture_coordinate.t = acos(zr) / PI;
   }
   return found;
 }

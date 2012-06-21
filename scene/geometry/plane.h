@@ -25,6 +25,9 @@ class Plane : public Element {
 
   // This should always have length 1.
   Vector3 normal_;
+
+  Vector3 tangent_;
+  Vector3 bitangent_;
 };
 
 #endif  /* PLANE_H_ */

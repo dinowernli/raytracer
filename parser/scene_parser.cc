@@ -20,6 +20,7 @@
 #include "scene/material.h"
 #include "scene/mesh.h"
 #include "scene/scene.h"
+#include "scene/texture/checkerboard.h"
 #include "scene/texture/constant_texture.h"
 
 SceneParser::SceneParser() {
@@ -55,6 +56,9 @@ Material* SceneParser::Parse(const raytracer::MaterialData& data,
   Texture* ambient = new ConstantTexture(Parse(data.ambient()));
   Texture* diffuse = new ConstantTexture(Parse(data.diffuse()));
   Texture* specular = new ConstantTexture(Parse(data.specular()));
+
+  // TODO(dinow): Add support for parsing textures.
+  // Texture* diffuse = new Checkerboard();
 
   scene->AddTexture(emission);
   scene->AddTexture(ambient);

@@ -23,9 +23,8 @@ TEST(Checkerboard, IsChanging) {
   Color3 red(1, 0, 0);
   Checkerboard cb(blue, red);
 
-  EXPECT_TRUE(TestUtil::ColorsEqual(red, cb.Evaluate(DataWithCoords(0, 0))));
-  EXPECT_TRUE(TestUtil::ColorsEqual(blue, cb.Evaluate(DataWithCoords(0, 1))));
-  EXPECT_TRUE(TestUtil::ColorsEqual(blue, cb.Evaluate(DataWithCoords(0, 1.1))));
+  EXPECT_TRUE(TestUtil::ColorsEqual(blue, cb.Evaluate(DataWithCoords(0, 0))));
+  EXPECT_TRUE(TestUtil::ColorsEqual(red, cb.Evaluate(DataWithCoords(0, 0.1))));
 }
 
 }

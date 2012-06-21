@@ -16,9 +16,9 @@ class Checkerboard : public Texture2D {
 
  protected:
   virtual Color3 Evaluate2D(const IntersectionData& data) const {
-    size_t ss = size_t(data.texture_coordinate.s);
-    size_t tt = size_t(data.texture_coordinate.t);
-    if ((ss % 2 == 0) ^ (tt % 2 == 0)) {
+    size_t ss = size_t(data.texture_coordinate.s * 10) & 1;
+    size_t tt = size_t(data.texture_coordinate.t * 10) & 1;
+    if (ss == tt) {
       return first_;
     } else {
       return second_;
