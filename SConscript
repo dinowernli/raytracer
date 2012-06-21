@@ -94,6 +94,7 @@ test_cc_files = [
   'test/renderer/*.cc',
   'test/scene/geometry/*.cc',
   'test/scene/light/*.cc',
+  'test/scene/texture/*.cc',
   'test/util/*.cc',
 ]
 test_sources = [Glob(cc_file) for cc_file in test_cc_files]

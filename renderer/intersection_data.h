@@ -6,22 +6,13 @@
 #ifndef INTERSECTIONDATA_H_
 #define INTERSECTIONDATA_H_
 
+#include "scene/texture/texture_coordinate.h"
 #include "util/point3.h"
 #include "util/ray.h"
 
 class Element;
 class Light;
 class Material;
-
-struct TextureCoordinates {
-  // After initialization, Valid() will be false.
-  TextureCoordinates() { Invalidate(); }
-  bool Valid() const { return s >= 0 && t >= 0; }
-  void Set(Scalar ss, Scalar tt) { s = ss; t = tt; }
-  void Invalidate() { Set(-1, -1); }
-
-  Scalar s, t;
-};
 
 class IntersectionData {
  public:
@@ -45,7 +36,7 @@ class IntersectionData {
 
   // Returns whether or not the intersection has valid 2D texture coordinates.
   // Note that 3D texture coordinates are just given by position.
-  bool HasTextureCoordinates() const { return texture_coordinates.Valid(); }
+  bool HasTextureCoordinates() const { return texture_coordinate.Valid(); }
 
   // Returns the intersected element or NULL if it is not an element.
   const Element* element() const { return element_; }
@@ -57,7 +48,7 @@ class IntersectionData {
   Point3 position;
   Vector3 normal;
   const Material* material;
-  TextureCoordinates texture_coordinates;
+  TextureCoordinate texture_coordinate;
 
  private:
   const Element* element_;

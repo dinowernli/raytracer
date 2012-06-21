@@ -12,7 +12,7 @@ namespace {
 
 TEST(Sphere, PointOnSurface) {
   Color3 c(0, 0, 0);
-  Material dummy(c, c, c, c, 0, 0, 0, 0);
+  Material dummy(NULL, NULL, NULL, NULL, 0, 0, 0, 0);
 
   Point3 target(1, 2, 3);
   Point3 center(17, -2, 8);

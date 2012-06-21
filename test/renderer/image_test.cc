@@ -6,12 +6,9 @@
 #include <gtest/gtest.h>
 
 #include "renderer/image.h"
+#include "test/test_util.h"
 
 namespace {
-
-static bool ColorsEqual(Color3 c1, Color3 c2) {
-  return (c1.r() == c2.r() && c1.g() == c2.g() && c1.b() == c2.b());
-}
 
 TEST(Image, ImageBlackInitially) {
   Image image(10, 20);
@@ -21,7 +18,7 @@ TEST(Image, ImageBlackInitially) {
 
   for (size_t x = 0; x < image.SizeX(); ++x) {
     for (size_t y = 0; y < image.SizeY(); ++y) {
-      EXPECT_TRUE(ColorsEqual(Color3(0, 0, 0), image.PixelAt(x, y)));
+      EXPECT_TRUE(TestUtil::ColorsEqual(Color3(0, 0, 0), image.PixelAt(x, y)));
     }
   }
 }
@@ -37,7 +34,7 @@ TEST(Image, ColorStoredAndRetrieved) {
 
   for (size_t x = 0; x < image.SizeX(); ++x) {
     for (size_t y = 0; y < image.SizeY(); ++y) {
-      EXPECT_TRUE(ColorsEqual(Color3(1, 0, 1), image.PixelAt(x, y)));
+      EXPECT_TRUE(TestUtil::ColorsEqual(Color3(1, 0, 1), image.PixelAt(x, y)));
     }
   }
 }
