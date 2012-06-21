@@ -16,6 +16,7 @@ class Checkerboard : public Texture2D {
 
  protected:
   virtual Color3 Evaluate2D(const IntersectionData& data) const {
+    // TODO(dinow): Add parameter for checkerboard frequency.
     size_t ss = size_t(data.texture_coordinate.s * 10) & 1;
     size_t tt = size_t(data.texture_coordinate.t * 10) & 1;
     if (ss == tt) {
