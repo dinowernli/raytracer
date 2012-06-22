@@ -9,28 +9,53 @@ camera: {
   resolution_y: 600
 }
 
-sphere_lights {
-  center: { x:0 y:4.5 z:-1 }
-  color: { r:1 g:1 b:1 }
-  radius: 2
+textures {
+  identifier: "constant_black"
+  color: { r:0 g:0 b:0 }
+}
+
+textures {
+  identifier: "constant_blue"
+  color: { r:0 g:0.1 b:0.7 }
+}
+
+textures {
+  identifier: "constant_grey"
+  color: { r:0.3 g:0.3 b:0.3 }
+}
+
+textures {
+  identifier: "constant_green"
+  color { r:0.2 g:0.8 b:0.1 }
+}
+
+textures {
+  identifier: "constant_green_2"
+  color { r:0 g:0.2 b:0 }
 }
 
 materials {
   identifier: "blue"
-  emission: { r:0 g:0 b:0 }
-  ambient: { r:0 g:0.1 b:0.7 }
-  diffuse: { r:0 g:0.1 b:0.7 }
-  specular: { r:0.3 g:0.3 b:0.3 }
+  emission_texture: "constant_black"
+  ambient_texture: "constant_blue"
+  diffuse_texture: "constant_blue"
+  specular_texture: "constant_grey"
   shininess: 50
 }
 
 materials {
   identifier: "green"
-  emission: { r:0 g:0 b:0 }
-  ambient: { r:0 g:0 b:0 }
-  diffuse: { r:0.2 g:0.8 b:0.1 }
-  specular: { r:0 g:0.2 b:0 }
+  emission_texture: "constant_black"
+  ambient_texture: "constant_black"
+  diffuse_texture: "constant_green"
+  specular_texture: "constant_green_2"
   shininess: 30
+}
+
+sphere_lights {
+  center: { x:0 y:4.5 z:-1 }
+  color: { r:1 g:1 b:1 }
+  radius: 2
 }
 
 planes {

@@ -9,11 +9,17 @@ import "proto/scene/triangle_data.proto";
 import "proto/scene/sphere_data.proto";
 import "proto/util/color_data.proto";
 import "proto/util/material_data.proto";
+import "proto/util/texture_data.proto";
 
 message SceneData {
+  // Next ID: 14
+
   optional CameraData camera = 1;
   repeated PointLightData point_lights = 2;
+  repeated SphereLightData sphere_lights = 12;
+
   repeated MaterialData materials = 3;
+  repeated TextureData textures = 13;
 
   optional ColorData background = 4;
   optional ColorData ambient = 5;
@@ -24,6 +30,4 @@ message SceneData {
   repeated SphereData spheres = 8;
   repeated MeshData meshes = 9;
   repeated CirclePlaneData circle_planes = 10;
-  
-  repeated SphereLightData sphere_lights = 12;
 }

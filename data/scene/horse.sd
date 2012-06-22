@@ -23,20 +23,55 @@ point_lights {
   color: { r:1 g:1 b:1 }
 }
 
+textures {
+  identifier: "constant_black"
+  color: { r:0 g:0 b:0 }
+}
+
+textures {
+  identifier: "g1"
+  color: { r:0 g:0.1 b:0 }
+}
+
+textures {
+  identifier: "g2"
+  color: { r:0 g:0.5 b:0 }
+}
+
+textures {
+  identifier: "g3"
+  color: { r:0 g:0.3 b:0 }
+}
+
 materials {
   identifier: "green"
-  emission: { r:0 g:0 b:0 }
-  ambient: { r:0 g:0.1 b:0 }
-  diffuse: { r:0 g:0.5 b:0 }
-  specular: { r:0 g:0.3 b:0 }
+  emission_texture: "constant_black"
+  ambient_texture: "g2"
+  diffuse_texture: "g2"
+  specular_texture: "g2"
+}
+
+textures {
+  identifier: "b1"
+  color: { r:0 g:0 b:0.1 }
+}
+
+textures {
+  identifier: "b2"
+  color: { r:0.2 g:.5 b:1 }
+}
+
+textures {
+  identifier: "b3"
+  color: { r:0 g:0 b:0.3 }
 }
 
 materials {
   identifier: "blue"
-  emission: { r:0 g:0 b:0 }
-  ambient: { r:0 g:0 b:1 }
-  diffuse: { r:0.2 g:0.5 b:1 }
-  specular: { r:0 g:0 b:0.3 }
+  emission_texture: "constant_black"
+  ambient_texture: "b1"
+  diffuse_texture: "b2"
+  specular_texture: "b3"
   refraction_percentage: 0.3
   refraction_index: 0.1
 }

@@ -10,6 +10,7 @@
 #define SUPERSAMPLER_H_
 
 #include <cstddef>
+#include <glog/logging.h>
 #include <vector>
 
 #include "util/color3.h"
@@ -20,6 +21,8 @@ class Sample;
 class Statistics;
 
 struct Accumulator {
+  Accumulator() : num_samples(0), sum(0, 0, 0) {}
+
   size_t num_samples;
   Color3 sum;
 

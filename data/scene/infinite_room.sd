@@ -15,40 +15,63 @@ point_lights {
   color: { r:1 g:1 b:1 }
 }
 
+textures {
+  identifier: "constant_black"
+  color: { r:0 g:0 b:0 }
+}
+
+textures {
+  identifier: "constant_white"
+  color: { r:1 g:1 b:1 }
+}
+
 materials {
   identifier: "white_reflective"
-  emission: { r:0 g:0 b:0 }
-  ambient: { r:0 g:0 b:0 }
-  diffuse: { r:1 g:1 b:1 }
-  specular: { r:0 g:0 b:0 }
+  emission_texture: "constant_black"
+  ambient_texture: "constant_black"
+  diffuse_texture: "constant_white"
+  specular_texture: "constant_black"
   shininess: 1
   reflection_percentage: 0.6
 }
 
 materials {
   identifier: "white"
-  emission: { r:0 g:0 b:0 }
-  ambient: { r:0 g:0 b:0 }
-  diffuse: { r:1 g:1 b:1 }
-  specular: { r:0 g:0 b:0 }
+  emission_texture: "constant_black"
+  ambient_texture: "constant_black"
+  diffuse_texture: "constant_white"
+  specular_texture: "constant_black"
   shininess: 1
+}
+
+textures {
+  identifier: "r1"
+  color: { r:0.06 g:0 b:0 }
+}
+textures {
+  identifier: "r2"
+  color: { r:0.6 g:0 b:0 }
+}
+textures {
+  identifier: "r3"
+  color: { r:1 g:0.7 b:0.7 }
 }
 
 materials {
   identifier: "red"
-  emission: { r:0 g:0 b:0 }
-  ambient: { r:0.06 g:0 b:0 }
-  diffuse: { r:0.6 g:0 b:0 }
-  specular: { r:1 g:0.7 b:0.7 }
+  emission_texture: "constant_black"
+  ambient_texture: "r1"
+  diffuse_texture: "r2"
+  specular_texture: "r3"
   shininess: 10
 }
 
 materials {
   identifier: "red_reflective"
-  emission: { r:0 g:0 b:0 }
-  ambient: { r:0.06 g:0 b:0 }
-  diffuse: { r:0.6 g:0 b:0 }
-  specular: { r:1 g:0.7 b:0.7 }
+  emission_texture: "constant_black"
+  ambient_texture: "r1"
+  diffuse_texture: "r2"
+  specular_texture: "r3"
   shininess: 10
   reflection_percentage: 0.6
 }

@@ -3,10 +3,10 @@ package raytracer;
 import "proto/util/color_data.proto";
 
 message MaterialData {
-  optional ColorData emission = 1;
-  optional ColorData ambient = 2;
-  optional ColorData diffuse = 3;
-  optional ColorData specular = 4;
+  optional string emission_texture = 1;
+  optional string ambient_texture = 2;
+  optional string diffuse_texture = 3;
+  optional string specular_texture = 4;
   optional double shininess = 5 [default = 10];
 
   optional string identifier = 6;

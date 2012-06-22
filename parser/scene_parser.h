@@ -18,10 +18,12 @@
 namespace raytracer {
 class MaterialData;
 class SceneData;
+class TextureData;
 }
 
 class Material;
 class Scene;
+class Texture;
 
 class SceneParser {
  public:
@@ -33,10 +35,12 @@ class SceneParser {
   // of the returned pointer. If parsing failed, returns NULL for pointers and
   // the default value for value types. If any textures need to be created,
   // they are added to scene.
-  static Material* Parse(const raytracer::MaterialData& data, Scene* scene);
+  static Texture* Parse(const raytracer::TextureData& data);
   static Color3 Parse(const raytracer::ColorData& data);
   static Vector3 Parse(const raytracer::VectorData& data);
   static Point3 Parse(const raytracer::PointData& data);
+
+  Material* Parse(const raytracer::MaterialData& data);
 
   // Parses data and add everything to scene.
   void ParseScene(const raytracer::SceneData& data, Scene* scene);
@@ -47,6 +51,7 @@ class SceneParser {
 
   // Maps material identifiers to materials.
   std::map<std::string, Material*> material_map_;
+  std::map<std::string, Texture*> texture_map_;
 };
 
 #endif  /* SCENE_PARSER_H_ */

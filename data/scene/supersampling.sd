@@ -2,10 +2,10 @@ background: { r:1 g:0.9 b:0.9 }
 ambient: { r:0.02 g:0.02 b:0.02 }
 
 camera: {
-  position: { x:-5 y:1 z:0 }
+  position: { x:-5 y:-0.5 z:0 }
   view: { x:1 y:0 z:0 }
   up: { x:0 y:1 z:0 }
-  opening_angle: 17
+  opening_angle: 20
   resolution_x: 600
   resolution_y: 600
 }
@@ -15,45 +15,62 @@ point_lights {
   color: { r:1 g:1 b:1 }
 }
 
+textures {
+  identifier: "checkered_yellow_black"
+  checkerboard {
+    length: 1
+    first: { r:0 g:0 b:0 }
+    second: { r:1 g:1 b:0 }
+  }
+}
+
+textures {
+  identifier: "constant_black"
+  color: { r:0 g:0 b:0 }
+}
+
+textures {
+  identifier: "constant_white"
+  color: { r:1 g:1 b:1 }
+}
+
+textures {
+  identifier: "constant_red"
+  color: { r:1 g:0 b:0 }
+}
+
+textures {
+  identifier: "r2"
+  color: { r:0.1 g:0 b:0 }
+}
+
 materials {
-  identifier: "white"
-  emission: { r:0 g:0 b:0 }
-  ambient: { r:0 g:0 b:0 }
-  diffuse: { r:1 g:1 b:1 }
-  specular: { r:0 g:0 b:0 }
+  identifier: "checkered"
+  emission_texture: "constant_black"
+  ambient_texture: "constant_black"
+  diffuse_texture: "checkered_yellow_black"
+  specular_texture: "constant_black"
   shininess: 1
 }
 
 materials {
-  identifier: "red"
-  emission: { r:0 g:0 b:0 }
-  ambient: { r:1 g:0 b:0 }
-  diffuse: { r:1 g:0 b:0 }
-  specular: { r:0.2 g:0 b:0 }
-  shininess: 10
-}
-
-materials {
   identifier: "red_reflective"
-  emission: { r:0 g:0 b:0 }
-  ambient: { r:1 g:0 b:0 }
-  diffuse: { r:1 g:0 b:0 }
-  specular: { r:0.2 g:0 b:0 }
+  emission_texture: "constant_black"
+  ambient_texture: "constant_red"
+  diffuse_texture: "constant_red"
+  specular_texture: "r2"
   shininess: 10
   reflection_percentage: 0.5
 }
 
-circle_planes {
-  plane_data: {
-    point: { x:0 y:-1.2 z:0 }
-    normal: { x:0 y:1 z:0 }
-    material_id: "red"
-  }
-  ring_material_id: "white"
+planes {
+  point: { x:0 y:-1.2 z:0 }
+  normal: { x:0 y:1 z:0 }
+  material_id: "checkered"
 }
 
 spheres {
-  center: { x:10 y:3.5 z:0 }
-  radius: 2.5
+  center: { x:10 y:4.8 z:0 }
+  radius: 4.5
   material_id: "red_reflective"
 }

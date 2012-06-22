@@ -45,25 +45,36 @@ Point3 SceneParser::Parse(const raytracer::PointData& data) {
 }
 
 // static
-Material* SceneParser::Parse(const raytracer::MaterialData& data,
-                             Scene* scene) {
-  if (!(data.has_emission() && data.has_ambient()
-      && data.has_diffuse() && data.has_specular())) {
+Texture* SceneParser::Parse(const raytracer::TextureData& data) {
+  if (data.has_color()) {
+    return new ConstantTexture(Parse(data.color()));
+  } else if (data.has_checkerboard()) {
+    const auto& cb = data.checkerboard();
+    if (!cb.has_first() || !cb.has_second()) {
+      LOG(WARNING) << "Unable to parse checkerboard texture";
+      return NULL;
+    }
+    return new Checkerboard(Parse(cb.first()), Parse(cb.second()), cb.length());
+  } else {
+    LOG(WARNING) << "Unable to infer texture subtype";
+    return NULL;
+  }
+}
+
+Material* SceneParser::Parse(const raytracer::MaterialData& data) {
+  if (!(data.has_emission_texture() && data.has_ambient_texture()
+      && data.has_diffuse_texture() && data.has_specular_texture())) {
     return NULL;
   }
 
-  Texture* emission = new ConstantTexture(Parse(data.emission()));
-  Texture* ambient = new ConstantTexture(Parse(data.ambient()));
-  Texture* diffuse = new ConstantTexture(Parse(data.diffuse()));
-  Texture* specular = new ConstantTexture(Parse(data.specular()));
+  Texture* emission = texture_map_[data.emission_texture()];
+  Texture* ambient = texture_map_[data.ambient_texture()];
+  Texture* diffuse = texture_map_[data.diffuse_texture()];
+  Texture* specular = texture_map_[data.specular_texture()];
 
-  // TODO(dinow): Add support for parsing textures.
-  // Texture* diffuse = new Checkerboard();
-
-  scene->AddTexture(emission);
-  scene->AddTexture(ambient);
-  scene->AddTexture(diffuse);
-  scene->AddTexture(specular);
+  if (!(emission && ambient && diffuse && specular)) {
+    return NULL;
+  }
 
   return new Material(emission, ambient, diffuse, specular, data.shininess(),
                       data.reflection_percentage(),
@@ -72,10 +83,27 @@ Material* SceneParser::Parse(const raytracer::MaterialData& data,
 
 void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
   material_map_.clear();
+  texture_map_.clear();
 
   scene->set_background(Parse(data.background()));
   scene->set_ambient(Parse(data.ambient()));
   scene->set_refraction_index(data.refraction_index());
+
+  Texture* texture = NULL;
+  for (int i = 0; i < data.textures_size(); ++i) {
+    if (!data.textures(i).has_identifier()) {
+      LOG(WARNING) << "Skipping texture without identifier";
+      continue;
+    }
+
+    if (!(texture = Parse(data.textures(i)))) {
+      LOG(WARNING) << "Skipping incomplete texture";
+      continue;
+    }
+
+    scene->AddTexture(texture);
+    texture_map_[data.textures(i).identifier()] = texture;
+  }
 
   Material* material = NULL;
   for (int i = 0; i < data.materials_size(); ++i) {
@@ -83,15 +111,16 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
       LOG(WARNING) << "Skipping material without identifier";
       continue;
     }
+    const std::string& id = data.materials(i).identifier();
 
-    if (!(material = Parse(data.materials(i), scene))) {
-      LOG(WARNING) << "Skipping incomplete material";
+    if (!(material = Parse(data.materials(i)))) {
+      LOG(WARNING) << "Skipping incomplete material: " << id;
       continue;
     }
 
     // Ownership taken by scene.
     scene->AddMaterial(material);
-    material_map_[data.materials(i).identifier()] = material;
+    material_map_[id] = material;
   }
 
   if (data.has_camera()) {
@@ -257,5 +286,8 @@ void SceneParser::ParseScene(const raytracer::SceneData& data, Scene* scene) {
 // Fetches the material pointer from the map, returns none if it is not found.
 Material* SceneParser::GetMaterial(const std::string& id) const {
   auto it = material_map_.find(id);
-  return ((it == material_map_.end()) ? NULL : it->second);
+  if (it == material_map_.end()) {
+    return NULL;
+  }
+  return it->second;
 }

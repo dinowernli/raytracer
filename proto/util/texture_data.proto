@@ -1,0 +1,24 @@
+package raytracer;
+
+import "proto/util/color_data.proto";
+
+// An alternating checkerboard pattern with two colors.
+message CheckerboardData {
+  optional uint32 length = 1 [default = 1];
+  optional ColorData first = 2;   // Defaults to black (enforced in parser).
+  optional ColorData second = 3;  // Defaults to white (enforced in parser).
+}
+
+message TextureData {
+  optional string identifier = 1;
+
+  // Only one of the following fields is supposed to be set.
+  // Represents a constant color texture.
+  optional ColorData color = 2;
+
+  // Procedural checkerboard texture.
+  optional CheckerboardData checkerboard = 3;
+
+  // Texture taken from an image.
+  optional string image = 4;
+}
