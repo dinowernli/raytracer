@@ -72,8 +72,9 @@ cc_files = [
 lib_sources = [Glob(cc_file) for cc_file in cc_files] + [st[2] for st in source_target]
 
 lib_target = environment.Library('raytracer', lib_sources)
-environment.Append(LIBS='raytracer')
-environment.Append(LIBS='glut')       # Only the binary needs to link against glut (not included for library).
+environment.Prepend(LIBS='raytracer')
+environment.ParseConfig('pkg-config --cflags --libs glu')
+environment.Append(LIBS='glut')  # Does not seem to have a pkg-config file
 environment.Append(LIBPATH='.')
 
 # Specify binaries
@@ -86,10 +87,9 @@ Default(raytracer)
 
 ### Build unit tests.
 
-#environment.ParseConfig('pkg-config --cflags --libs libgtest')
-environment.Append(LIBS='-lgtest')
-environment.Append(LIBS='-lgtest_main')
 test_environment = environment.Clone()
+test_environment.Append(LIBS='-lgtest')
+test_environment.Prepend(LIBS='-lgtest_main')
 test_cc_files = [
   'test/renderer/*.cc',
   'test/scene/geometry/*.cc',
@@ -98,5 +98,5 @@ test_cc_files = [
   'test/util/*.cc',
 ]
 test_sources = [Glob(cc_file) for cc_file in test_cc_files]
-environment.Program('unit_tests', test_sources)
-environment.Alias('test', ['unit_tests'])
+test_environment.Program('unit_tests', test_sources)
+test_environment.Alias('test', ['unit_tests'])
