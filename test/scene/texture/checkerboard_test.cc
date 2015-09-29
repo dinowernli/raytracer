@@ -21,7 +21,7 @@ static IntersectionData DataWithCoords(Scalar ss, Scalar tt) {
 TEST(Checkerboard, IsChanging) {
   Color3 blue(0, 0, 1);
   Color3 red(1, 0, 0);
-  Checkerboard cb(blue, red);
+  Checkerboard cb(blue, red, 5 /* length */);
 
   EXPECT_TRUE(TestUtil::ColorsEqual(blue, cb.Evaluate(DataWithCoords(0, 0))));
   EXPECT_TRUE(TestUtil::ColorsEqual(red, cb.Evaluate(DataWithCoords(0, 0.1))));
