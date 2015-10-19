@@ -1,4 +1,4 @@
-A raytracer writting in C++.
+A raytracer written in C++.
 
 Build
 =====
